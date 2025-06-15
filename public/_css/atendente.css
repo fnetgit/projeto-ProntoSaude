@@ -1,0 +1,92 @@
+/* _css/atendente.css */
+
+@import url('style.css');
+
+/* --- Abas (atendente) --- */
+.tabs {
+    display: flex;
+    border-bottom: 2px solid var(--cor-borda);
+    margin-bottom: 30px;
+}
+
+.tab-button {
+    padding: 15px 25px;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--cor-texto-secundario);
+    position: relative;
+    border: none;
+    background: none;
+}
+
+.tab-button.active {
+    color: var(--cor-primaria);
+}
+
+.tab-button.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: var(--cor-primaria);
+}
+
+/* --- Barra de Pesquisa (atendente) --- */
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--cor-borda);
+    border-radius: 5px;
+    padding: 8px 15px;
+    margin-bottom: 30px;
+    max-width: 60%;
+}
+
+.search-bar input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 5px 10px;
+    font-size: 16px;
+}
+
+.search-bar .icon {
+    margin-right: 10px;
+}
+
+/* --- Botões de Ação na Tabela (atendente) --- */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.action-buttons button {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.2s;
+}
+
+.action-buttons .edit-btn {
+    background-color: #f0f0f0;
+}
+
+.action-buttons .edit-btn:hover {
+    background-color: #e0e0e0;
+}
+
+.action-buttons .consult-btn {
+    background-color: var(--cor-primaria);
+    color: var(--cor-texto-claro);
+}
+
+.action-buttons .consult-btn:hover {
+    background-color: var(--cor-primaria-hover);
+}

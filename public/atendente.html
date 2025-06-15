@@ -1,0 +1,168 @@
+<!-- atendente.html -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/_css/style.css">
+    <link rel="stylesheet" href="/_css/atendente.css">
+    <title>Clinify - Home do Atendente</title>
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">Clinify</div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="atendente.html" class="sidebar-item active"><img
+                                src="https://img.icons8.com/ios-filled/50/ffffff/home.png"
+                                alt="Página Principal" /><span>Principal</span></a></li>
+                    <li><a href="fila.html" class="sidebar-item"><img
+                                src="https://img.icons8.com/ios-filled/50/ffffff/user-group-man-man.png"
+                                alt="Ver Fila" /><span>Fila</span></a></li>
+                    <li><a href="#" class="sidebar-item"><img
+                                src="https://img.icons8.com/ios-filled/50/ffffff/bar-chart.png"
+                                alt="Estatísticas" /><span>Estatísticas</span></a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="user-info">
+                    <div class="user-avatar"><img src="https://img.icons8.com/ios-filled/20/ffffff/user-male-circle.png"
+                            alt="User" /></div>
+                    <div>
+                        <div class="user-name">Francisco Neto</div>
+                        <div class="user-role">Atendente</div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="tabs">
+                <button class="tab-button" data-tab="cadastrar">CADASTRAR PACIENTES</button>
+                <button class="tab-button active" data-tab="procurar">PROCURAR PACIENTE</button>
+            </div>
+
+            <div class="form-section" id="cadastrar-pacientes-form" style="display: none;">
+                <form>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nomeCompleto">Nome completo</label>
+                            <input type="text" id="nomeCompleto" name="nomeCompleto" value=""
+                                placeholder="Digite o nome completo">
+                        </div>
+                        <div class="form-group">
+                            <label for="dataNascimento">Data de Nascimento</label>
+                            <input type="date" id="dataNascimento" name="dataNascimento">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cpf">CPF</label>
+                            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00">
+                        </div>
+                        <div class="form-group">
+                            <label for="naturalidade">Naturalidade</label>
+                            <input type="text" id="naturalidade" name="naturalidade" placeholder="Cidade - UF">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cartaoSUS">Cartão do SUS</label>
+                            <input type="text" id="cartaoSUS" name="cartaoSUS" placeholder="000 0000 0000 0000">
+                        </div>
+                        <div class="form-group">
+                            <label for="nacionalidade">Nacionalidade</label>
+                            <input type="text" id="nacionalidade" name="nacionalidade" placeholder="Ex: Brasileira">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nomeMae">Nome da mãe</label>
+                            <input type="text" id="nomeMae" name="nomeMae" placeholder="Nome completo da mãe">
+                        </div>
+                        <div class="form-group">
+                            <label for="genero">Gênero</label>
+                            <input type="text" id="genero" name="genero" placeholder="Masculino/Feminino">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-button">CADASTRAR PACIENTE</button>
+                </form>
+            </div>
+
+            <div class="form-section" id="procurar-paciente-form">
+                <div class="search-bar">
+                    <img src="https://img.icons8.com/ios-filled/24/777777/search--v1.png" alt="Search Icon"
+                        class="icon" />
+                    <input type="text" placeholder="Pesquisar Paciente...">
+                </div>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>NAME</th>
+                            <th>CPF</th>
+                            <th>CARTÃO SUS</th>
+                            <th>TELEFONE</th>
+                            <th>NASCIMENTO</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>JOSÉ MARANHÃO</td>
+                            <td>627.332.403-50</td>
+                            <td>2881645207</td>
+                            <td>(98) 9 84617625</td>
+                            <td>10/05/2004</td>
+                            <td class="action-buttons">
+                                <button class="edit-btn">
+                                    <img src="https://img.icons8.com/ios-filled/16/000000/edit--v1.png" alt="Edit" />
+                                </button>
+                                <button class="consult-btn">Consulta</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>MARIA SILVA</td>
+                            <td>123.456.789-00</td>
+                            <td>98765432109876</td>
+                            <td>(11) 9 12345678</td>
+                            <td>01/01/1990</td>
+                            <td class="action-buttons">
+                                <button class="edit-btn">
+                                    <img src="https://img.icons8.com/ios-filled/16/000000/edit--v1.png" alt="Edit" />
+                                </button>
+                                <button class="consult-btn">Consulta</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>PEDRO ALVES</td>
+                            <td>987.654.321-10</td>
+                            <td>12345678901234</td>
+                            <td>(21) 9 98765432</td>
+                            <td>15/03/1985</td>
+                            <td class="action-buttons">
+                                <button class="edit-btn">
+                                    <img src="https://img.icons8.com/ios-filled/16/000000/edit--v1.png" alt="Edit" />
+                                </button>
+                                <button class="consult-btn">Consulta</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script src="/_js/atendente.js"></script>
+</body>
+
+</html>

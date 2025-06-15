@@ -1,0 +1,155 @@
+/* _css/medico.css */
+
+/* --- BOTÃO DE CHAMAR PACIENTE NA FILA --- */
+.action-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    min-width: 150px;
+    text-align: center;
+}
+
+.action-button.active {
+    background-color: var(--cor-primaria);
+    color: var(--cor-texto-claro);
+}
+
+.action-button.active:hover {
+    background-color: var(--cor-primaria-hover);
+}
+
+.action-button.inactive {
+    background-color: var(--cor-fundo-inativo);
+    color: var(--cor-texto-inativo);
+    cursor: not-allowed;
+}
+
+
+/* --- SEÇÃO DE ATENDIMENTO --- */
+.patient-info-display {
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+#display-patient-name {
+    font-size: 24px;
+    font-weight: 500;
+}
+
+#display-patient-dob {
+    font-size: 16px;
+    color: var(--cor-texto-secundario);
+}
+
+
+/* --- BOX DE DADOS DA TRIAGEM --- */
+.data-display-box {
+    background-color: #f9f9f9;
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+}
+
+.data-display-box h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--cor-borda);
+    padding-bottom: 10px;
+    font-size: 18px;
+}
+
+.triage-data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.data-item {
+    font-size: 16px;
+}
+
+.data-item-full {
+    font-size: 16px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+/* --- FORMULÁRIO DE PARECER MÉDICO --- */
+.medical-report-form textarea {
+    min-height: 180px;
+    resize: vertical;
+}
+
+#parecerMedico[readonly] {
+    background-color: var(--cor-fundo-pagina);
+    cursor: not-allowed;
+}
+
+#parecerMedico[readonly]:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: var(--cor-borda);
+}
+
+/* --- GRUPO DE BOTÕES DE AÇÃO DA CONSULTA --- */
+.action-buttons-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+/* --- ESTILO BASE PARA OS BOTÕES DENTRO DO GRUPO --- */
+.action-buttons-group>button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--cor-texto-claro);
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+.action-buttons-group>button:active {
+    transform: scale(0.98);
+}
+
+/* --- CORES ESPECÍFICAS PARA CADA BOTÃO --- */
+.btn-iniciar {
+    background-color: var(--cor-sucesso);
+}
+
+.btn-iniciar:hover {
+    background-color: var(--cor-sucesso-hover);
+}
+
+.btn-chamar-novamente {
+    background-color: var(--cor-primaria);
+}
+
+.btn-chamar-novamente:hover {
+    background-color: var(--cor-primaria-hover);
+}
+
+.btn-nao-compareceu {
+    background-color: #d9534f;
+}
+
+.btn-nao-compareceu:hover {
+    background-color: #c9302c;
+}
+
+.btn-encerrar {
+    background-color: #333d45;
+}
+
+.btn-encerrar:hover {
+    background-color: #555d67;
+}

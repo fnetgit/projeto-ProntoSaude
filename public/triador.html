@@ -1,0 +1,154 @@
+<!-- triador.html -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/_css/style.css">
+    <link rel="stylesheet" href="/_css/triador.css">
+    <title>Clinify - Triagem de Pacientes</title>
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">Clinify</div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="sidebar-item active">
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Página Principal" />
+                            <span>Principal</span>
+                        </a></li>
+                    <li><a href="#" class="sidebar-item">
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/bar-chart.png" alt="Estatísticas" />
+                            <span>Estatísticas</span>
+                        </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <img src="https://img.icons8.com/ios-filled/20/ffffff/user-male-circle.png" alt="User" />
+                    </div>
+                    <div>
+                        <div class="user-name">Francisco Neto</div>
+                        <div class="user-role">Triador</div>
+                    </div>
+                </div>
+            </header>
+
+            <section id="triagem-pacientes">
+                <h1 class="page-title">Pacientes para Triagem</h1>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>NOME</th>
+                            <th>CPF</th>
+                            <th>CARTÃO SUS</th>
+                            <th>TELEFONE</th>
+                            <th>NASCIMENTO</th>
+                            <th>AÇÃO</th>
+                        </tr>
+                    </thead>
+                    <tbody id="triage-body">
+                        <tr>
+                            <td>CARLOS ALBERTO DE NOBREGA</td>
+                            <td>111.222.333-44</td>
+                            <td>987654321012345</td>
+                            <td>(86) 9 9988-7766</td>
+                            <td>12/03/1936</td>
+                            <td>
+                                <button class="initiate-button active">Iniciar</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>ANA MARIA BRAGA</td>
+                            <td>444.555.666-77</td>
+                            <td>123456789054321</td>
+                            <td>(11) 9 8877-6655</td>
+                            <td>01/04/1949</td>
+                            <td>
+                                <button class="initiate-button inactive" disabled>Aguardando</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>JOSÉ MARANHÃO</td>
+                            <td>627.332.403-50</td>
+                            <td>2881645207</td>
+                            <td>(98) 9 8461-7625</td>
+                            <td>10/05/2004</td>
+                            <td>
+                                <button class="initiate-button inactive" disabled>Aguardando</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="dados-da-triagem" style="display: none;">
+                <h1 class="page-title">Dados da Triagem</h1>
+
+                <div class="patient-info-display">
+                    <h2 id="display-patient-name"></h2>
+                    <p id="display-patient-dob"></p>
+                </div>
+
+                <form class="triage-form" onsubmit="return false;">
+                    <div class="form-row">
+                        <div class="form-group"><label for="peso">Peso</label><input type="text" id="peso"
+                                placeholder="Ex: 70kg"></div>
+                        <div class="form-group"><label for="altura">Altura</label><input type="text" id="altura"
+                                placeholder="Ex: 1.75m"></div>
+                        <div class="form-group"><label for="temperatura">Temperatura</label><input type="text"
+                                id="temperatura" placeholder="Ex: 36.5°C"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group"><label for="saturacaoOxigenio">Saturação de oxigênio (%)</label><input
+                                type="text" id="saturacaoOxigenio" placeholder="Ex: 98%"></div>
+                        <div class="form-group"><label for="pressaoArterial">Pressão arterial</label><input type="text"
+                                id="pressaoArterial" placeholder="Ex: 120/80 mmHg"></div>
+                        <div class="form-group"><label for="glicose">Glicose (mg/dL)</label><input type="text"
+                                id="glicose" placeholder="Ex: 90 mg/dL"></div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group form-group--full-width">
+                            <label for="sintomasDescricao">Sintomas, descrição</label>
+                            <textarea id="sintomasDescricao" name="sintomasDescricao"
+                                placeholder="Descreva os sintomas do paciente aqui..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group select-wrapper form-group--third-width">
+                            <label for="prioridade">Prioridade</label>
+                            <select name="prioridade" id="prioridade">
+                                <option value="">Selecione a Prioridade</option>
+                                <option value="vermelho">Emergência (Vermelho)</option>
+                                <option value="laranja">Muito Urgente (Laranja)</option>
+                                <option value="amarelo">Urgente (Amarelo)</option>
+                                <option value="verde">Pouco Urgente (Verde)</option>
+                                <option value="azul">Não Urgente (Azul)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-buttons">
+                        <button type="submit" class="submit-button">Registrar Triagem</button>
+                        <button type="button" class="back-button">Voltar para a Lista</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script src="/_js/triador.js"></script>
+</body>
+
+</html>
