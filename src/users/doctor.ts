@@ -1,7 +1,7 @@
 import { PatientInQueue } from "../queues/priority-queue";
 
 export class Doctor {
-  constructor(private name: string) {}
+  constructor(private name: string) { }
 
   public performService(patient: PatientInQueue) {
     console.log(

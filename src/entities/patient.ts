@@ -14,5 +14,5 @@ export class Patient {
     public susCard: string,
     public motherName: string,
     public address: string
-  ) {}
+  ) { }
 }

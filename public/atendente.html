@@ -68,7 +68,7 @@
                         </div>
                         <div class="form-group">
                             <label for="naturalidade">Naturalidade</label>
-                            <input type="text" id="naturalidade" name="naturalidade" placeholder="Cidade - UF">
+                            <input type="text" id="naturalidade" name="naturalidade" placeholder="Cidade, País">
                         </div>
                     </div>
 
@@ -78,8 +78,9 @@
                             <input type="text" id="cartaoSUS" name="cartaoSUS" placeholder="000 0000 0000 0000">
                         </div>
                         <div class="form-group">
-                            <label for="nacionalidade">Nacionalidade</label>
-                            <input type="text" id="nacionalidade" name="nacionalidade" placeholder="Ex: Brasileira">
+                            <label for="endereço">Endereço</label>
+                            <input type="text" id="endereço" name="endereço"
+                                placeholder="Rua Exemplo, 123, Bairro, Cidade - UF">
                         </div>
                     </div>
 
@@ -89,8 +90,13 @@
                             <input type="text" id="nomeMae" name="nomeMae" placeholder="Nome completo da mãe">
                         </div>
                         <div class="form-group">
-                            <label for="genero">Gênero</label>
-                            <input type="text" id="genero" name="genero" placeholder="Masculino/Feminino">
+                            <label for="sexo">Sexo</label>
+                            <select id="sexo" name="sexo">
+                                <option value="" disabled selected>Selecione o sexo</option>
+                                <option value="masculino">Masculino</option>
+                                <option value="feminino">Feminino</option>
+                                <option value="não informado">Não informado</option>
+                            </select>
                         </div>
                     </div>
 

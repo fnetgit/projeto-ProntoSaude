@@ -11,7 +11,7 @@ export class Triage {
     public bloodPressure: string,
     public wristbandColor: string,
     public dateTime: Date
-  ) {}
+  ) { }
 
   public static colorToPriority(color: string): number {
     switch (color.toLowerCase()) {
