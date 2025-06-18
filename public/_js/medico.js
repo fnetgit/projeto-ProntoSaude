@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const corpoTabela = document.getElementById('fila-body');
     const displayNameElement = document.getElementById('display-patient-name');
     const displayDobElement = document.getElementById('display-patient-dob');
+    const displayGenderElement = document.getElementById('display-patient-gender');
 
     // --- ELEMENTOS DA CONSULTA ---
     const parecerMedicoTextarea = document.getElementById('parecerMedico');
@@ -16,16 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnChamarNovamente = document.getElementById('chamar-novamente-btn');
     const btnNaoCompareceu = document.getElementById('nao-compareceu-btn');
 
-    let linhaEmAtendimento = null; // Guarda a linha (TR) do paciente em atendimento
+    let linhaEmAtendimento = null;
 
     // --- 2. Funções ---
 
-    /**
-     * Ativa o botão de ação para o próximo paciente na fila.
-     */
+    // Botão de ação para o próximo paciente na fila.
     function ativarProximoDaFila() {
-        const proximaLinha = corpoTabela.querySelector('tr'); // Pega a nova primeira linha
-        if (!proximaLinha) return; // Sai da função se não houver mais pacientes
+        const proximaLinha = corpoTabela.querySelector('tr');
+        if (!proximaLinha) return;
 
         const proximoBotao = proximaLinha.querySelector('.action-button.inactive');
         if (proximoBotao) {
@@ -33,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
             proximoBotao.classList.remove('inactive');
             proximoBotao.classList.add('active');
             proximoBotao.disabled = false;
-            // Adiciona o evento de clique APENAS ao botão que foi ativado
             proximoBotao.addEventListener('click', mostrarConsulta);
         }
     }
@@ -45,68 +43,61 @@ document.addEventListener('DOMContentLoaded', () => {
     function mostrarConsulta(event) {
         linhaEmAtendimento = event.target.closest('tr');
 
+        // Captura dos dados da linha da tabela
         const nomePaciente = linhaEmAtendimento.cells[1].textContent;
         const nascimentoPaciente = linhaEmAtendimento.cells[4].textContent;
+        const generoPaciente = linhaEmAtendimento.cells[5].textContent;
 
+        // Exibição dos dados na área de consulta
         displayNameElement.textContent = nomePaciente;
         displayDobElement.textContent = `Data de Nascimento: ${nascimentoPaciente}`;
+        displayGenderElement.textContent = `Gênero: ${generoPaciente}`;
 
         secaoFila.style.display = 'none';
         secaoConsulta.style.display = 'block';
     }
 
-    /**
-     * Reseta a tela de consulta para o estado inicial.
-     */
+    // Reseta a tela de consulta para o estado inicial.
     function resetarTelaConsulta() {
-        formConsulta.reset(); // Limpa o textarea
+        formConsulta.reset();
         parecerMedicoTextarea.readOnly = true;
         parecerMedicoTextarea.placeholder = "Clique em 'Iniciar Consulta' para liberar a edição...";
 
-        // Define a visibilidade inicial dos botões
         btnIniciarConsulta.style.display = 'inline-block';
         btnChamarNovamente.style.display = 'inline-block';
         btnNaoCompareceu.style.display = 'inline-block';
         btnEncerrarConsulta.style.display = 'none';
     }
 
-    /**
-     * Exibe a fila de pacientes, esconde e reseta a tela de consulta.
-     */
+    // Exibe a fila de pacientes, esconde e reseta a tela de consulta.
     function mostrarFila() {
         secaoConsulta.style.display = 'none';
         secaoFila.style.display = 'block';
         displayNameElement.textContent = '';
         displayDobElement.textContent = '';
-        resetarTelaConsulta(); // Garante que a tela de consulta seja resetada ao voltar
+        displayGenderElement.textContent = '';
+        resetarTelaConsulta();
     }
 
-    /**
-     * Libera o campo de parecer médico e ajusta os botões.
-     */
+    // Libera o campo de parecer médico e ajusta os botões.
     function iniciarConsulta() {
         parecerMedicoTextarea.readOnly = false;
         parecerMedicoTextarea.placeholder = "Descreva o diagnóstico, tratamento e recomendações...";
-        parecerMedicoTextarea.focus(); // Foca no campo de texto
+        parecerMedicoTextarea.focus();
 
-        // Esconde os botões de ação inicial e mostra o de encerrar
         btnIniciarConsulta.style.display = 'none';
         btnChamarNovamente.style.display = 'none';
         btnNaoCompareceu.style.display = 'none';
         btnEncerrarConsulta.style.display = 'inline-block';
     }
 
-    /**
-     * Simula uma nova chamada ao paciente.
-     */
+    // Simula uma nova chamada ao paciente.
     function chamarNovamente() {
         const nomePaciente = displayNameElement.textContent;
         alert(`Chamando paciente ${nomePaciente} novamente!`);
     }
 
-    /**
-     * Registra o não comparecimento do paciente e volta para a fila.
-     */
+    // Registra o não comparecimento do paciente e volta para a fila.
     function registrarNaoComparecimento() {
         const nomePaciente = displayNameElement.textContent;
         const confirmou = confirm(`Deseja realmente registrar a ausência do paciente ${nomePaciente}? Esta ação não pode ser desfeita.`);
@@ -151,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         ativarProximoDaFila();
-        mostrarFila(); // Esta função agora também reseta os botões
+        mostrarFila();
     }
 
     // --- 3. Adicionar Eventos ---
@@ -160,7 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
         botaoInicial.addEventListener('click', mostrarConsulta);
     }
 
-    // Eventos dos botões de consulta
     btnIniciarConsulta.addEventListener('click', iniciarConsulta);
     btnChamarNovamente.addEventListener('click', chamarNovamente);
     btnNaoCompareceu.addEventListener('click', registrarNaoComparecimento);
