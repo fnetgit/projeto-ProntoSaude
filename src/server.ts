@@ -35,7 +35,6 @@ app.post('/api/pacientes', (req, res) => {
         mother_name,
         gender,
         phone,
-        nationality
     } = req.body;
 
     if (!patient_name || !birth_date || !cpf || !sus_card) {
@@ -63,7 +62,6 @@ app.post('/api/pacientes', (req, res) => {
             gender,
             phone,
             address,
-            nationality,
             birthplace,
             sus_card,
             mother_name
@@ -76,7 +74,6 @@ app.post('/api/pacientes', (req, res) => {
             newPatient.gender,
             newPatient.phone,
             newPatient.address,
-            nationality,
             newPatient.birthplace,
             newPatient.susCard,
             newPatient.motherName
@@ -112,7 +109,6 @@ app.get('/api/pacientes', (req, res) => {
                     gender,
                     phone,
                     address,
-                    nationality,
                     birthplace,
                     sus_card,
                     mother_name
