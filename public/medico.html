@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/_css/style.css">
+    <link rel="stylesheet" href="/_css/medico.css">
+    <title>Clinify - Área do Médico</title>
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">Clinify</div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="medico.html" class="sidebar-item active">
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Página Principal" />
+                            <span>Principal</span>
+                        </a></li>
+                    <li><a href="#" class="sidebar-item">
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/bar-chart.png" alt="Estatísticas" />
+                            <span>Estatísticas</span>
+                        </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="user-info">
+                    <div class="user-avatar"><img src="https://img.icons8.com/ios-filled/20/ffffff/user-male-circle.png"
+                            alt="User" /></div>
+                    <div>
+                        <div class="user-name">Dr. Francisco Neto</div>
+                        <div class="user-role">Médico</div>
+                    </div>
+                </div>
+            </header>
+
+            <section id="fila-de-pacientes">
+                <h1 class="page-title">Fila de Pacientes</h1>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>SENHA</th>
+                            <th>NOME</th>
+                            <th>PRIORIDADE</th>
+                            <th>DATA E HORA DA TRIAGEM</th>
+                            <th style="display: none;">NASCIMENTO</th>
+                            <th style="display: none;">GÊNERO</th>
+                            <th>AÇÃO</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fila-body">
+                        <tr>
+                            <td>001</td>
+                            <td>MARIA JOSÉ DA CONCEIÇÃO</td>
+                            <td>
+                                <span class="priority-badge priority-laranja">Muito Urgente</span>
+                            </td>
+                            <td>13/10/2025 08:45</td>
+                            <td style="display: none;">15/05/1968</td>
+                            <td style="display: none;">Feminino</td>
+                            <td><button class="action-button active">Chamar Paciente</button></td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>JOÃO PEREIRA DOS SANTOS</td>
+                            <td>
+                                <span class="priority-badge priority-verde">Pouco Urgente</span>
+                            </td>
+                            <td>13/10/2025 08:52</td>
+                            <td style="display: none;">23/11/1985</td>
+                            <td style="display: none;">Masculino</td>
+                            <td><button class="action-button inactive" disabled>Aguardando</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="atendimento-medico" style="display: none;">
+                <h1 class="page-title">Consulta Médica</h1>
+
+                <div class="patient-info-display">
+                    <h2 id="display-patient-name"></h2>
+                    <p id="display-patient-dob"></p>
+                    <p id="display-patient-gender"></p>
+                </div>
+
+                <div class="data-display-box">
+                    <h3>Dados da Triagem</h3>
+                    <div class="triage-data-grid">
+                        <div class="data-item"><strong>Peso:</strong> 72kg</div>
+                        <div class="data-item"><strong>Altura:</strong> 1.65m</div>
+                        <div class="data-item"><strong>Temperatura:</strong> 37.8°C</div>
+                        <div class="data-item"><strong>Saturação O²:</strong> 97%</div>
+                        <div class="data-item"><strong>Pressão Arterial:</strong> 140/90 mmHg</div>
+                        <div class="data-item"><strong>Glicose:</strong> 110 mg/dL</div>
+                    </div>
+                    <div class="data-item-full">
+                        <strong>Sintomas Descritos:</strong> Forte dor de cabeça e tontura há 2 dias, com episódios de
+                        náusea.
+                    </div>
+                </div>
+
+                <form class="medical-report-form">
+                    <div class="form-group">
+                        <label for="parecerMedico">Parecer do Médico</label>
+                        <textarea id="parecerMedico" name="parecerMedico"
+                            placeholder="Clique em 'Iniciar Consulta' para liberar a edição..." readonly></textarea>
+                    </div>
+
+                    <div class="action-buttons-group">
+                        <button type="button" id="iniciar-consulta-btn" class="btn-iniciar">Iniciar Consulta</button>
+                        <button type="button" id="chamar-novamente-btn" class="btn-chamar-novamente">Chamar
+                            Novamente</button>
+                        <button type="button" id="nao-compareceu-btn" class="btn-nao-compareceu">Não Compareceu</button>
+                        <button type="submit" id="encerrar-consulta-btn" class="btn-encerrar"
+                            style="display: none;">Encerrar Consulta</button>
+                    </div>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script src="/_js/medico.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,89 @@
+<!-- fila.html -->
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/_css/atendente.css">
+    <title>Clinify - Fila de Atendimento</title>
+</head>
+
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">Clinify</div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="atendente.html" class="sidebar-item">
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Página Principal" />
+                            <span>Principal</span>
+                        </a></li>
+                    <li><a href="fila.html" class="sidebar-item active">
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/user-group-man-man.png"
+                                alt="Ver Fila" />
+                            <span>Fila</span>
+                        </a></li>
+                    <li><a href="#" class="sidebar-item">
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/bar-chart.png" alt="Estatísticas" />
+                            <span>Estatísticas</span>
+                        </a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <img src="https://img.icons8.com/ios-filled/20/ffffff/user-male-circle.png" alt="User" />
+                    </div>
+                    <div>
+                        <div class="user-name">Francisco Neto</div>
+                        <div class="user-role">Atendente</div>
+                    </div>
+                </div>
+            </header>
+
+            <section id="fila-de-atendimento">
+                <h1 class="page-title">Fila de Atendimento</h1>
+
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Senha/Id</th>
+                            <th>Nome</th>
+                            <th>Prioridade</th>
+                            <th>Status</th>
+                            <th>Data e hora da triagem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="queue-body">
+                        <tr>
+                            <td>001</td>
+                            <td>MARIA JOSÉ DA CONCEIÇÃO</td>
+                            <td>
+                                <span class="priority-badge priority-laranja">Muito Urgente</span>
+                            </td>
+                            <td>Aguardando Atendimento</td>
+                            <td>13/10/2025 08:45</td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>JOÃO PEREIRA DOS SANTOS</td>
+                            <td>
+                                <span class="priority-badge priority-verde">Pouco Urgente</span>
+                            </td>
+                            <td>Aguardando Atendimento</td>
+                            <td>13/10/2025 08:52</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+    <script src="/_js/fila.js"></script>
+</body>
+
+</html>
