@@ -90,3 +90,7 @@
 .action-buttons .consult-btn:hover {
     background-color: var(--cor-primaria-hover);
 }
+
+#phone {
+    width: 48.5%;
+}
