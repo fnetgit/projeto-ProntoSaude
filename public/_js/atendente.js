@@ -25,14 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    const form = document.querySelector('#cadastrar-pacientes-form form');
-    if (form) {
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-            alert('Formulário de Cadastro enviado! (Este é apenas um exemplo de JS)');
-        });
-    }
-
     const searchInput = document.querySelector('.search-bar input');
     if (searchInput) {
         searchInput.addEventListener('input', (event) => {
