@@ -124,3 +124,116 @@
     background-color: var(--container-bg-color);
     color: var(--text-color);
 }
+
+/* Estilos para o botão "Iniciar" na tabela de fila (initiate-button) */
+.initiate-button {
+    padding: 8px 15px; /* Ajustado um pouco para se encaixar na tabela */
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+    text-align: center;
+    min-width: 80px; /* Garante uma largura mínima */
+}
+
+.initiate-button.active {
+    background-color: var(--success-color); /* Cor verde para ativo */
+    color: var(--light-text-color);
+}
+
+.initiate-button.active:hover {
+    background-color: var(--success-color-hover);
+}
+
+.initiate-button.inactive {
+    background-color: var(--secondary-bg-color); /* Cor mais neutra para inativo */
+    color: var(--secondary-text-color);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* Estilos para o botão "Remover" na tabela de fila (remove-button) */
+.remove-button {
+    padding: 8px 15px; /* Mesmo padding do iniciar */
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    background-color: var(--danger-color); /* Cor vermelha para remover */
+    color: var(--light-text-color);
+    margin-left: 5px; /* Espaço entre Iniciar e Remover */
+}
+
+.remove-button:hover {
+    background-color: var(--danger-color-hover);
+}
+
+
+/* --- Estilos para Botões do Formulário de Triagem --- */
+
+/* Botão "Registrar Triagem" (submit-button) dentro do formulário de triagem */
+.triage-form .submit-button {
+    align-self: center; /* Alinha o botão no centro do flex container */
+    padding: 15px 40px;
+    margin-top: 0; /* Remove margem superior se houver alguma conflitando */
+    font-size: 16px;
+    font-weight: 600;
+    background-color: var(--primary-color);
+    color: var(--light-text-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.triage-form .submit-button:hover {
+    background-color: var(--primary-color-hover);
+}
+
+/* Botão "Voltar" do Formulário (back-button) dentro do formulário de triagem */
+/* Note: O botão "Voltar" no cabeçalho da seção também pode usar .back-button,
+   mas este seletor foca nos botões dentro do formulário. */
+.triage-form .back-button {
+    align-self: center;
+    padding: 15px 40px;
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: var(--secondary-bg-color); /* Cor mais neutra para voltar */
+    color: var(--text-color);
+    border: 1px solid var(--border-color); /* Adiciona uma borda */
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+    display: flex; /* Para alinhar imagem e texto */
+    align-items: center;
+    justify-content: center;
+    gap: 8px; /* Espaço entre imagem e texto */
+}
+
+.triage-form .back-button:hover {
+    background-color: var(--input-bg-color); /* Uma cor mais clara no hover */
+    border-color: var(--primary-color); /* Mudar cor da borda no hover */
+}
+
+.triage-form .back-button img {
+    height: 20px; /* Ajusta o tamanho da imagem do ícone */
+    width: 20px;
+}
+
+/* Ajustes para as cores de prioridade no select, se você não tiver essas regras ou se quiser sobrescrever */
+#priority_classification.priority-red,
+#priority_classification.priority-orange,
+#priority_classification.priority-green,
+#priority_classification.priority-blue,
+#priority_classification.priority-yellow {
+    color: var(--light-text-color);
+    font-weight: 700;
+}
+
+/* Se precisar que o texto em fundo amarelo seja escuro */
+.select-wrapper.priority-yellow.has-color::after {
+    color: var(--text-color);
+}
