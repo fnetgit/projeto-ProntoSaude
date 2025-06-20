@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const actionCell = row.insertCell();
                 actionCell.className = 'action-buttons';
                 actionCell.innerHTML = `
-                    <button class="edit-btn"><img src="https://img.icons8.com/ios-filled/16/000000/edit--v1.png" alt="Edit" /></button>
+                    <button class="edit-btn"><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" widh="20px" height="20px" alt="Edit" /></button>
                     <button class="consult-btn">Consulta</button>
                 `;
 
