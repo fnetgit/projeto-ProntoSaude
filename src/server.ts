@@ -1,6 +1,6 @@
 import express from 'express';
 import sqlite3 from 'sqlite3';
-import { Patient } from './entities/patient'; // ESSA IMPORTAÇÃO É CRUCIAL PARA A TIPAGEM E ESTRUTURA DO CÓDIGO!
+import { Patient } from './entities/patient';
 import path from 'path';
 
 const app = express();
@@ -13,8 +13,6 @@ const db = new sqlite3.Database(dbPath, (err) => {
         console.error('Erro ao conectar ao banco de dados:', err.message);
     } else {
         console.log(`Conectado ao banco de dados SQLite em: ${dbPath}`);
-        // As tabelas são assumidas como existentes e gerenciadas externamente.
-        // Não há comandos CREATE TABLE aqui, pois você as gerencia fora deste código.
     }
 });
 
@@ -65,7 +63,7 @@ app.post('/api/pacientes', (req, res) => {
             birthplace,
             sus_card,
             mother_name
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
         const params = [
             newPatient.patientName,
@@ -99,7 +97,7 @@ app.post('/api/pacientes', (req, res) => {
     }
 });
 
-// Rota GET para buscar todos os pacientes (mantida).
+// Rota GET para buscar todos os pacientes.
 app.get('/api/pacientes', (req, res) => {
     const sql = `SELECT
                     patient_id,
@@ -123,7 +121,7 @@ app.get('/api/pacientes', (req, res) => {
     });
 });
 
-// Rota POST para adicionar um paciente à tabela Service (fila de triagem) (mantida).
+// Rota POST para adicionar um paciente à tabela Service (fila de triagem).
 app.post('/api/service', (req, res) => {
     console.log('Corpo da requisição recebido (adicionar à fila de serviço):', req.body);
     const { patient_id, attendant_id, datetime } = req.body;
@@ -145,7 +143,7 @@ app.post('/api/service', (req, res) => {
     });
 });
 
-// Rota GET para buscar pacientes na fila de triagem (da tabela Service para o dia atual) (mantida).
+// Rota GET para buscar pacientes na fila de triagem.
 app.get('/api/queue-patients', (req, res) => {
     const today = new Date().toISOString().split('T')[0]; // Ex: '2023-10-27'
 
@@ -159,7 +157,7 @@ app.get('/api/queue-patients', (req, res) => {
             P.phone,
             P.sus_card,
             S.datetime AS service_datetime,
-            S.service_id -- Incluímos o service_id para que possamos deletá-lo facilmente
+            S.service_id
         FROM Service AS S
         JOIN Patient AS P ON S.patient_id = P.patient_id
         WHERE SUBSTR(S.datetime, 1, 10) = ?
@@ -232,7 +230,7 @@ app.post('/api/triage', (req, res) => {
     });
 });
 
-// NOVA ROTA: DELETE para remover um paciente da fila de serviço (excluir o registro da tabela Service)
+// ROTA DELETE para remover um paciente da fila de serviço
 app.delete('/api/queue/:serviceId', (req, res) => {
     const serviceId = req.params.serviceId; // Pega o service_id da URL
 
