@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/_css/style.css">
-    <link rel="stylesheet" href="/_css/atendente.css">
+    <link rel="stylesheet" href="/_css/attendant.css">
     <title>Clinify - Home do Atendente</title>
 </head>
 
@@ -15,15 +15,15 @@
             <div class="logo">Clinify</div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="atendente.html" class="sidebar-item active"><img
+                    <li><a href="attendant.html" class="sidebar-item active"><img
                                 src="https://img.icons8.com/ios-filled/50/ffffff/home.png"
-                                alt="Página Principal" /><span>Principal</span></a></li>
-                    <li><a href="fila.html" class="sidebar-item"><img
+                                alt="Homepage" /><span>Principal</span></a></li>
+                    <li><a href="queue.html" class="sidebar-item"><img
                                 src="https://img.icons8.com/ios-filled/50/ffffff/user-group-man-man.png"
-                                alt="Ver Fila" /><span>Fila</span></a></li>
+                                alt="View Queue" /><span>Fila</span></a></li>
                     <li><a href="#" class="sidebar-item"><img
                                 src="https://img.icons8.com/ios-filled/50/ffffff/bar-chart.png"
-                                alt="Estatísticas" /><span>Estatísticas</span></a></li>
+                                alt="Statistics" /><span>Estatísticas</span></a></li>
                 </ul>
             </nav>
         </aside>
@@ -41,12 +41,11 @@
             </header>
 
             <div class="tabs">
-                <button class="tab-button" data-tab="cadastrar">CADASTRAR PACIENTES</button>
-                <button class="tab-button active" data-tab="procurar">PROCURAR PACIENTE</button>
+                <button class="tab-button" data-tab="register">CADASTRAR PACIENTES</button>
+                <button class="tab-button active" data-tab="search">PROCURAR PACIENTE</button>
             </div>
 
-            <!-- Formulário de Cadastro de Pacientes -->
-            <div class="form-section" id="cadastrar-pacientes-form" style="display: none;">
+            <div class="form-section" id="register-patient-form" style="display: none;">
                 <form>
                     <div class="form-row">
                         <div class="form-group">
@@ -113,7 +112,7 @@
                 </form>
             </div>
 
-            <div class="form-section" id="procurar-paciente-form">
+            <div class="form-section" id="search-patient-form">
                 <div class="search-bar">
                     <img src="https://img.icons8.com/ios-filled/24/777777/search--v1.png" alt="Search Icon"
                         class="icon" />
@@ -123,25 +122,23 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>NAME</th>
+                            <th>NOME</th>
                             <th>CPF</th>
-                            <th>CARTÃO SUS</th>
+                            <th>CARTÃO DO SUS</th>
                             <th>TELEFONE</th>
-                            <th>NASCIMENTO</th>
-                            <th></th>
+                            <th>DATA DE NASCIMENTO</th>
+                            <th>AÇÕES</th>
                         </tr>
                     </thead>
                     <tbody id="patient-list-body">
-                        <!-- O CONTEÚDO DESTA SEÇÃO SERÁ GERADO DINAMICAMENTE PELO JAVASCRIPT (cadastro.js) -->
                     </tbody>
                 </table>
             </div>
         </main>
     </div>
 
-    <script src="/_js/atendente.js"></script>
-    <script src="/_js/cadastro.js"></script>
-
+    <script src="/_js/attendant.js"></script>
+    <script src="/_js/patient-registration.js"></script>
 </body>
 
 </html>

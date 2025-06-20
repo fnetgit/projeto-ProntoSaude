@@ -1,28 +1,38 @@
-/* _css/style.css */
-
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
-/* --- VARIÁVEIS DE DESIGN --- */
 :root {
-    --cor-primaria: #007bff;
-    --cor-primaria-hover: #0056b3;
-    --cor-sucesso: #28a745;
-    --cor-sucesso-hover: #218838;
-    --cor-sidebar-bg: #333d45;
-    --cor-sidebar-hover: #555d67;
-    --cor-texto: #333;
-    --cor-texto-claro: #ffffff;
-    --cor-texto-secundario: #777;
-    --cor-fundo-pagina: #f0f2f5;
-    --cor-fundo-container: #fff;
-    --cor-borda: #ddd;
-    --cor-fundo-header-tabela: #f8f9fa;
-    --cor-fundo-inativo: #ccc;
-    --cor-texto-inativo: #666;
-    --fonte-principal: 'Roboto', sans-serif;
+    --primary-color: #007bff;
+    --primary-color-hover: #0056b3;
+    --success-color: #28a745;
+    --success-color-hover: #218838;
+    --danger-color: #d9534f;
+    --danger-color-hover: #c9302c;
+    --warning-color: #f0ad4e;
+    --info-color: #17a2b8;
+
+    --sidebar-bg-color: #333d45;
+    --sidebar-hover-color: #555d67;
+
+    --text-color: #333;
+    --light-text-color: #ffffff;
+    --secondary-text-color: #777;
+
+    --page-bg-color: #f0f2f5;
+    --container-bg-color: #fff;
+    --border-color: #ddd;
+    --table-header-bg-color: #f8f9fa;
+    --inactive-bg-color: #ccc;
+    --inactive-text-color: #666;
+
+    --primary-font: 'Roboto', sans-serif;
+
+    --priority-red: #d9534f;
+    --priority-orange: #f0ad4e;
+    --priority-yellow: #f1c40f;
+    --priority-green: #28a745;
+    --priority-blue: #007bff;
 }
 
-/* --- RESET E ESTILOS GERAIS --- */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -30,9 +40,9 @@
 }
 
 body {
-    font-family: var(--fonte-principal);
-    background-color: var(--cor-fundo-pagina);
-    color: var(--cor-texto);
+    font-family: var(--primary-font);
+    background-color: var(--page-bg-color);
+    color: var(--text-color);
 }
 
 a {
@@ -49,10 +59,9 @@ h6 {
     font-weight: 700;
 }
 
-/* --- ESTRUTURA PRINCIPAL (CONTAINER) --- */
 .container {
     display: flex;
-    background-color: var(--cor-fundo-container);
+    background-color: var(--container-bg-color);
     width: 100%;
     height: 100vh;
     box-shadow: none;
@@ -74,14 +83,13 @@ section {
 
 .page-title {
     font-size: 28px;
-    color: var(--cor-texto);
+    color: var(--text-color);
     margin-bottom: 30px;
 }
 
-/* --- SIDEBAR COMUM --- */
 .sidebar {
     width: 125px;
-    background-color: var(--cor-sidebar-bg);
+    background-color: var(--sidebar-bg-color);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -92,7 +100,7 @@ section {
 .sidebar .logo {
     font-size: 32px;
     font-weight: 700;
-    color: var(--cor-texto-claro);
+    color: var(--light-text-color);
     margin-bottom: 50px;
     text-align: center;
 }
@@ -117,7 +125,7 @@ section {
 
 .sidebar-item:hover,
 .sidebar-item.active {
-    background-color: var(--cor-sidebar-hover);
+    background-color: var(--sidebar-hover-color);
 }
 
 .sidebar-item img {
@@ -127,12 +135,11 @@ section {
 }
 
 .sidebar-item span {
-    color: var(--cor-texto-claro);
+    color: var(--light-text-color);
     font-size: 14px;
     text-align: center;
 }
 
-/* --- HEADER COMUM --- */
 .header {
     display: flex;
     justify-content: flex-end;
@@ -149,7 +156,7 @@ section {
 .user-avatar {
     width: 35px;
     height: 35px;
-    background-color: var(--cor-primaria);
+    background-color: var(--primary-color);
     border-radius: 50%;
     margin-right: 12px;
     display: flex;
@@ -164,15 +171,14 @@ section {
 
 .user-name {
     font-weight: 500;
-    color: var(--cor-texto);
+    color: var(--text-color);
 }
 
 .user-role {
     font-size: 12px;
-    color: var(--cor-texto-secundario);
+    color: var(--secondary-text-color);
 }
 
-/* --- TABELAS GENÉRICAS --- */
 .data-table {
     width: 100%;
     border-collapse: collapse;
@@ -183,13 +189,13 @@ section {
 .data-table td {
     padding: 15px;
     text-align: left;
-    border-bottom: 1px solid var(--cor-borda);
+    border-bottom: 1px solid var(--border-color);
     vertical-align: middle;
 }
 
 .data-table th {
-    background-color: var(--cor-fundo-header-tabela);
-    color: var(--cor-texto-secundario);
+    background-color: var(--table-header-bg-color);
+    color: var(--secondary-text-color);
     font-weight: 500;
     text-transform: uppercase;
     font-size: 13px;
@@ -199,7 +205,6 @@ section {
     background-color: #f5f5f5;
 }
 
-/* --- ESTILOS PARA BADGES DE PRIORIDADE (ATUALIZADO) --- */
 .priority-badge {
     display: inline-block;
     padding: 5px 15px;
@@ -208,34 +213,32 @@ section {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: var(--cor-texto-claro);
+    color: var(--light-text-color);
     text-align: center;
 }
 
-/* Cores do Protocolo de Manchester */
-.priority-vermelho {
-    background-color: #d9534f;
+.priority-red {
+    background-color: var(--priority-red);
 }
 
-.priority-laranja {
-    background-color: #f0ad4e;
+.priority-orange {
+    background-color: var(--priority-orange);
 }
 
-.priority-amarelo {
-    background-color: #f1c40f;
-    color: var(--cor-texto);
+.priority-yellow {
+    background-color: var(--priority-yellow);
+    color: var(--text-color);
 }
 
-.priority-verde {
-    background-color: var(--cor-sucesso);
+.priority-green {
+    background-color: var(--priority-green);
 }
 
-.priority-azul {
-    background-color: var(--cor-primaria);
+.priority-blue {
+    background-color: var(--priority-blue);
 }
 
 
-/* --- FORMULÁRIOS GENÉRICOS --- */
 .form-section {
     width: 100%;
 }
@@ -252,9 +255,13 @@ section {
     flex-direction: column;
 }
 
+.form-group.full-width {
+    flex-basis: 100%;
+}
+
 .form-group label {
     font-size: 14px;
-    color: var(--cor-texto-secundario);
+    color: var(--secondary-text-color);
     margin-bottom: 8px;
     font-weight: 500;
 }
@@ -262,27 +269,28 @@ section {
 .form-group input[type="text"],
 .form-group input[type="date"],
 .form-group input[type="password"],
+.form-group input[type="number"],
 .form-group textarea,
 .form-group select {
     padding: 12px;
-    border: 1px solid var(--cor-borda);
+    border: 1px solid var(--border-color);
     border-radius: 5px;
     font-size: 16px;
     width: 100%;
-    font-family: var(--fonte-principal);
+    font-family: var(--primary-font);
 }
 
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
     outline: none;
-    border-color: var(--cor-primaria);
+    border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
 }
 
 .submit-button {
-    background-color: var(--cor-sucesso);
-    color: var(--cor-texto-claro);
+    background-color: var(--success-color);
+    color: var(--light-text-color);
     padding: 15px 30px;
     border: none;
     border-radius: 5px;
@@ -295,5 +303,21 @@ section {
 }
 
 .submit-button:hover {
-    background-color: var(--cor-sucesso-hover);
+    background-color: var(--success-color-hover);
+}
+
+.back-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    color: var(--secondary-text-color);
+    margin-bottom: 20px;
+}
+
+.back-button:hover {
+    color: var(--text-color);
 }

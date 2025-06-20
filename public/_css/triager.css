@@ -1,0 +1,126 @@
+@import url('style.css');
+
+.initiate-triage-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    min-width: 150px;
+    text-align: center;
+    background-color: var(--success-color);
+    color: var(--light-text-color);
+}
+
+.initiate-triage-btn:hover {
+    background-color: var(--success-color-hover);
+}
+
+.triage-form textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.triage-form .submit-button,
+.triage-form .back-button {
+    align-self: center;
+    padding: 15px 40px;
+    margin-top: 0;
+}
+
+.patient-info-display {
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: center;
+}
+
+#display-patient-name {
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--text-color);
+    margin-bottom: 5px;
+}
+
+#display-patient-dob {
+    font-size: 16px;
+    color: var(--secondary-text-color);
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper::after {
+    content: '▼';
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: var(--secondary-text-color);
+    font-size: 12px;
+    transition: color 0.3s ease;
+}
+
+#priority_classification {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-weight: 500;
+}
+
+#priority_classification.priority-red,
+#priority_classification.priority-orange,
+#priority_classification.priority-green,
+#priority_classification.priority-blue {
+    color: var(--light-text-color);
+    font-weight: 700;
+}
+
+#priority_classification.priority-yellow {
+    color: var(--text-color);
+    font-weight: 700;
+}
+
+.select-wrapper.has-color::after {
+    color: var(--light-text-color);
+}
+
+.select-wrapper.priority-yellow.has-color::after {
+    color: var(--text-color);
+}
+
+#priority_classification.priority-red {
+    background-color: var(--priority-red);
+}
+
+#priority_classification.priority-orange {
+    background-color: var(--priority-orange);
+}
+
+#priority_classification.priority-yellow {
+    background-color: var(--priority-yellow);
+}
+
+#priority_classification.priority-green {
+    background-color: var(--priority-green);
+}
+
+#priority_classification.priority-blue {
+    background-color: var(--priority-blue);
+}
+
+#priority_classification option {
+    background-color: var(--container-bg-color);
+    color: var(--text-color);
+}

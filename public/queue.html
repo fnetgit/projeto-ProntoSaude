@@ -1,12 +1,10 @@
-<!-- fila.html -->
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/_css/atendente.css">
+    <link rel="stylesheet" href="/_css/attendant.css">
     <title>Clinify - Fila de Atendimento</title>
 </head>
 
@@ -16,17 +14,17 @@
             <div class="logo">Clinify</div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="atendente.html" class="sidebar-item">
-                            <img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Página Principal" />
+                    <li><a href="attendant.html" class="sidebar-item">
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Homepage" />
                             <span>Principal</span>
                         </a></li>
-                    <li><a href="fila.html" class="sidebar-item active">
+                    <li><a href="queue.html" class="sidebar-item active">
                             <img src="https://img.icons8.com/ios-filled/50/ffffff/user-group-man-man.png"
-                                alt="Ver Fila" />
+                                alt="View Queue" />
                             <span>Fila</span>
                         </a></li>
                     <li><a href="#" class="sidebar-item">
-                            <img src="https://img.icons8.com/ios-filled/50/ffffff/bar-chart.png" alt="Estatísticas" />
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/bar-chart.png" alt="Statistics" />
                             <span>Estatísticas</span>
                         </a></li>
                 </ul>
@@ -46,17 +44,17 @@
                 </div>
             </header>
 
-            <section id="fila-de-atendimento">
+            <section id="service-queue">
                 <h1 class="page-title">Fila de Atendimento</h1>
 
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Senha/Id</th>
-                            <th>Nome</th>
-                            <th>Prioridade</th>
-                            <th>Status</th>
-                            <th>Data e hora da triagem</th>
+                            <th>SENHA</th>
+                            <th>NOME</th>
+                            <th>PRIORIDADE</th>
+                            <th>STATUS</th>
+                            <th>DATA/HORA DA TRIAGEM</th>
                         </tr>
                     </thead>
                     <tbody id="queue-body">
@@ -64,7 +62,7 @@
                             <td>001</td>
                             <td>MARIA JOSÉ DA CONCEIÇÃO</td>
                             <td>
-                                <span class="priority-badge priority-laranja">Muito Urgente</span>
+                                <span class="priority-badge priority-orange">Muito Urgente</span>
                             </td>
                             <td>Aguardando Atendimento</td>
                             <td>13/10/2025 08:45</td>
@@ -73,7 +71,7 @@
                             <td>002</td>
                             <td>JOÃO PEREIRA DOS SANTOS</td>
                             <td>
-                                <span class="priority-badge priority-verde">Pouco Urgente</span>
+                                <span class="priority-badge priority-green">Pouco Urgente</span>
                             </td>
                             <td>Aguardando Atendimento</td>
                             <td>13/10/2025 08:52</td>
@@ -83,7 +81,7 @@
             </section>
         </main>
     </div>
-    <script src="/_js/fila.js"></script>
+    <script src="public/_js/queue.js"></script>
 </body>
 
 </html>

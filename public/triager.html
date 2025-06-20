@@ -1,3 +1,5 @@
+<!-- triager.html -->
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -5,7 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/_css/style.css">
-    <link rel="stylesheet" href="/_css/triador.css">
+    <link rel="stylesheet" href="/_css/triage.css">
     <title>Clinify - Triagem de Pacientes</title>
 </head>
 
@@ -15,15 +17,15 @@
             <div class="logo">Clinify</div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="atendente.html" class="sidebar-item"><img
+                    <li><a href="attendant.html" class="sidebar-item"><img
                                 src="https://img.icons8.com/ios-filled/50/ffffff/home.png"
-                                alt="Página Principal" /><span>Principal</span></a></li>
-                    <li><a href="fila.html" class="sidebar-item active"><img
+                                alt="Homepage" /><span>Principal</span></a></li>
+                    <li><a href="queue.html" class="sidebar-item active"><img
                                 src="https://img.icons8.com/ios-filled/50/ffffff/user-group-man-man.png"
-                                alt="Ver Fila" /><span>Fila</span></a></li>
+                                alt="View Queue" /><span>Fila</span></a></li>
                     <li><a href="#" class="sidebar-item"><img
                                 src="https://img.icons8.com/ios-filled/50/ffffff/bar-chart.png"
-                                alt="Estatísticas" /><span>Estatísticas</span></a></li>
+                                alt="Statistics" /><span>Estatísticas</span></a></li>
                 </ul>
             </nav>
         </aside>
@@ -40,29 +42,26 @@
                     </div>
                 </div>
             </header>
-
-            <!-- Seção da Lista de Pacientes para Triagem (Fila) -->
-            <section id="triagem-pacientes">
+            
+            <section id="triage-queue-list">
                 <h1 class="page-title">Pacientes para Triagem</h1>
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>NOME</th>
+                            <th>NAME</th>
                             <th>CPF</th>
-                            <th>CARTÃO SUS</th>
-                            <th>TELEFONE</th>
-                            <th>NASCIMENTO</th>
-                            <th>AÇÃO</th>
+                            <th>SUS CARD</th>
+                            <th>PHONE</th>
+                            <th>BIRTH DATE</th>
+                            <th>ACTION</th>
                         </tr>
                     </thead>
                     <tbody id="triage-queue-body">
-                        <!-- Conteúdo será preenchido dinamicamente pelo JavaScript -->
-                    </tbody>
+                        </tbody>
                 </table>
             </section>
 
-            <!-- Seção do Formulário de Dados da Triagem -->
-            <section id="dados-da-triagem" style="display: none;">
+            <section id="triage-data-form" style="display: none;">
                 <button class="back-button"><img src="https://img.icons8.com/ios-filled/24/000000/left.png" alt="Voltar" /> Voltar</button>
                 <h1 class="page-title">Dados da Triagem</h1>
 
@@ -104,11 +103,11 @@
                             <div class="select-wrapper">
                                 <select id="priority_classification" name="priority_classification" required>
                                     <option value="" disabled selected>Selecione a prioridade</option>
-                                    <option value="vermelho">Vermelho (Emergência)</option>
-                                    <option value="laranja">Laranja (Muito Urgente)</option>
-                                    <option value="amarelo">Amarelo (Urgente)</option>
-                                    <option value="verde">Verde (Pouco Urgente)</option>
-                                    <option value="azul">Azul (Não Urgente)</option>
+                                    <option value="red">Vermelho (Emergência)</option>
+                                    <option value="orange">Laranja (Muito Urgente)</option>
+                                    <option value="yellow">Amarelo (Urgente)</option>
+                                    <option value="green">Verde (Pouco Urgente)</option>
+                                    <option value="blue">Azul (Não Urgente)</option>
                                 </select>
                             </div>
                         </div>
@@ -128,7 +127,6 @@
         </main>
     </div>
 
-    <script src="/_js/triador.js"></script>
-</body>
+    <script src="/_js/triager.js"></script> </body>
 
 </html>

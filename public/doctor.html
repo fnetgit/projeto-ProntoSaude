@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/_css/style.css">
-    <link rel="stylesheet" href="/_css/medico.css">
+    <link rel="stylesheet" href="/_css/doctor.css">
     <title>Clinify - Área do Médico</title>
 </head>
 
@@ -15,12 +15,12 @@
             <div class="logo">Clinify</div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="medico.html" class="sidebar-item active">
-                            <img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Página Principal" />
+                    <li><a href="doctor.html" class="sidebar-item active">
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Homepage" />
                             <span>Principal</span>
                         </a></li>
                     <li><a href="#" class="sidebar-item">
-                            <img src="https://img.icons8.com/ios-filled/50/ffffff/bar-chart.png" alt="Estatísticas" />
+                            <img src="https://img.icons8.com/ios-filled/50/ffffff/bar-chart.png" alt="Statistics" />
                             <span>Estatísticas</span>
                         </a></li>
                 </ul>
@@ -39,7 +39,7 @@
                 </div>
             </header>
 
-            <section id="fila-de-pacientes">
+            <section id="patient-queue">
                 <h1 class="page-title">Fila de Pacientes</h1>
                 <table class="data-table">
                     <thead>
@@ -47,18 +47,18 @@
                             <th>SENHA</th>
                             <th>NOME</th>
                             <th>PRIORIDADE</th>
-                            <th>DATA E HORA DA TRIAGEM</th>
-                            <th style="display: none;">NASCIMENTO</th>
+                            <th>DATA/HORA DA TRIAGEM</th>
+                            <th style="display: none;">DATA DE NASCIMENTO</th>
                             <th style="display: none;">GÊNERO</th>
                             <th>AÇÃO</th>
                         </tr>
                     </thead>
-                    <tbody id="fila-body">
+                    <tbody id="doctor-queue-body">
                         <tr>
                             <td>001</td>
                             <td>MARIA JOSÉ DA CONCEIÇÃO</td>
                             <td>
-                                <span class="priority-badge priority-laranja">Muito Urgente</span>
+                                <span class="priority-badge priority-orange">Muito Urgente</span>
                             </td>
                             <td>13/10/2025 08:45</td>
                             <td style="display: none;">15/05/1968</td>
@@ -69,7 +69,7 @@
                             <td>002</td>
                             <td>JOÃO PEREIRA DOS SANTOS</td>
                             <td>
-                                <span class="priority-badge priority-verde">Pouco Urgente</span>
+                                <span class="priority-badge priority-green">Pouco Urgente</span>
                             </td>
                             <td>13/10/2025 08:52</td>
                             <td style="display: none;">23/11/1985</td>
@@ -80,7 +80,7 @@
                 </table>
             </section>
 
-            <section id="atendimento-medico" style="display: none;">
+            <section id="medical-consultation" style="display: none;">
                 <h1 class="page-title">Consulta Médica</h1>
 
                 <div class="patient-info-display">
@@ -107,25 +107,24 @@
 
                 <form class="medical-report-form">
                     <div class="form-group">
-                        <label for="parecerMedico">Parecer do Médico</label>
-                        <textarea id="parecerMedico" name="parecerMedico"
+                        <label for="medical-opinion">Parecer do Médico</label>
+                        <textarea id="medical-opinion" name="medical-opinion"
                             placeholder="Clique em 'Iniciar Consulta' para liberar a edição..." readonly></textarea>
                     </div>
 
                     <div class="action-buttons-group">
-                        <button type="button" id="iniciar-consulta-btn" class="btn-iniciar">Iniciar Consulta</button>
-                        <button type="button" id="chamar-novamente-btn" class="btn-chamar-novamente">Chamar
-                            Novamente</button>
-                        <button type="button" id="nao-compareceu-btn" class="btn-nao-compareceu">Não Compareceu</button>
-                        <button type="submit" id="encerrar-consulta-btn" class="btn-encerrar"
-                            style="display: none;">Encerrar Consulta</button>
+                        <button type="button" id="start-consultation-btn" class="btn-start">Iniciar Consulta</button>
+                        <button type="button" id="call-again-btn" class="btn-call-again">Chamar Novamente</button>
+                        <button type="button" id="no-show-btn" class="btn-no-show">Não Compareceu</button>
+                        <button type="submit" id="end-consultation-btn" class="btn-end" style="display: none;">Encerrar
+                            Consulta</button>
                     </div>
                 </form>
             </section>
         </main>
     </div>
 
-    <script src="/_js/medico.js"></script>
+    <script src="/public/_js/doctor.js"></script>
 </body>
 
 </html>

@@ -1,6 +1,5 @@
-/* _css/medico.css */
+@import url('style.css');
 
-/* --- BOTÃO DE CHAMAR PACIENTE NA FILA --- */
 .action-button {
     padding: 10px 20px;
     border: none;
@@ -13,43 +12,44 @@
 }
 
 .action-button.active {
-    background-color: var(--cor-primaria);
-    color: var(--cor-texto-claro);
+    background-color: var(--primary-color);
+    color: var(--light-text-color);
 }
 
 .action-button.active:hover {
-    background-color: var(--cor-primaria-hover);
+    background-color: var(--primary-color-hover);
 }
 
 .action-button.inactive {
-    background-color: var(--cor-fundo-inativo);
-    color: var(--cor-texto-inativo);
+    background-color: var(--inactive-bg-color);
+    color: var(--inactive-text-color);
     cursor: not-allowed;
 }
 
 
-/* --- SEÇÃO DE ATENDIMENTO --- */
 .patient-info-display {
     padding-bottom: 20px;
     margin-bottom: 30px;
-    border-bottom: 1px solid var(--cor-borda);
+    border-bottom: 1px solid var(--border-color);
 }
 
 #display-patient-name {
     font-size: 24px;
     font-weight: 500;
+    color: var(--text-color);
 }
 
-#display-patient-dob {
+#display-patient-dob,
+#display-patient-gender {
     font-size: 16px;
-    color: var(--cor-texto-secundario);
+    color: var(--secondary-text-color);
+    margin-top: 4px;
 }
 
 
-/* --- BOX DE DADOS DA TRIAGEM --- */
 .data-display-box {
     background-color: #f9f9f9;
-    border: 1px solid var(--cor-borda);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 30px;
@@ -58,7 +58,7 @@
 .data-display-box h3 {
     margin-top: 0;
     margin-bottom: 20px;
-    border-bottom: 1px solid var(--cor-borda);
+    border-bottom: 1px solid var(--border-color);
     padding-bottom: 10px;
     font-size: 18px;
 }
@@ -78,26 +78,26 @@
     font-size: 16px;
     padding-top: 15px;
     border-top: 1px solid #eee;
+    margin-top: 15px;
+    line-height: 1.5;
 }
 
-/* --- FORMULÁRIO DE PARECER MÉDICO --- */
 .medical-report-form textarea {
     min-height: 180px;
     resize: vertical;
 }
 
-#parecerMedico[readonly] {
-    background-color: var(--cor-fundo-pagina);
+#medical-opinion[readonly] {
+    background-color: var(--page-bg-color);
     cursor: not-allowed;
 }
 
-#parecerMedico[readonly]:focus {
+#medical-opinion[readonly]:focus {
     outline: none;
     box-shadow: none;
-    border-color: var(--cor-borda);
+    border-color: var(--border-color);
 }
 
-/* --- GRUPO DE BOTÕES DE AÇÃO DA CONSULTA --- */
 .action-buttons-group {
     display: flex;
     flex-wrap: wrap;
@@ -105,7 +105,6 @@
     margin-top: 20px;
 }
 
-/* --- ESTILO BASE PARA OS BOTÕES DENTRO DO GRUPO --- */
 .action-buttons-group>button {
     padding: 12px 25px;
     border: none;
@@ -113,7 +112,7 @@
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
-    color: var(--cor-texto-claro);
+    color: var(--light-text-color);
     transition: background-color 0.3s, transform 0.1s;
 }
 
@@ -121,35 +120,34 @@
     transform: scale(0.98);
 }
 
-/* --- CORES ESPECÍFICAS PARA CADA BOTÃO --- */
-.btn-iniciar {
-    background-color: var(--cor-sucesso);
+.btn-start {
+    background-color: var(--success-color);
 }
 
-.btn-iniciar:hover {
-    background-color: var(--cor-sucesso-hover);
+.btn-start:hover {
+    background-color: var(--success-color-hover);
 }
 
-.btn-chamar-novamente {
-    background-color: var(--cor-primaria);
+.btn-call-again {
+    background-color: var(--primary-color);
 }
 
-.btn-chamar-novamente:hover {
-    background-color: var(--cor-primaria-hover);
+.btn-call-again:hover {
+    background-color: var(--primary-color-hover);
 }
 
-.btn-nao-compareceu {
-    background-color: #d9534f;
+.btn-no-show {
+    background-color: var(--danger-color);
 }
 
-.btn-nao-compareceu:hover {
-    background-color: #c9302c;
+.btn-no-show:hover {
+    background-color: var(--danger-color-hover);
 }
 
-.btn-encerrar {
-    background-color: #333d45;
+.btn-end {
+    background-color: var(--sidebar-bg-color);
 }
 
-.btn-encerrar:hover {
-    background-color: #555d67;
+.btn-end:hover {
+    background-color: var(--sidebar-hover-color);
 }
