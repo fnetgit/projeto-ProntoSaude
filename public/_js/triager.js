@@ -1,264 +1,176 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. Seleção dos Elementos HTML ---
-    const secaoLista = document.getElementById('triage-queue-list');
-    const secaoFormulario = document.getElementById('triage-data-form');
-    const triageForm = document.querySelector('#triage-data-form .triage-form');
-    const backToTopButton = document.getElementById('back-to-top-button');
-    const backToListButton = document.getElementById('back-to-list-button');
+    // Elementos da UI
+    const triageQueueList = document.getElementById('triage-queue-list');
+    const triageDataFormSection = document.getElementById('triage-data-form');
+    const triageQueueBody = document.getElementById('triage-queue-body');
+    // Busca o elemento pelo ID CORRETO que está no HTML
     const prioritySelect = document.getElementById('priority_classification');
-    const tbodyTriageQueue = document.getElementById('triage-queue-body');
+    const triageForm = document.getElementById('triage-form-element');
+    const displayPatientName = document.getElementById('display-patient-name');
+    const displayPatientDob = document.getElementById('display-patient-dob');
+    const patientIdInput = document.getElementById('patient_id');
+    const serviceIdInput = document.getElementById('service_id');
+    const backButton = document.querySelector('.back-button');
 
-    // Elementos para exibir os dados do paciente no formulário de triagem
-    const displayNameElement = document.getElementById('display-patient-name');
-    const displayDobElement = document.getElementById('display-patient-dob');
+    // Mapa para exibir textos mais amigáveis no select
+    const classificationTextMap = {
+        'Vermelho': 'Vermelho (Emergência)',
+        'Laranja': 'Laranja (Muito Urgente)',
+        'Amarelo': 'Amarelo (Urgente)',
+        'Verde': 'Verde (Pouco Urgente)',
+        'Azul': 'Azul (Não Urgente)'
+    };
 
-    let currentPatientDataForTriage = null; // Armazena os dados completos do paciente em triagem
+    // Função que aplica a cor no select ao mudar a opção
+    const applyColorToSelect = () => {
+        if (!prioritySelect || prioritySelect.selectedIndex === -1) return;
 
-    // --- 2. Funções de Formatação (Reutilizadas) ---
-    function formatCpf(cpf) {
-        if (!cpf) return '';
-        const cleaned = cpf.replace(/\D/g, '');
-        return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-    }
-
-    function formatPhone(phone) {
-        if (!phone) return '';
-        const cleaned = phone.replace(/\D/g, '');
-        if (cleaned.length === 11) {
-            return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
-        } else if (cleaned.length === 10) {
-            return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
-        }
-        return phone;
-    }
-
-    // --- Funções Auxiliares para Cores de Prioridade ---
-    function limparCoresPrioridade() {
-        const wrapper = prioritySelect.closest('.select-wrapper');
-        const classesDePrioridade = ['priority-red', 'priority-orange', 'priority-yellow', 'priority-green', 'priority-blue'];
-        prioritySelect.classList.remove(...classesDePrioridade);
-        if (wrapper) {
-            wrapper.classList.remove(...classesDePrioridade, 'has-color');
-        }
-    }
-
-    function actualizarCorPrioridade() {
-        limparCoresPrioridade();
-        const wrapper = prioritySelect.closest('.select-wrapper');
-        const valor = prioritySelect.value;
-        if (valor) {
-            const novaClasse = `priority-${valor}`;
-            prioritySelect.classList.add(novaClasse);
-            if (wrapper) {
-                wrapper.classList.add(novaClasse, 'has-color');
-            }
-        }
-    }
-
-    // --- 3. Funções de Lógica de UI e Dados ---
-
-    function mostrarFormulario(patient) {
-        currentPatientDataForTriage = patient; // Dados do paciente da fila, incluindo service_id
-        
-        displayNameElement.textContent = patient.patient_name;
-        displayDobElement.textContent = `Data de Nascimento: ${patient.birth_date}`;
-
-        secaoLista.style.display = 'none';
-        secaoFormulario.style.display = 'block';
-    }
-
-    async function handleRemoveButtonClick(serviceId, patientName) {
-        if (confirm(`Tem certeza que deseja marcar ${patientName} como 'Não Compareceu' na fila de triagem?`)) {
-            try {
-                const response = await fetch(`/api/queue/${serviceId}`, {
-                    method: 'DELETE'
-                });
-
-                if (response.ok) {
-                    alert(`${patientName} marcado como 'Não Compareceu' com sucesso!`);
-                    fetchAndRenderQueuePatients(); // Recarrega a fila
-                } else {
-                    const errorData = await response.json();
-                    alert(`Erro ao marcar ${patientName} como 'Não Compareceu': ${errorData.message || response.statusText}`);
-                }
-            } catch (error) {
-                console.error('Erro de conexão ao marcar paciente como "Não Compareceu":', error);
-                alert('Erro de conexão ao tentar marcar paciente como "Não Compareceu".');
-            }
-        }
-    }
-
-    async function fetchAndRenderQueuePatients() {
-        if (!tbodyTriageQueue) {
-            console.error('Elemento <tbody> da tabela de fila de triagem não encontrado.');
-            return;
-        }
-        tbodyTriageQueue.innerHTML = '';
-
-        try {
-            const response = await fetch('/api/queue-patients');
-            if (!response.ok) {
-                throw new Error(`Erro HTTP: ${response.status}`);
-            }
-            const patientsInQueue = await response.json();
-
-            if (patientsInQueue.length === 0) {
-                const row = tbodyTriageQueue.insertRow();
-                const cell = row.insertCell();
-                cell.colSpan = 6;
-                cell.textContent = 'Nenhum paciente na fila de triagem hoje.';
-                cell.className = 'text-center text-gray-500 py-4';
-                return;
-            }
-
-            patientsInQueue.forEach((patient, index) => {
-                const row = tbodyTriageQueue.insertRow();
-                row.dataset.patient = JSON.stringify(patient); 
-
-                row.insertCell().textContent = patient.patient_name;
-                row.insertCell().textContent = formatCpf(patient.cpf);
-                row.insertCell().textContent = patient.sus_card;
-                row.insertCell().textContent = formatPhone(patient.phone || '');
-                row.insertCell().textContent = patient.birth_date;
-
-                const actionCell = row.insertCell();
-                const isFirst = index === 0;
-                const buttonStatusClass = isFirst ? 'active' : 'inactive';
-                const buttonText = isFirst ? 'Iniciar' : 'Aguardando';
-                const buttonDisabled = !isFirst;
-
-                actionCell.innerHTML = `
-                    <button class="initiate-button ${buttonStatusClass}" ${buttonDisabled ? 'disabled' : ''}>
-                        ${buttonText}
-                    </button>
-                    <button class="remove-button" data-service-id="${patient.service_id}" style="margin-left: 5px;">Remover</button>
-                `;
-
-                const initiateButton = actionCell.querySelector('.initiate-button');
-                if (initiateButton && isFirst) {
-                    initiateButton.addEventListener('click', () => mostrarFormulario(patient));
-                }
-
-                const removeButton = actionCell.querySelector('.remove-button');
-                if (removeButton) {
-                    removeButton.addEventListener('click', () => handleRemoveButtonClick(patient.service_id, patient.patient_name));
-                }
-            });
-        } catch (error) {
-            console.error('Erro ao buscar e renderizar pacientes na fila de triagem:', error);
-            const row = tbodyTriageQueue.insertRow();
-            const cell = row.insertCell();
-            cell.colSpan = 6;
-            cell.textContent = 'Erro ao carregar fila de triagem. Verifique o console para detalhes.';
-            cell.className = 'text-center text-red-500 py-4';
-        }
-    }
-
-    async function registrarTriagem(event) {
-        event.preventDefault();
-
-        const blood_pressure = document.getElementById('blood_pressure').value.trim();
-        const temperature = parseFloat(document.getElementById('temperature').value.trim());
-        const glucose = parseFloat(document.getElementById('glucose').value.trim());
-        const weight = parseFloat(document.getElementById('weight').value.trim());
-        const oxygen_saturation = parseFloat(document.getElementById('oxygen_saturation').value.trim());
-        const symptoms = document.getElementById('symptoms').value.trim();
-        const wristband_color = document.getElementById('priority_classification').value;
-
-        if (!blood_pressure || isNaN(temperature) || isNaN(glucose) || isNaN(weight) || isNaN(oxygen_saturation) || !symptoms || !wristband_color) {
-            alert('Por favor, preencha todos os campos obrigatórios da triagem.');
-            return;
-        }
-
-        if (!currentPatientDataForTriage || !currentPatientDataForTriage.patient_id || !currentPatientDataForTriage.service_id) { 
-            alert('Nenhum paciente selecionado ou dados incompletos para triagem.');
-            console.error('currentPatientDataForTriage:', currentPatientDataForTriage); // Log para verificar
-            return;
-        }
-        
-        const triageOfficerId = 1;
-
-        const triageData = {
-            patient_id: currentPatientDataForTriage.patient_id,
-            service_id: currentPatientDataForTriage.service_id, // Incluindo service_id para o backend
-            triage_officer_id: triageOfficerId,
-            classification_id: getClassificationId(wristband_color),
-            datetime: new Date().toISOString(),
-            blood_pressure: blood_pressure,
-            temperature: temperature,
-            glucose: glucose,
-            weight: weight,
-            oxygen_saturation: oxygen_saturation,
-            symptoms: symptoms
+        const selectedOptionText = prioritySelect.options[prioritySelect.selectedIndex].textContent.toLowerCase();
+        const colorMap = {
+            'vermelho': 'priority-red', 'laranja': 'priority-orange',
+            'amarelo': 'priority-yellow', 'verde': 'priority-green',
+            'azul': 'priority-blue'
         };
 
-        // --- LOG DE DEPURAÇÃO: Confirmar que service_id está sendo enviado ---
-        console.log('Dados da Triagem a serem enviados para o backend:', triageData);
+        // Remove todas as classes de cor anteriores
+        prioritySelect.classList.remove(...Object.values(colorMap));
 
+        // Adiciona a classe de cor correta
+        for (const colorName in colorMap) {
+            if (selectedOptionText.includes(colorName)) {
+                prioritySelect.classList.add(colorMap[colorName]);
+                break;
+            }
+        }
+    };
+
+    // Adiciona o "ouvinte" de evento para mudar a cor
+    if (prioritySelect) {
+        prioritySelect.addEventListener('change', applyColorToSelect);
+    }
+
+    // Carrega as classificações do banco de dados
+    async function loadClassifications() {
+        if (!prioritySelect) return;
+        try {
+            const response = await fetch('/api/classifications');
+            if (!response.ok) throw new Error('Falha ao buscar classificações.');
+            const classifications = await response.json();
+            prioritySelect.innerHTML = '<option value="" disabled selected>Selecione a prioridade</option>';
+            classifications.forEach(cls => {
+                const option = document.createElement('option');
+                option.value = cls.classification_id;
+                option.textContent = classificationTextMap[cls.color_name] || cls.color_name;
+                prioritySelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Erro ao carregar classificações:', error);
+            prioritySelect.innerHTML = '<option value="" disabled>Erro ao carregar</option>';
+        }
+    }
+
+    // Carrega os pacientes na fila de triagem
+    async function loadTriageQueue() {
+        try {
+            const response = await fetch('/api/queue-patients');
+            if (!response.ok) throw new Error('Falha ao buscar pacientes.');
+            const patients = await response.json();
+            renderTriageQueue(patients);
+        } catch (error) {
+            console.error('Erro ao carregar fila de triagem:', error);
+            triageQueueBody.innerHTML = `<tr><td colspan="6">Erro ao carregar a fila.</td></tr>`;
+        }
+    }
+
+    // Renderiza a tabela de pacientes
+    function renderTriageQueue(patients) {
+        triageQueueBody.innerHTML = '';
+        if (patients.length === 0) {
+            triageQueueBody.innerHTML = `<tr><td colspan="6">Nenhum paciente aguardando triagem.</td></tr>`;
+            return;
+        }
+        patients.forEach(patient => {
+            const birthDate = new Date(patient.birth_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${patient.patient_name}</td>
+                <td>${patient.cpf}</td>
+                <td>${patient.sus_card}</td>
+                <td>${patient.phone || 'N/A'}</td>
+                <td>${birthDate}</td>
+                <td>
+                    <button class="initiate-button active" data-patient-id="${patient.patient_id}" data-service-id="${patient.service_id}" data-patient-name="${patient.patient_name}" data-birth-date="${birthDate}">Triar</button>
+                    <button class="remove-button" data-service-id="${patient.service_id}">Remover</button>
+                </td>
+            `;
+            triageQueueBody.appendChild(row);
+        });
+    }
+
+    // Alterna entre a lista e o formulário
+    function showTriageForm(show) {
+        triageQueueList.style.display = show ? 'none' : 'block';
+        triageDataFormSection.style.display = show ? 'block' : 'none';
+        if (!show) {
+            triageForm.reset();
+            // Reseta a cor do select ao voltar
+            if (prioritySelect) {
+                prioritySelect.classList.remove('priority-red', 'priority-orange', 'priority-yellow', 'priority-green', 'priority-blue');
+            }
+        }
+    }
+
+    // Lida com cliques nos botões da tabela
+    triageQueueBody.addEventListener('click', async (event) => {
+        const target = event.target;
+        if (target.classList.contains('initiate-button')) {
+            patientIdInput.value = target.dataset.patientId;
+            serviceIdInput.value = target.dataset.serviceId;
+            displayPatientName.textContent = target.dataset.patientName;
+            displayPatientDob.textContent = `Nascimento: ${target.dataset.birthDate}`;
+            showTriageForm(true);
+        }
+        if (target.classList.contains('remove-button')) {
+            const serviceId = target.dataset.serviceId;
+            if (confirm('Marcar este paciente como "Não Compareceu"?')) {
+                try {
+                    const response = await fetch(`/api/queue/${serviceId}`, { method: 'DELETE' });
+                    const result = await response.json();
+                    if (!response.ok) throw new Error(result.message);
+                    alert(result.message);
+                    loadTriageQueue();
+                } catch (error) {
+                    alert(`Erro: ${error.message}`);
+                }
+            }
+        }
+    });
+
+    // Lida com a submissão do formulário de triagem
+    triageForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(triageForm);
+        const triageData = Object.fromEntries(formData.entries());
         try {
             const response = await fetch('/api/triage', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(triageData)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(triageData),
             });
-
-            if (response.ok) {
-                alert('Triagem registrada com sucesso!');
-                // A remoção da fila de serviço (atualização de status) agora é feita pelo backend
-                // Não precisamos mais de await removePatientFromServiceQueue(currentPatientDataForTriage.service_id); aqui
-                
-                mostrarListaDeTriagem(); // Retorna para a lista e recarrega a fila
-            } else {
-                const errorData = await response.json();
-                alert(`Erro ao registrar triagem: ${errorData.message || response.statusText}`);
-            }
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message);
+            alert(result.message);
+            showTriageForm(false);
+            loadTriageQueue();
         } catch (error) {
-            console.error('Erro na requisição de triagem:', error);
-            alert('Erro de conexão ao tentar registrar triagem.');
+            alert(`Erro ao registrar triagem: ${error.message}`);
         }
-    }
+    });
 
-    function getClassificationId(colorName) {
-        switch (colorName.toLowerCase()) {
-            case "red": return 1; 
-            case "orange": return 2;
-            case "yellow": return 3;
-            case "green": return 4;
-            case "blue": return 5;
-            default: return null;
-        }
-    }
+    // Botão de voltar
+    backButton.addEventListener('click', () => showTriageForm(false));
 
-    function mostrarListaDeTriagem() {
-        secaoFormulario.style.display = 'none';
-        secaoLista.style.display = 'block';
-        triageForm.reset();
-        limparCoresPrioridade();
-        displayNameElement.textContent = '';
-        displayDobElement.textContent = '';
-        currentPatientDataForTriage = null;
-        fetchAndRenderQueuePatients();
-    }
-
-
-    // --- 4. Inicialização e Event Listeners ---
-
-    if (backToTopButton) {
-        backToTopButton.addEventListener('click', mostrarListaDeTriagem);
-    }
-    if (backToListButton) {
-        backToListButton.addEventListener('click', mostrarListaDeTriagem);
-    }
-
-    if (prioritySelect) {
-        prioritySelect.addEventListener('change', actualizarCorPrioridade);
-    }
-
-    if (triageForm) {
-        triageForm.addEventListener('submit', registrarTriagem);
-    }
-
-    fetchAndRenderQueuePatients();
+    // Inicialização da página
+    loadClassifications();
+    loadTriageQueue();
 });

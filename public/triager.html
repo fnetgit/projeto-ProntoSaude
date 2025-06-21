@@ -55,7 +55,8 @@
                         </tr>
                     </thead>
                     <tbody id="triage-queue-body">
-                        </tbody>
+                        <!-- Conteúdo preenchido pelo JavaScript -->
+                    </tbody>
                 </table>
             </section>
 
@@ -67,7 +68,10 @@
                     <p id="display-patient-dob"></p>
                 </div>
 
-                <form class="triage-form" onsubmit="return false;">
+                <form class="triage-form" id="triage-form-element">
+                    <input type="hidden" id="patient_id" name="patient_id">
+                    <input type="hidden" id="service_id" name="service_id">
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="blood_pressure">Pressão Arterial</label>
@@ -101,13 +105,8 @@
                         <div class="form-group">
                             <label for="priority_classification">Classificação de Prioridade</label>
                             <div class="select-wrapper">
-                                <select id="priority_classification" name="priority_classification" required>
-                                    <option value="" disabled selected>Selecione a prioridade</option>
-                                    <option value="red">Vermelho (Emergência)</option>
-                                    <option value="orange">Laranja (Muito Urgente)</option>
-                                    <option value="yellow">Amarelo (Urgente)</option>
-                                    <option value="green">Verde (Pouco Urgente)</option>
-                                    <option value="blue">Azul (Não Urgente)</option>
+                                <select id="priority_classification" name="classification_id" required>
+                                    <option value="" disabled selected>Carregando...</option>
                                 </select>
                             </div>
                         </div>
@@ -116,7 +115,7 @@
                     <div class="form-group full-width">
                         <label for="symptoms">Sintomas e Observações</label>
                         <textarea id="symptoms" name="symptoms" rows="5"
-                            placeholder="Descreva os sintomas e quaisquer observações relevantes" required></textarea>
+                            placeholder="Descreva os sintomas e observações relevantes" required></textarea>
                     </div>
 
                     <div class="form-buttons">
