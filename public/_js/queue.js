@@ -19,20 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Só executa a lógica da fila se o elemento #queue-body existir na página
     if (queueBody) {
-        async function fetchPriorityQueue() {
-            try {
-                const response = await fetch('/api/priority-queue');
-                if (!response.ok) {
-                    throw new Error(`Erro HTTP! Status: ${response.status}`);
-                }
-                const patients = await response.json();
-                displayQueue(patients);
-            } catch (error) {
-                console.error('Erro ao buscar a fila de prioridade:', error);
-                queueBody.innerHTML = '<tr><td colspan="5">Erro ao carregar a fila de atendimento.</td></tr>';
-            }
-        }
 
+        // Mapeamento de cores para classes CSS
         function getPriorityBadgeClass(colorName) {
             switch (colorName.toLowerCase()) {
                 case 'vermelho': return 'priority-red';
@@ -44,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // Mapeamento de cores para texto de prioridade
         function getPriorityText(colorName) {
             switch (colorName.toLowerCase()) {
                 case 'vermelho': return 'Emergência';
@@ -52,6 +41,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'verde': return 'Pouco Urgente';
                 case 'azul': return 'Não Urgente';
                 default: return 'Desconhecido';
+            }
+        }
+
+        // NOVO: Mapeamento de status para texto (COPIADO DO DOCTOR.JS)
+        function getStatusText(statusCode) {
+            switch (statusCode) {
+                case 0: return 'Aguardando Atendimento';
+                case 1: return 'Em Atendimento';
+                case 3: return 'Atendido';
+                case 4: return 'Não Compareceu';
+                default: return 'Desconhecido';
+            }
+        }
+
+        async function fetchPriorityQueue() {
+            try {
+                // AQUI VOCÊ ESTÁ CHAMANDO '/api/priority-queue', QUE É A ROTA DO MÉDICO.
+                // Se a fila do atendente deve ver *exatamente* o que o médico vê (incluindo "Em Atendimento"),
+                // então esta rota está correta.
+                // Se o atendente só deve ver quem "Aguardando Triagem", deveria ser '/api/queue-patients'.
+                // Pelo seu problema, você quer que o status mude, então manter '/api/priority-queue' ou
+                // a nova '/api/general-queue' que sugeri antes é o correto.
+                // Vou assumir que você quer que ela veja a mesma fila que o médico.
+                const response = await fetch('/api/priority-queue');
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP! Status: ${response.status}`);
+                }
+                const patients = await response.json();
+                displayQueue(patients);
+            } catch (error) {
+                console.error('Erro ao buscar a fila de prioridade:', error);
+                queueBody.innerHTML = '<tr><td colspan="5">Erro ao carregar a fila de atendimento.</td></tr>';
             }
         }
 
@@ -71,14 +92,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 row.innerHTML = `
                     <td>${(index + 1).toString().padStart(3, '0')}</td>
-                    <td>${patient.patientName}</td>
+                    <td>${patient.patient_name}</td>
                     <td>
                         <span class="priority-badge ${getPriorityBadgeClass(patient.color_name)}">
                             ${getPriorityText(patient.color_name)}
                         </span>
                     </td>
-                    <td>Aguardando Atendimento</td>
-                    <td>${formattedDate} ${formattedTime}</td>
+                    <td>${getStatusText(patient.queue_status)}</td> <td>${formattedDate} ${formattedTime}</td>
                 `;
                 queueBody.appendChild(row);
             });
@@ -87,8 +107,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Carrega a fila quando a página é carregada
         fetchPriorityQueue();
 
-        // Opcional: Atualizar a fila a cada X segundos
-        // setInterval(fetchPriorityQueue, 15000);
+        // Habilitar a atualização automática da fila a cada 5 segundos
+        setInterval(fetchPriorityQueue, 5000);
     }
     // --- Fim do código da fila de atendimento ---
 });

@@ -8,13 +8,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/_css/style.css">
     <link rel="stylesheet" href="/_css/doctor.css">
-    <title>ProntoSaúde - Área do Médico</title>
+    <title>Clinify - Área do Médico</title>
 </head>
 
 <body>
     <div class="container">
         <aside class="sidebar">
-            <div class="logo">ProntoSaúde</div>
+            <div class="logo">Clinify</div>
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="doctor.html" class="sidebar-item active">
@@ -33,7 +33,7 @@
             <header class="header">
                 <div class="user-info">
                     <div class="user-avatar"><img src="https://img.icons8.com/ios-filled/20/ffffff/user-male-circle.png"
-                            alt="User" /></div>
+                                alt="User" /></div>
                     <div>
                         <div class="user-name">Dr. Francisco Neto</div>
                         <div class="user-role">Médico</div>
@@ -50,34 +50,14 @@
                             <th>NOME</th>
                             <th>PRIORIDADE</th>
                             <th>DATA/HORA DA TRIAGEM</th>
-                            <th style="display: none;">DATA DE NASCIMENTO</th>
-                            <th style="display: none;">GÊNERO</th>
+                            <!-- <th style="display: none;">DATA DE NASCIMENTO</th> -->
+                            <!-- <th style="display: none;">GÊNERO</th> -->
+                            <th>STATUS</th>
                             <th>AÇÃO</th>
                         </tr>
                     </thead>
                     <tbody id="doctor-queue-body">
-                        <tr>
-                            <td>001</td>
-                            <td>MARIA JOSÉ DA CONCEIÇÃO</td>
-                            <td>
-                                <span class="priority-badge priority-orange">Muito Urgente</span>
-                            </td>
-                            <td>13/10/2025 08:45</td>
-                            <td style="display: none;">15/05/1968</td>
-                            <td style="display: none;">Feminino</td>
-                            <td><button class="action-button active">Chamar Paciente</button></td>
-                        </tr>
-                        <tr>
-                            <td>002</td>
-                            <td>JOÃO PEREIRA DOS SANTOS</td>
-                            <td>
-                                <span class="priority-badge priority-green">Pouco Urgente</span>
-                            </td>
-                            <td>13/10/2025 08:52</td>
-                            <td style="display: none;">23/11/1985</td>
-                            <td style="display: none;">Masculino</td>
-                            <td><button class="action-button inactive" disabled>Aguardando</button></td>
-                        </tr>
+                        <!-- Conteúdo da fila será inserido aqui pelo JavaScript -->
                     </tbody>
                 </table>
             </section>
@@ -94,16 +74,14 @@
                 <div class="data-display-box">
                     <h3>Dados da Triagem</h3>
                     <div class="triage-data-grid">
-                        <div class="data-item"><strong>Peso:</strong> 72kg</div>
-                        <div class="data-item"><strong>Altura:</strong> 1.65m</div>
-                        <div class="data-item"><strong>Temperatura:</strong> 37.8°C</div>
-                        <div class="data-item"><strong>Saturação O²:</strong> 97%</div>
-                        <div class="data-item"><strong>Pressão Arterial:</strong> 140/90 mmHg</div>
-                        <div class="data-item"><strong>Glicose:</strong> 110 mg/dL</div>
+                        <div class="data-item"><strong>Peso:</strong> <span id="triage-weight"></span>kg</div>
+                        <div class="data-item"><strong>Temperatura:</strong> <span id="triage-temperature"></span>°C</div>
+                        <div class="data-item"><strong>Saturação O²:</strong> <span id="triage-oxygen-saturation"></span>%</div>
+                        <div class="data-item"><strong>Pressão Arterial:</strong> <span id="triage-blood-pressure"></span> mmHg</div>
+                        <div class="data-item"><strong>Glicose:</strong> <span id="triage-glucose"></span> mg/dL</div>
                     </div>
                     <div class="data-item-full">
-                        <strong>Sintomas Descritos:</strong> Forte dor de cabeça e tontura há 2 dias, com episódios de
-                        náusea.
+                        <strong>Sintomas Descritos:</strong> <span id="triage-symptoms"></span>
                     </div>
                 </div>
 
@@ -116,17 +94,16 @@
 
                     <div class="action-buttons-group">
                         <button type="button" id="start-consultation-btn" class="btn-start">Iniciar Consulta</button>
-                        <button type="button" id="call-again-btn" class="btn-call-again">Chamar Novamente</button>
-                        <button type="button" id="no-show-btn" class="btn-no-show">Não Compareceu</button>
-                        <button type="submit" id="end-consultation-btn" class="btn-end" style="display: none;">Encerrar
-                            Consulta</button>
+                        <button type="button" id="call-again-btn" class="btn-call-again" style="display: none;">Chamar Novamente</button>
+                        <button type="button" id="no-show-btn" class="btn-no-show" style="display: none;">Não Compareceu</button>
+                        <button type="submit" id="end-consultation-btn" class="btn-end" style="display: none;">Encerrar Consulta</button>
                     </div>
                 </form>
             </section>
         </main>
     </div>
 
-    <script src="/public/_js/doctor.js"></script>
+    <script src="/_js/doctor.js"></script>
 </body>
 
 </html>

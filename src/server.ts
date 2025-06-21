@@ -17,7 +17,36 @@ interface QueueRow {
     queue_datetime: string;
     triage_datetime: string;
     queue_status: number;
+    // Novos campos para a lógica de prioridade por tempo (se necessário)
+    max_wait_minutes?: number;
+    elapsed_minutes?: number;
+    time_remaining?: number;
+    // Adicionado triage_id para buscar detalhes da triagem específica
+    triage_id?: number;
 }
+
+// Interface para os detalhes completos da triagem (usada na nova rota)
+interface TriageDetails {
+    triage_id: number;
+    patient_id: number;
+    triage_officer_id: number;
+    classification_id: number;
+    datetime: string;
+    blood_pressure: string;
+    temperature: number;
+    glucose: number;
+    weight: number;
+    oxygen_saturation: number;
+    symptoms: string;
+    // Dados do paciente
+    patient_name: string; // Garantindo que patient_name está aqui
+    birth_date: string;
+    gender: string;
+    // Dados da classificação
+    color_name: string;
+    level_order: number;
+}
+
 
 const app = express();
 const port = 3000;
@@ -157,8 +186,6 @@ app.post('/api/triage', (req, res) => {
                     return res.status(500).json({ message: 'Erro ao atualizar status do serviço.' });
                 }
 
-                // A VERIFICAÇÃO E ATUALIZAÇÃO DA PRIORITYQUEUE AINDA É IMPORTANTE AQUI
-                // PARA GARANTIR QUE CADA PACIENTE SÓ TENHA UMA ENTRADA ATIVA (STATUS = 0)
                 const checkPriorityQueueSql = `SELECT queue_id FROM PriorityQueue WHERE patient_id = ? AND status = 0`;
                 db.get(checkPriorityQueueSql, [patient_id], (err, row: { queue_id: number } | undefined) => {
                     if (err) {
@@ -168,7 +195,6 @@ app.post('/api/triage', (req, res) => {
                     }
 
                     if (row) {
-                        // Se o paciente já está na fila, atualiza o datetime para a data da nova triagem
                         const updatePriorityQueueSql = `UPDATE PriorityQueue SET datetime = ?, status = 0 WHERE queue_id = ?`;
                         db.run(updatePriorityQueueSql, [datetime, row.queue_id], (err) => {
                             if (err) {
@@ -180,7 +206,6 @@ app.post('/api/triage', (req, res) => {
                             res.status(201).json({ message: 'Triagem registrada e fila de atendimento atualizada!', triageId });
                         });
                     } else {
-                        // Se o paciente NÃO está na fila, insere uma nova entrada
                         const insertPriorityQueueSql = `INSERT INTO PriorityQueue (patient_id, datetime, status) VALUES (?, ?, ?)`;
                         db.run(insertPriorityQueueSql, [patient_id, datetime, 0], (err) => {
                             if (err) {
@@ -198,12 +223,8 @@ app.post('/api/triage', (req, res) => {
     });
 });
 
-// ROTA PARA A FILA DE ATENDIMENTO GERAL
+// ROTA PARA A FILA DE ATENDIMENTO GERAL E DO MÉDICO (REUTILIZADA)
 app.get('/api/priority-queue', (req, res) => {
-    // Consulta SQL revisada para garantir:
-    // 1. Apenas a triagem mais recente de cada paciente.
-    // 2. Apenas a entrada mais recente e ativa na PriorityQueue para cada paciente.
-    // Isso garante que cada paciente apareça uma única vez na fila com a prioridade correta.
     const sql = `
         WITH LatestTriagePerPatient AS (
             SELECT
@@ -224,17 +245,37 @@ app.get('/api/priority-queue', (req, res) => {
                 ROW_NUMBER() OVER(PARTITION BY patient_id ORDER BY datetime DESC, queue_id DESC) as rn_pq
             FROM
                 PriorityQueue
-            WHERE status = 0 -- Apenas entradas ativas na fila de prioridade
+            WHERE status IN (0, 1) -- Inclui pacientes aguardando (0) e em atendimento (1) para o médico
         )
         SELECT
             LPQE.queue_id,
             LPQE.patient_id,
             P.patient_name,
-            LTPP.triage_datetime, -- Data e hora da triagem (a mais recente)
+            P.birth_date,
+            P.gender,
+            LTPP.triage_id,
+            LTPP.triage_datetime,
             C.color_name,
             C.level_order,
             LPQE.queue_datetime,
-            LPQE.queue_status
+            LPQE.queue_status,
+            CASE C.level_order
+                WHEN 1 THEN 0
+                WHEN 2 THEN 10
+                WHEN 3 THEN 60
+                WHEN 4 THEN 120
+                WHEN 5 THEN 240
+                ELSE 9999
+            END AS max_wait_minutes,
+            CAST((JULIANDAY('now') - JULIANDAY(LPQE.queue_datetime)) * 1440 AS INTEGER) AS elapsed_minutes,
+            CAST((CASE C.level_order
+                WHEN 1 THEN 0
+                WHEN 2 THEN 10
+                WHEN 3 THEN 60
+                WHEN 4 THEN 120
+                WHEN 5 THEN 240
+                ELSE 9999
+            END - (JULIANDAY('now') - JULIANDAY(LPQE.queue_datetime)) * 1440) AS INTEGER) AS time_remaining
         FROM
             LatestPriorityQueueEntry AS LPQE
         JOIN
@@ -244,11 +285,13 @@ app.get('/api/priority-queue', (req, res) => {
         JOIN
             Classification AS C ON LTPP.classification_id = C.classification_id
         WHERE
-            LPQE.rn_pq = 1 -- Garante que pegamos apenas a entrada mais recente da PriorityQueue para cada paciente
-            AND LTPP.rn_triage = 1 -- Garante que pegamos apenas a triagem mais recente para cada paciente
+            LPQE.rn_pq = 1
+            AND LTPP.rn_triage = 1
         ORDER BY
-            C.level_order ASC, -- Ordena pela prioridade (menor level_order = maior prioridade)
-            LPQE.queue_datetime ASC; -- Em caso de mesma prioridade, ordena por quem entrou na fila primeiro
+            CASE WHEN C.level_order = 1 THEN 1 ELSE 2 END ASC,
+            time_remaining ASC,
+            C.level_order ASC,
+            LPQE.queue_datetime ASC;
     `;
 
     db.all(sql, [], (err, rows: QueueRow[]) => {
@@ -256,21 +299,46 @@ app.get('/api/priority-queue', (req, res) => {
             console.error('Erro ao buscar pacientes na fila de prioridade:', err.message);
             return res.status(500).json({ message: 'Erro ao buscar pacientes na fila de prioridade.' });
         }
-
-        const priorityQueue = new PriorityQueue();
-        rows.forEach(row => {
-            priorityQueue.insert({
-                queue_id: row.queue_id,
-                patient_id: row.patient_id,
-                patientName: row.patient_name,
-                priority: row.level_order,
-                color_name: row.color_name,
-                queue_datetime: row.queue_datetime
-            });
-        });
-        res.status(200).json(priorityQueue.list());
+        // --- NOVO: ADICIONE ESTE CONSOLE.LOG AQUI ---
+        console.log('Dados brutos da API /api/priority-queue:', rows);
+        // --- FIM DO NOVO CONSOLE.LOG ---
+        res.status(200).json(rows);
     });
 });
+
+// NOVA ROTA: Obter detalhes completos da triagem e dados do paciente
+app.get('/api/triage-details/:patientId/:triageId', (req, res) => {
+    const { patientId, triageId } = req.params;
+    const sql = `
+        SELECT
+            T.triage_id, T.patient_id, T.triage_officer_id, T.classification_id, T.datetime,
+            T.blood_pressure, T.temperature, T.glucose, T.weight, T.oxygen_saturation, T.symptoms,
+            P.patient_name, P.birth_date, P.gender,
+            C.color_name, C.level_order
+        FROM
+            Triage AS T
+        JOIN
+            Patient AS P ON T.patient_id = P.patient_id
+        JOIN
+            Classification AS C ON T.classification_id = C.classification_id
+        WHERE
+            T.patient_id = ? AND T.triage_id = ?;
+    `;
+    db.get(sql, [patientId, triageId], (err, row: TriageDetails | undefined) => {
+        if (err) {
+            console.error('Erro ao buscar detalhes da triagem:', err.message);
+            return res.status(500).json({ message: 'Erro ao buscar detalhes da triagem.' });
+        }
+        if (!row) {
+            return res.status(404).json({ message: 'Detalhes da triagem não encontrados.' });
+        }
+        // --- NOVO: ADICIONE ESTE CONSOLE.LOG AQUI ---
+        console.log('Dados brutos da API /api/triage-details:', row);
+        // --- FIM DO NOVO CONSOLE.LOG ---
+        res.status(200).json(row);
+    });
+});
+
 
 app.delete('/api/queue/:serviceId', (req, res) => {
     const { serviceId } = req.params;
@@ -304,7 +372,10 @@ app.post('/api/appointment', (req, res) => {
     }
     const sql = `INSERT INTO Appointment (patient_id, doctor_id, datetime, observations) VALUES (?, ?, ?, ?)`;
     db.run(sql, [patient_id, doctor_id, datetime, observations], function (err) {
-        if (err) { return res.status(500).json({ message: 'Erro ao registrar atendimento.' }); }
+        if (err) {
+            console.error('Erro ao registrar atendimento:', err.message);
+            return res.status(500).json({ message: 'Erro ao registrar atendimento.' });
+        }
         res.status(201).json({ message: 'Atendimento registrado com sucesso!', appointmentId: this.lastID });
     });
 });
@@ -315,7 +386,10 @@ app.put('/api/priority-queue/:queueId/status', (req, res) => {
     if (status === undefined) { return res.status(400).json({ message: 'Status é obrigatório.' }); }
     const sql = `UPDATE PriorityQueue SET status = ? WHERE queue_id = ?`;
     db.run(sql, [status, queueId], function (err) {
-        if (err) { return res.status(500).json({ message: 'Erro ao atualizar status na fila.' }); }
+        if (err) {
+            console.error('Erro ao atualizar status na fila:', err.message);
+            return res.status(500).json({ message: 'Erro ao atualizar status na fila.' });
+        }
         if (this.changes === 0) { return res.status(404).json({ message: 'Registro na fila não encontrado.' }); }
         res.status(200).json({ message: 'Status da fila atualizado com sucesso.' });
     });
