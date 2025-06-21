@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentPatientDataForTriage = null; // Armazena os dados completos do paciente em triagem
 
-    // --- 2. Funções de Formatação ---
+    // --- 2. Funções de Formatação (Reutilizadas) ---
     function formatCpf(cpf) {
         if (!cpf) return '';
         const cleaned = cpf.replace(/\D/g, '');
@@ -70,9 +70,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleRemoveButtonClick(serviceId, patientName) {
         if (confirm(`Tem certeza que deseja marcar ${patientName} como 'Não Compareceu' na fila de triagem?`)) {
             try {
-                // Requisição DELETE para o endpoint no backend (agora ele vai ATUALIZAR o status para 2)
                 const response = await fetch(`/api/queue/${serviceId}`, {
-                    method: 'DELETE' // Sem corpo, pois o ID já está na URL
+                    method: 'DELETE'
                 });
 
                 if (response.ok) {
@@ -171,8 +170,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!currentPatientDataForTriage || !currentPatientDataForTriage.patient_id || !currentPatientDataForTriage.service_id) { // Adicionado service_id na validação
+        if (!currentPatientDataForTriage || !currentPatientDataForTriage.patient_id || !currentPatientDataForTriage.service_id) { 
             alert('Nenhum paciente selecionado ou dados incompletos para triagem.');
+            console.error('currentPatientDataForTriage:', currentPatientDataForTriage); // Log para verificar
             return;
         }
         
@@ -192,7 +192,8 @@ document.addEventListener('DOMContentLoaded', () => {
             symptoms: symptoms
         };
 
-        console.log('Dados da Triagem a serem enviados:', triageData);
+        // --- LOG DE DEPURAÇÃO: Confirmar que service_id está sendo enviado ---
+        console.log('Dados da Triagem a serem enviados para o backend:', triageData);
 
         try {
             const response = await fetch('/api/triage', {
@@ -229,10 +230,6 @@ document.addEventListener('DOMContentLoaded', () => {
             default: return null;
         }
     }
-
-    // A função removePatientFromServiceQueue AGORA SÓ É CHAMADA PELO BOTÃO "Remover", NÃO PELA TRIAGEM.
-    // Ela vai chamar o endpoint DELETE /api/queue/:serviceId que no backend fará o UPDATE de status para 2.
-    // async function removePatientFromServiceQueue(serviceId) { ... } (Este código não é mais chamado por registrarTriagem)
 
     function mostrarListaDeTriagem() {
         secaoFormulario.style.display = 'none';
