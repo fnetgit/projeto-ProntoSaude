@@ -1,7 +1,24 @@
+// server.ts
+
 import express from 'express';
 import sqlite3 from 'sqlite3';
 import { Patient } from './entities/patient';
+import { PriorityQueue, PatientInQueue } from './queues/priority-queue';
 import path from 'path';
+
+// Nova interface para o tipo de dado retornado pela consulta SQL da fila de prioridade
+// ESTA É A LOCALIZAÇÃO CORRETA PARA A INTERFACE
+interface QueueRow {
+    queue_id: number;
+    patient_id: number;
+    patient_name: string;
+    classification_id: number;
+    color_name: string;
+    level_order: number;
+    queue_datetime: string;
+    triage_datetime: string;
+    queue_status: number;
+}
 
 const app = express();
 const port = 3000;
@@ -117,27 +134,71 @@ app.post('/api/triage', (req, res) => {
         return res.status(400).json({ message: 'Dados essenciais da triagem estão faltando.' });
     }
     const datetime = new Date().toISOString();
-    const triage_officer_id = 1;
+    const triage_officer_id = 1; // Ou o ID do triador logado
 
     db.serialize(() => {
         db.run('BEGIN TRANSACTION;');
+
+        // 1. Inserir a nova triagem
         const triageSql = `INSERT INTO Triage (patient_id, triage_officer_id, classification_id, datetime, blood_pressure, temperature, glucose, weight, oxygen_saturation, symptoms) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
         db.run(triageSql, [patient_id, triage_officer_id, classification_id, datetime, blood_pressure, temperature, glucose, weight, oxygen_saturation, symptoms], function (err) {
-            if (err) { db.run('ROLLBACK;'); return res.status(500).json({ message: 'Erro ao registrar triagem.' }); }
+            if (err) {
+                console.error('Erro ao registrar triagem:', err.message);
+                db.run('ROLLBACK;');
+                return res.status(500).json({ message: 'Erro ao registrar triagem.' });
+            }
             const triageId = this.lastID;
-            const priorityQueueSql = `INSERT INTO PriorityQueue (patient_id, datetime, status) VALUES (?, ?, ?)`;
-            db.run(priorityQueueSql, [patient_id, datetime, 0], (err) => {
-                if (err) { db.run('ROLLBACK;'); return res.status(500).json({ message: 'Erro ao adicionar na fila de prioridade.' }); }
-                const updateServiceSql = `UPDATE Service SET status = 1 WHERE service_id = ?`; // Status 1 = Triado
-                db.run(updateServiceSql, [service_id], (err) => {
-                    if (err) { db.run('ROLLBACK;'); return res.status(500).json({ message: 'Erro ao atualizar status do serviço.' }); }
-                    db.run('COMMIT;');
-                    res.status(201).json({ message: 'Triagem registrada e paciente na fila de atendimento!', triageId });
+
+            // 2. Atualizar o status do Service para "Triado"
+            const updateServiceSql = `UPDATE Service SET status = 1 WHERE service_id = ?`; // Status 1 = Triado
+            db.run(updateServiceSql, [service_id], (err) => {
+                if (err) {
+                    console.error('Erro ao atualizar status do serviço:', err.message);
+                    db.run('ROLLBACK;');
+                    return res.status(500).json({ message: 'Erro ao atualizar status do serviço.' });
+                }
+
+                // 3. Gerenciar a entrada na PriorityQueue
+                // Primeiro, verificar se o paciente já está na PriorityQueue com status 0 (aguardando)
+                const checkPriorityQueueSql = `SELECT queue_id FROM PriorityQueue WHERE patient_id = ? AND status = 0`;
+                db.get(checkPriorityQueueSql, [patient_id], (err, row: { queue_id: number } | undefined) => { // Tipagem para o 'row' do db.get
+                    if (err) {
+                        console.error('Erro ao verificar PriorityQueue:', err.message);
+                        db.run('ROLLBACK;');
+                        return res.status(500).json({ message: 'Erro ao verificar fila de prioridade.' });
+                    }
+
+                    if (row) {
+                        // Se o paciente já está na fila de prioridade, atualiza o datetime (ou pode apenas ignorar se não quiser atualizar)
+                        const updatePriorityQueueSql = `UPDATE PriorityQueue SET datetime = ?, status = 0 WHERE queue_id = ?`;
+                        db.run(updatePriorityQueueSql, [datetime, row.queue_id], (err) => {
+                            if (err) {
+                                console.error('Erro ao atualizar PriorityQueue existente:', err.message);
+                                db.run('ROLLBACK;');
+                                return res.status(500).json({ message: 'Erro ao atualizar fila de prioridade.' });
+                            }
+                            db.run('COMMIT;');
+                            res.status(201).json({ message: 'Triagem registrada e fila de atendimento atualizada!', triageId });
+                        });
+                    } else {
+                        // Se o paciente NÃO está na fila de prioridade, insere
+                        const insertPriorityQueueSql = `INSERT INTO PriorityQueue (patient_id, datetime, status) VALUES (?, ?, ?)`;
+                        db.run(insertPriorityQueueSql, [patient_id, datetime, 0], (err) => {
+                            if (err) {
+                                console.error('Erro ao adicionar na fila de prioridade:', err.message);
+                                db.run('ROLLBACK;');
+                                return res.status(500).json({ message: 'Erro ao adicionar na fila de prioridade.' });
+                            }
+                            db.run('COMMIT;');
+                            res.status(201).json({ message: 'Triagem registrada e paciente na fila de atendimento!', triageId });
+                        });
+                    }
                 });
             });
         });
     });
 });
+
 
 // Rota para marcar paciente como "Não Compareceu"
 app.delete('/api/queue/:serviceId', (req, res) => {
@@ -150,58 +211,69 @@ app.delete('/api/queue/:serviceId', (req, res) => {
     });
 });
 
-// Rota para o médico ver a fila de atendimento
-app.get('/api/medical-queue', (req, res) => {
-    const todayLocal = new Date().toISOString().split('T')[0];
+
+// Rota para buscar e ordenar a fila de prioridade
+app.get('/api/priority-queue', (req, res) => {
+    // Seleciona pacientes na fila de prioridade com status 0 (aguardando atendimento)
+    // Garante que a triagem mais recente seja usada para a classificação
     const sql = `
-        SELECT PQ.*, P.patient_name, P.cpf, P.birth_date, C.color_name, C.level_order
-        FROM PriorityQueue AS PQ JOIN Patient AS P ON PQ.patient_id = P.patient_id
-        JOIN Triage AS T ON P.patient_id = T.patient_id AND DATE(T.datetime) = ?
-        JOIN Classification AS C ON T.classification_id = C.classification_id
-        WHERE DATE(PQ.datetime) = ? AND PQ.status = 0
-        ORDER BY C.level_order ASC, PQ.datetime ASC`;
-    db.all(sql, [todayLocal, todayLocal], (err, rows) => {
+        SELECT
+            PQ.queue_id,
+            PQ.patient_id,
+            P.patient_name,
+            T.classification_id,
+            C.color_name,
+            C.level_order,
+            PQ.datetime AS queue_datetime,
+            T.datetime AS triage_datetime, -- Adicionado para fins de depuração/exibição se necessário
+            PQ.status AS queue_status
+        FROM
+            PriorityQueue AS PQ
+        JOIN
+            Patient AS P ON PQ.patient_id = P.patient_id
+        LEFT JOIN
+            Triage AS T ON PQ.patient_id = T.patient_id
+        LEFT JOIN (
+            SELECT patient_id, MAX(datetime) as max_triage_datetime
+            FROM Triage
+            GROUP BY patient_id
+        ) AS LatestTriage ON T.patient_id = LatestTriage.patient_id AND T.datetime = LatestTriage.max_triage_datetime
+        JOIN
+            Classification AS C ON T.classification_id = C.classification_id
+        WHERE
+            PQ.status = 0 -- Apenas pacientes aguardando atendimento
+            AND T.triage_id IS NOT NULL -- Garante que há uma triagem associada
+        ORDER BY
+            C.level_order ASC, -- Menor level_order = maior prioridade
+            PQ.datetime ASC;   -- Em caso de mesma prioridade, quem entrou na fila antes
+    `;
+
+    db.all(sql, [], (err, rows: QueueRow[]) => { // AQUI, 'rows: QueueRow[]' é o que queremos
         if (err) {
-            console.error('Erro ao buscar fila médica:', err.message);
-            return res.status(500).json({ message: 'Erro ao buscar fila médica.' });
+            console.error('Erro ao buscar pacientes na fila de prioridade:', err.message);
+            return res.status(500).json({ message: 'Erro ao buscar pacientes na fila de prioridade.' });
         }
-        res.status(200).json(rows);
+
+        // Criar uma instância da PriorityQueue
+        const priorityQueue = new PriorityQueue();
+
+        // Popular a PriorityQueue com os dados do banco
+        rows.forEach(row => {
+            priorityQueue.insert({
+                queue_id: row.queue_id,
+                patient_id: row.patient_id,
+                patientName: row.patient_name,
+                priority: row.level_order,
+                color_name: row.color_name,
+                queue_datetime: row.queue_datetime
+            });
+        });
+
+        // Retorna a lista ordenada da PriorityQueue (já está ordenada pela consulta SQL)
+        res.status(200).json(priorityQueue.list());
     });
 });
 
-// Rota para registrar o atendimento médico
-app.post('/api/appointment', (req, res) => {
-    const { patient_id, doctor_id, datetime, observations } = req.body;
-    if (!patient_id || !doctor_id || !datetime) {
-        return res.status(400).json({ message: 'Campos obrigatórios do atendimento faltando.' });
-    }
-    const sql = `INSERT INTO Appointment (patient_id, doctor_id, datetime, observations) VALUES (?, ?, ?, ?)`;
-    db.run(sql, [patient_id, doctor_id, datetime, observations], function (err) {
-        if (err) {
-            return res.status(500).json({ message: 'Erro ao registrar atendimento.' });
-        }
-        res.status(201).json({ message: 'Atendimento registrado com sucesso!', appointmentId: this.lastID });
-    });
-});
-
-// Rota para atualizar status na fila de prioridade (ex: médico chamou, foi atendido)
-app.put('/api/priority-queue/:queueId/status', (req, res) => {
-    const { queueId } = req.params;
-    const { status } = req.body;
-    if (status === undefined) {
-        return res.status(400).json({ message: 'Status é obrigatório.' });
-    }
-    const sql = `UPDATE PriorityQueue SET status = ? WHERE queue_id = ?`;
-    db.run(sql, [status, queueId], function (err) {
-        if (err) {
-            return res.status(500).json({ message: 'Erro ao atualizar status na fila.' });
-        }
-        if (this.changes === 0) {
-            return res.status(404).json({ message: 'Registro na fila não encontrado.' });
-        }
-        res.status(200).json({ message: 'Status da fila atualizado com sucesso.' });
-    });
-});
 
 app.listen(port, () => {
     console.log(`Servidor rodando em http://localhost:${port}`);

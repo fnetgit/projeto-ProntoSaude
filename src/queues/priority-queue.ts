@@ -1,6 +1,12 @@
+// src/queues/priority-queue.ts
+
 export interface PatientInQueue {
   patientName: string;
-  priority: number;
+  priority: number; // Corresponde ao level_order da classificação
+  queue_id?: number; // Opcional, para identificar a entrada na PriorityQueue
+  patient_id?: number; // Opcional, para identificar o paciente
+  color_name?: string; // Opcional, para exibir a cor da classificação
+  queue_datetime?: string; // Opcional, para a data/hora que entrou na fila de prioridade
 }
 
 export class PriorityQueue {
@@ -20,6 +26,7 @@ export class PriorityQueue {
     [this.heap[i], this.heap[j]] = [this.heap[j], this.heap[i]];
   }
 
+  // A lógica de bubbleUp e bubbleDown permanece a mesma, pois operam apenas no 'priority'
   private bubbleUp(i: number) {
     while (
       i > 0 &&
@@ -70,6 +77,9 @@ export class PriorityQueue {
   }
 
   public list(): PatientInQueue[] {
-    return [...this.heap];
+
+    const sortedList = [...this.heap];
+
+    return [...this.heap].sort((a, b) => a.priority - b.priority || new Date(a.queue_datetime!).getTime() - new Date(b.queue_datetime!).getTime());
   }
 }
