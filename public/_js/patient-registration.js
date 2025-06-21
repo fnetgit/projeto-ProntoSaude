@@ -1,42 +1,52 @@
-// _js/patient-registration.js (Completo e Correto)
-// RESPONSABILIDADE: Comunicação com a API e Gestão de Dados da tabela.
+// _js/patient-registration.js
+// RESPONSABILIDADE: Gestão completa da página do atendente, incluindo cadastro,
+// listagem, ações e filtragem de pacientes.
 
 document.addEventListener('DOMContentLoaded', () => {
+    // --- SELETORES DE ELEMENTOS ---
     const patientRegistrationForm = document.querySelector('#register-patient-form form');
     const patientTableTbody = document.getElementById('patient-list-body');
-    const tabButtons = document.querySelectorAll('.tab-button');
+    const searchInput = document.querySelector('.search-bar input');
+    const searchTabButton = document.querySelector('.tab-button[data-tab="search"]');
 
-    // --- FUNÇÕES AUXILIARES DE FORMATAÇÃO (APENAS PARA EXIBIÇÃO NA TABELA) ---
+    // --- VARIÁVEL PARA ARMAZENAR OS DADOS ---
+    // Guarda a lista completa de pacientes para permitir a filtragem rápida no frontend.
+    let allPatients = [];
 
+    // --- FUNÇÕES AUXILIARES DE FORMATAÇÃO ---
+    // Responsáveis por formatar os dados para exibição na tabela.
     function formatCpf(cpf) {
         if (!cpf) return '';
-        const cleaned = cpf.replace(/\D/g, '');
+        const cleaned = String(cpf).replace(/\D/g, '');
+        if (cleaned.length !== 11) return cpf;
         return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
     }
 
     function formatSusCard(susCard) {
         if (!susCard) return '';
-        const cleaned = susCard.replace(/\D/g, '');
+        const cleaned = String(susCard).replace(/\D/g, '');
+        if (cleaned.length !== 15) return susCard;
         return cleaned.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
     }
 
     function formatPhone(phone) {
         if (!phone) return '';
-        const cleaned = phone.replace(/\D/g, '');
+        const cleaned = String(phone).replace(/\D/g, '');
         if (cleaned.length === 11) {
             return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
         } else if (cleaned.length === 10) {
             return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
         }
-        return phone; // Retorna o número sem formatação se não for 10 ou 11 dígitos
+        return phone;
     }
 
     // --- LÓGICA DE AÇÕES E COMUNICAÇÃO COM API ---
 
-    // Função para o botão "Consulta"
+    // Função executada ao clicar no botão "Consulta".
+    // Envia o paciente para a fila de triagem.
     async function handleConsultButtonClick(patientId) {
-        console.log('Consult button clicked for patient ID:', patientId);
-        const attendantId = 1; // ID do atendente logado (pode ser dinâmico no futuro)
+        console.log('Botão "Consulta" clicado para o paciente ID:', patientId);
+        const attendantId = 1; // Simula o ID do atendente logado
 
         try {
             const response = await fetch('/api/service', {
@@ -56,105 +66,130 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(`Erro ao enviar paciente para a fila: ${errorData.message || response.statusText}`);
             }
         } catch (error) {
-            console.error('Error in service queue request:', error);
+            console.error('Erro na requisição para a fila de atendimento:', error);
             alert('Erro de conexão ao enviar paciente para a fila.');
         }
     }
 
-    // Busca os pacientes da API e os renderiza na tabela
+    // Função que desenha a tabela no HTML com base em uma lista de pacientes.
+    function renderTable(patientsToRender) {
+        if (!patientTableTbody) return;
+        patientTableTbody.innerHTML = '';
+
+        if (patientsToRender.length === 0) {
+            patientTableTbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhum paciente encontrado.</td></tr>';
+            return;
+        }
+
+        patientsToRender.forEach(patient => {
+            const row = patientTableTbody.insertRow();
+            row.dataset.patientId = patient.patient_id;
+
+            row.insertCell().textContent = patient.patient_name;
+            row.insertCell().textContent = formatCpf(patient.cpf);
+            row.insertCell().textContent = formatSusCard(patient.sus_card);
+            row.insertCell().textContent = formatPhone(patient.phone);
+            row.insertCell().textContent = new Date(patient.birth_date).toLocaleDateString('pt-BR');
+
+            const actionCell = row.insertCell();
+            actionCell.className = 'action-buttons';
+            actionCell.innerHTML = `
+                <button class="edit-btn"><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" width="20px" height="20px" alt="Editar" /></button>
+                <button class="consult-btn">Consulta</button>
+            `;
+            actionCell.querySelector('.consult-btn').addEventListener('click', () => handleConsultButtonClick(patient.patient_id));
+        });
+    }
+
+    // Busca a lista de pacientes da API, armazena e chama a função de renderização.
     async function fetchAndRenderPatients() {
         if (!patientTableTbody) return;
+        if (allPatients.length === 0) {
+            patientTableTbody.innerHTML = '<tr><td colspan="6" class="text-center">Carregando...</td></tr>';
+        }
 
-        patientTableTbody.innerHTML = '<tr><td colspan="6" class="text-center">Carregando...</td></tr>';
         try {
             const response = await fetch('/api/pacientes');
             if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
 
-            const patients = await response.json();
-            patientTableTbody.innerHTML = '';
+            allPatients = await response.json();
+            renderTable(allPatients);
 
-            if (patients.length === 0) {
-                patientTableTbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhum paciente cadastrado.</td></tr>';
-                return;
-            }
-
-            patients.forEach(patient => {
-                const row = patientTableTbody.insertRow();
-                row.dataset.patientId = patient.patient_id;
-
-                row.insertCell().textContent = patient.patient_name;
-                row.insertCell().textContent = formatCpf(patient.cpf);
-                row.insertCell().textContent = formatSusCard(patient.sus_card);
-                row.insertCell().textContent = formatPhone(patient.phone);
-                row.insertCell().textContent = new Date(patient.birth_date).toLocaleDateString('pt-BR');
-
-                const actionCell = row.insertCell();
-                actionCell.className = 'action-buttons';
-                actionCell.innerHTML = `
-                    <button class="edit-btn"><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" widh="20px" height="20px" alt="Edit" /></button>
-                    <button class="consult-btn">Consulta</button>
-                `;
-                actionCell.querySelector('.consult-btn').addEventListener('click', () => handleConsultButtonClick(patient.patient_id));
-            });
         } catch (error) {
-            console.error('Error fetching and rendering patients:', error);
+            console.error('Erro ao buscar pacientes:', error);
             patientTableTbody.innerHTML = '<tr><td colspan="6" class="text-center">Erro ao carregar pacientes.</td></tr>';
         }
     }
 
-    // Adiciona o evento de 'submit' ao formulário de registro
+    // --- EVENT LISTENERS (OUVINTES DE EVENTOS) ---
+
+    // 1. Listener do campo de busca (pesquisa por Nome ou CPF).
+    if (searchInput) {
+        searchInput.addEventListener('input', (event) => {
+            const searchTerm = event.target.value.toLowerCase();
+            const numericSearchTerm = searchTerm.replace(/\D/g, '');
+
+            if (searchTerm.trim() === '') {
+                renderTable(allPatients);
+                return;
+            }
+
+            const filteredPatients = allPatients.filter(patient => {
+                const nameMatch = patient.patient_name && patient.patient_name.toLowerCase().includes(searchTerm);
+                const cpfMatch = numericSearchTerm.length > 0 && patient.cpf && String(patient.cpf).startsWith(numericSearchTerm);
+                return nameMatch || cpfMatch;
+            });
+
+            renderTable(filteredPatients);
+        });
+    }
+
+    // 2. Listener do formulário de cadastro de paciente.
     if (patientRegistrationForm) {
         patientRegistrationForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const formData = new FormData(patientRegistrationForm);
             const patientData = Object.fromEntries(formData.entries());
 
-            // --- TRECHO A SER VERIFICADO/ADICIONADO: LIMPAR DADOS ANTES DE ENVIAR ---
-            // Garante que CPF, Cartão SUS e Telefone contenham apenas dígitos numéricos
-            // antes de serem enviados ao backend para inserção no banco de dados.
-            if (patientData.cpf) {
-                patientData.cpf = String(patientData.cpf).replace(/\D/g, ''); // Remove tudo que não for dígito
-            }
-            if (patientData.sus_card) {
-                patientData.sus_card = String(patientData.sus_card).replace(/\D/g, ''); // Remove tudo que não for dígito
-            }
-            if (patientData.phone) {
-                patientData.phone = String(patientData.phone).replace(/\D/g, ''); // Remove tudo que não for dígito
-            }
-            // --- FIM DO TRECHO DE LIMPEZA ---
-
-            patientData.gender = parseInt(String(patientData.gender), 10); // Converte gender para número
+            // Limpa os dados antes de enviar para a API
+            if (patientData.cpf) patientData.cpf = String(patientData.cpf).replace(/\D/g, '');
+            if (patientData.sus_card) patientData.sus_card = String(patientData.sus_card).replace(/\D/g, '');
+            if (patientData.phone) patientData.phone = String(patientData.phone).replace(/\D/g, '');
+            patientData.gender = parseInt(String(patientData.gender), 10);
 
             try {
                 const response = await fetch('/api/pacientes', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(patientData) // patientData AGORA Contém APENAS DÍGITOS para CPF, SUS, Telefone
+                    body: JSON.stringify(patientData)
                 });
 
                 if (response.ok) {
                     alert('Paciente cadastrado com sucesso!');
                     patientRegistrationForm.reset();
-                    document.querySelector('.tab-button[data-tab="search"]').click();
-                    fetchAndRenderPatients();
+                    // Simula um clique na aba de busca para mostrar a lista atualizada
+                    if (searchTabButton) searchTabButton.click();
                 } else {
                     const errorData = await response.json();
                     alert(`Erro ao cadastrar paciente: ${errorData.message || response.statusText}`);
                 }
             } catch (error) {
-                console.error('Erro na requisição POST:', error);
+                console.error('Erro na requisição de cadastro:', error);
                 alert('Erro de conexão ao tentar cadastrar paciente.');
             }
         });
     }
 
-    // Carrega a lista de pacientes ao iniciar ou ao clicar na aba de pesquisa
-    const searchTabButton = document.querySelector('.tab-button[data-tab="search"]');
+    // 3. Listener da aba de busca (para recarregar a lista).
     if (searchTabButton) {
-        // Carrega a lista de pacientes quando a página é aberta pela primeira vez
-        fetchAndRenderPatients();
-
-        // Adiciona um listener para recarregar a lista caso o usuário clique na aba de pesquisa
-        searchTabButton.addEventListener('click', fetchAndRenderPatients);
+        // Carrega a lista quando a aba é clicada.
+        searchTabButton.addEventListener('click', () => {
+            if (searchInput) searchInput.value = ''; // Limpa a busca anterior
+            fetchAndRenderPatients();
+        });
     }
+
+    // --- INICIALIZAÇÃO ---
+    // Carrega a lista de pacientes assim que a página é aberta.
+    fetchAndRenderPatients();
 });
