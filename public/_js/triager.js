@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. Seleção dos Elementos HTML (IDs alinhados com triager.html) ---
-    const secaoLista = document.getElementById('triage-queue-list'); // ID atualizado
-    const secaoFormulario = document.getElementById('triage-data-form'); // ID atualizado
-    const triageForm = document.querySelector('#triage-data-form .triage-form'); // Seletor atualizado
-    const backToQueueButton = document.querySelector('#triage-data-form .back-button'); // Seletor atualizado
+    // --- 1. Seleção dos Elementos HTML ---
+    const secaoLista = document.getElementById('triage-queue-list');
+    const secaoFormulario = document.getElementById('triage-data-form');
+    const triageForm = document.querySelector('#triage-data-form .triage-form');
+    const backToTopButton = document.getElementById('back-to-top-button');
+    const backToListButton = document.getElementById('back-to-list-button');
     const prioritySelect = document.getElementById('priority_classification');
     const tbodyTriageQueue = document.getElementById('triage-queue-body');
 
@@ -11,9 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayNameElement = document.getElementById('display-patient-name');
     const displayDobElement = document.getElementById('display-patient-dob');
 
-    let currentPatientDataForTriage = null;
+    let currentPatientDataForTriage = null; // Armazena os dados completos do paciente em triagem
 
-    // --- 2. Funções de Formatação (Reutilizadas) ---
+    // --- 2. Funções de Formatação ---
     function formatCpf(cpf) {
         if (!cpf) return '';
         const cleaned = cpf.replace(/\D/g, '');
@@ -34,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Funções Auxiliares para Cores de Prioridade ---
     function limparCoresPrioridade() {
         const wrapper = prioritySelect.closest('.select-wrapper');
-        const classesDePrioridade = ['priority-red', 'priority-orange', 'priority-yellow', 'priority-green', 'priority-blue']; // Usar classes em inglês
+        const classesDePrioridade = ['priority-red', 'priority-orange', 'priority-yellow', 'priority-green', 'priority-blue'];
         prioritySelect.classList.remove(...classesDePrioridade);
         if (wrapper) {
             wrapper.classList.remove(...classesDePrioridade, 'has-color');
@@ -46,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const wrapper = prioritySelect.closest('.select-wrapper');
         const valor = prioritySelect.value;
         if (valor) {
-            const novaClasse = `priority-${valor}`; // Ex: priority-red
+            const novaClasse = `priority-${valor}`;
             prioritySelect.classList.add(novaClasse);
             if (wrapper) {
                 wrapper.classList.add(novaClasse, 'has-color');
@@ -57,8 +58,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 3. Funções de Lógica de UI e Dados ---
 
     function mostrarFormulario(patient) {
-        currentPatientDataForTriage = patient;
-
+        currentPatientDataForTriage = patient; // Dados do paciente da fila, incluindo service_id
+        
         displayNameElement.textContent = patient.patient_name;
         displayDobElement.textContent = `Data de Nascimento: ${patient.birth_date}`;
 
@@ -67,22 +68,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function handleRemoveButtonClick(serviceId, patientName) {
-        if (confirm(`Tem certeza que deseja remover ${patientName} da fila de triagem?`)) {
+        if (confirm(`Tem certeza que deseja marcar ${patientName} como 'Não Compareceu' na fila de triagem?`)) {
             try {
+                // Requisição DELETE para o endpoint no backend (agora ele vai ATUALIZAR o status para 2)
                 const response = await fetch(`/api/queue/${serviceId}`, {
-                    method: 'DELETE'
+                    method: 'DELETE' // Sem corpo, pois o ID já está na URL
                 });
 
                 if (response.ok) {
-                    alert(`${patientName} removido da fila com sucesso!`);
+                    alert(`${patientName} marcado como 'Não Compareceu' com sucesso!`);
                     fetchAndRenderQueuePatients(); // Recarrega a fila
                 } else {
                     const errorData = await response.json();
-                    alert(`Erro ao remover ${patientName} da fila: ${errorData.message || response.statusText}`);
+                    alert(`Erro ao marcar ${patientName} como 'Não Compareceu': ${errorData.message || response.statusText}`);
                 }
             } catch (error) {
-                console.error('Erro de conexão ao remover paciente da fila:', error);
-                alert('Erro de conexão ao tentar remover paciente da fila.');
+                console.error('Erro de conexão ao marcar paciente como "Não Compareceu":', error);
+                alert('Erro de conexão ao tentar marcar paciente como "Não Compareceu".');
             }
         }
     }
@@ -112,7 +114,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             patientsInQueue.forEach((patient, index) => {
                 const row = tbodyTriageQueue.insertRow();
-                row.dataset.patient = JSON.stringify(patient);
+                row.dataset.patient = JSON.stringify(patient); 
 
                 row.insertCell().textContent = patient.patient_name;
                 row.insertCell().textContent = formatCpf(patient.cpf);
@@ -169,17 +171,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (!currentPatientDataForTriage || !currentPatientDataForTriage.patient_id) {
-            alert('Nenhum paciente selecionado para triagem.');
+        if (!currentPatientDataForTriage || !currentPatientDataForTriage.patient_id || !currentPatientDataForTriage.service_id) { // Adicionado service_id na validação
+            alert('Nenhum paciente selecionado ou dados incompletos para triagem.');
             return;
         }
-
+        
         const triageOfficerId = 1;
 
         const triageData = {
             patient_id: currentPatientDataForTriage.patient_id,
+            service_id: currentPatientDataForTriage.service_id, // Incluindo service_id para o backend
             triage_officer_id: triageOfficerId,
-            classification_id: getClassificationId(wristband_color), // Usa a nova função
+            classification_id: getClassificationId(wristband_color),
             datetime: new Date().toISOString(),
             blood_pressure: blood_pressure,
             temperature: temperature,
@@ -202,9 +205,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 alert('Triagem registrada com sucesso!');
-                await removePatientFromServiceQueue(currentPatientDataForTriage.service_id);
-
-                mostrarListaDeTriagem();
+                // A remoção da fila de serviço (atualização de status) agora é feita pelo backend
+                // Não precisamos mais de await removePatientFromServiceQueue(currentPatientDataForTriage.service_id); aqui
+                
+                mostrarListaDeTriagem(); // Retorna para a lista e recarrega a fila
             } else {
                 const errorData = await response.json();
                 alert(`Erro ao registrar triagem: ${errorData.message || response.statusText}`);
@@ -215,17 +219,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // MUDANÇA AQUI: Agora mapeia strings de cor em inglês para IDs numéricos
     function getClassificationId(colorName) {
         switch (colorName.toLowerCase()) {
-            case "red": return 1; // Vermelho
-            case "orange": return 2; // Laranja
-            case "yellow": return 3; // Amarelo
-            case "green": return 4;   // Verde
-            case "blue": return 5;    // Azul
+            case "red": return 1; 
+            case "orange": return 2;
+            case "yellow": return 3;
+            case "green": return 4;
+            case "blue": return 5;
             default: return null;
         }
     }
+
+    // A função removePatientFromServiceQueue AGORA SÓ É CHAMADA PELO BOTÃO "Remover", NÃO PELA TRIAGEM.
+    // Ela vai chamar o endpoint DELETE /api/queue/:serviceId que no backend fará o UPDATE de status para 2.
+    // async function removePatientFromServiceQueue(serviceId) { ... } (Este código não é mais chamado por registrarTriagem)
 
     function mostrarListaDeTriagem() {
         secaoFormulario.style.display = 'none';
@@ -241,12 +248,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 4. Inicialização e Event Listeners ---
 
-    if (prioritySelect) {
-        prioritySelect.addEventListener('change', actualizarCorPrioridade);
+    if (backToTopButton) {
+        backToTopButton.addEventListener('click', mostrarListaDeTriagem);
+    }
+    if (backToListButton) {
+        backToListButton.addEventListener('click', mostrarListaDeTriagem);
     }
 
-    if (backToQueueButton) {
-        backToQueueButton.addEventListener('click', mostrarListaDeTriagem);
+    if (prioritySelect) {
+        prioritySelect.addEventListener('change', actualizarCorPrioridade);
     }
 
     if (triageForm) {

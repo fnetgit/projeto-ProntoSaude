@@ -173,14 +173,14 @@ app.get('/api/queue-patients', (req, res) => {
     });
 });
 
-// Rota POST para registrar os dados da triagem na tabela Triage (mantida).
+// Rota POST para registrar os dados da triagem na tabela Triage E ADICIONAR À FILA DE PRIORIDADE.
 app.post('/api/triage', (req, res) => {
     console.log('Corpo da requisição recebido (registrar triagem):', req.body);
     const {
         patient_id,
         triage_officer_id,
-        classification_id,
-        datetime,
+        classification_id, // Este é o ID da prioridade (1-5)
+        datetime, // Data e hora da triagem
         blood_pressure,
         temperature,
         glucose,
@@ -189,13 +189,15 @@ app.post('/api/triage', (req, res) => {
         symptoms
     } = req.body;
 
+    // Validação básica dos campos da triagem
     if (!patient_id || !triage_officer_id || !classification_id || !datetime ||
         !blood_pressure || temperature === undefined || glucose === undefined ||
         weight === undefined || oxygen_saturation === undefined || !symptoms) {
         return res.status(400).json({ message: 'Todos os campos de triagem são obrigatórios.' });
     }
 
-    const sql = `INSERT INTO Triage (
+    // Query para inserir os dados na tabela Triage
+    const triageSql = `INSERT INTO Triage (
         patient_id,
         triage_officer_id,
         classification_id,
@@ -208,7 +210,7 @@ app.post('/api/triage', (req, res) => {
         symptoms
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    const params = [
+    const triageParams = [
         patient_id,
         triage_officer_id,
         classification_id,
@@ -221,15 +223,34 @@ app.post('/api/triage', (req, res) => {
         symptoms
     ];
 
-    db.run(sql, params, function (err) {
+    // Executa a inserção na tabela Triage
+    db.run(triageSql, triageParams, function (err) {
         if (err) {
             console.error('Erro ao inserir triagem:', err.message);
             return res.status(500).json({ message: 'Erro ao registrar triagem.' });
         }
-        res.status(201).json({ message: 'Triagem registrada com sucesso!', triageId: this.lastID });
+        const triageId = this.lastID; // ID da triagem recém-criada
+
+        // *** AÇÃO PRINCIPAL: ADICIONAR O PACIENTE À FILA DE PRIORIDADE (PriorityQueue) ***
+        // O status 0 significa "aguardando" (conforme a definição da sua tabela PriorityQueue)
+        const priorityQueueSql = `INSERT INTO PriorityQueue (patient_id, datetime, status) VALUES (?, ?, ?)`;
+        // Usa a mesma datetime da triagem para registrar a entrada na fila de prioridade
+        const priorityQueueParams = [patient_id, datetime, 0]; 
+
+        // Executa a inserção na tabela PriorityQueue
+        db.run(priorityQueueSql, priorityQueueParams, function (queueErr) {
+            if (queueErr) {
+                console.error('Erro ao inserir na fila de prioridade:', queueErr.message);
+                // É importante logar este erro. No entanto, se a triagem foi bem-sucedida,
+                // podemos retornar um sucesso parcial ou um status de erro específico se a fila for crítica.
+                // Aqui, optamos por retornar um erro 500 para indicar um problema no processo completo.
+                return res.status(500).json({ message: 'Triagem registrada, mas erro ao adicionar paciente à fila de prioridade.' });
+            }
+            // Se ambas as inserções forem bem-sucedidas, retorna sucesso.
+            res.status(201).json({ message: 'Triagem registrada e paciente adicionado à fila de prioridade com sucesso!', triageId: triageId });
+        });
     });
 });
-
 // ROTA DELETE para remover um paciente da fila de serviço
 app.delete('/api/queue/:serviceId', (req, res) => {
     const serviceId = req.params.serviceId; // Pega o service_id da URL
