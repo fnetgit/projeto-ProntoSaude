@@ -104,49 +104,49 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Adiciona o evento de 'submit' ao formulário de registro
     if (patientRegistrationForm) {
-    patientRegistrationForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const formData = new FormData(patientRegistrationForm);
-        const patientData = Object.fromEntries(formData.entries());
-        
-        // --- TRECHO A SER VERIFICADO/ADICIONADO: LIMPAR DADOS ANTES DE ENVIAR ---
-        // Garante que CPF, Cartão SUS e Telefone contenham apenas dígitos numéricos
-        // antes de serem enviados ao backend para inserção no banco de dados.
-        if (patientData.cpf) {
-            patientData.cpf = String(patientData.cpf).replace(/\D/g, ''); // Remove tudo que não for dígito
-        }
-        if (patientData.sus_card) {
-            patientData.sus_card = String(patientData.sus_card).replace(/\D/g, ''); // Remove tudo que não for dígito
-        }
-        if (patientData.phone) {
-            patientData.phone = String(patientData.phone).replace(/\D/g, ''); // Remove tudo que não for dígito
-        }
-        // --- FIM DO TRECHO DE LIMPEZA ---
+        patientRegistrationForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(patientRegistrationForm);
+            const patientData = Object.fromEntries(formData.entries());
 
-        patientData.gender = parseInt(String(patientData.gender), 10); // Converte gender para número
-
-        try {
-            const response = await fetch('/api/pacientes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(patientData) // patientData AGORA Contém APENAS DÍGITOS para CPF, SUS, Telefone
-            });
-
-            if (response.ok) {
-                alert('Paciente cadastrado com sucesso!');
-                patientRegistrationForm.reset();
-                document.querySelector('.tab-button[data-tab="search"]').click(); 
-                fetchAndRenderPatients();
-            } else {
-                const errorData = await response.json();
-                alert(`Erro ao cadastrar paciente: ${errorData.message || response.statusText}`);
+            // --- TRECHO A SER VERIFICADO/ADICIONADO: LIMPAR DADOS ANTES DE ENVIAR ---
+            // Garante que CPF, Cartão SUS e Telefone contenham apenas dígitos numéricos
+            // antes de serem enviados ao backend para inserção no banco de dados.
+            if (patientData.cpf) {
+                patientData.cpf = String(patientData.cpf).replace(/\D/g, ''); // Remove tudo que não for dígito
             }
-        } catch (error) {
-            console.error('Erro na requisição POST:', error);
-            alert('Erro de conexão ao tentar cadastrar paciente.');
-        }
-    });
-}
+            if (patientData.sus_card) {
+                patientData.sus_card = String(patientData.sus_card).replace(/\D/g, ''); // Remove tudo que não for dígito
+            }
+            if (patientData.phone) {
+                patientData.phone = String(patientData.phone).replace(/\D/g, ''); // Remove tudo que não for dígito
+            }
+            // --- FIM DO TRECHO DE LIMPEZA ---
+
+            patientData.gender = parseInt(String(patientData.gender), 10); // Converte gender para número
+
+            try {
+                const response = await fetch('/api/pacientes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(patientData) // patientData AGORA Contém APENAS DÍGITOS para CPF, SUS, Telefone
+                });
+
+                if (response.ok) {
+                    alert('Paciente cadastrado com sucesso!');
+                    patientRegistrationForm.reset();
+                    document.querySelector('.tab-button[data-tab="search"]').click();
+                    fetchAndRenderPatients();
+                } else {
+                    const errorData = await response.json();
+                    alert(`Erro ao cadastrar paciente: ${errorData.message || response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Erro na requisição POST:', error);
+                alert('Erro de conexão ao tentar cadastrar paciente.');
+            }
+        });
+    }
 
     // Carrega a lista de pacientes ao iniciar ou ao clicar na aba de pesquisa
     const searchTabButton = document.querySelector('.tab-button[data-tab="search"]');

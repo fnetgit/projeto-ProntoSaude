@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function mostrarFormulario(patient) {
         currentPatientDataForTriage = patient;
-        
+
         displayNameElement.textContent = patient.patient_name;
         displayDobElement.textContent = `Data de Nascimento: ${patient.birth_date}`;
 
@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             patientsInQueue.forEach((patient, index) => {
                 const row = tbodyTriageQueue.insertRow();
-                row.dataset.patient = JSON.stringify(patient); 
+                row.dataset.patient = JSON.stringify(patient);
 
                 row.insertCell().textContent = patient.patient_name;
                 row.insertCell().textContent = formatCpf(patient.cpf);
@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Nenhum paciente selecionado para triagem.');
             return;
         }
-        
+
         const triageOfficerId = 1;
 
         const triageData = {
@@ -202,8 +202,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 alert('Triagem registrada com sucesso!');
-                await removePatientFromServiceQueue(currentPatientDataForTriage.service_id); 
-                
+                await removePatientFromServiceQueue(currentPatientDataForTriage.service_id);
+
                 mostrarListaDeTriagem();
             } else {
                 const errorData = await response.json();
