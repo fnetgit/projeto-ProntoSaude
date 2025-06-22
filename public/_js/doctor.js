@@ -110,7 +110,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return await response.json();
         } catch (error) {
             console.error('Erro ao buscar detalhes da triagem:', error);
-            // Substituir por modal personalizado
             alert('Não foi possível carregar os detalhes da triagem.');
             return null;
         }
@@ -130,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return await response.json();
         } catch (error) {
             console.error('Erro ao atualizar status do paciente na fila:', error);
-            // Substituir por modal personalizado
             alert('Não foi possível atualizar o status do paciente.');
             return null;
         }
@@ -155,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return await response.json();
         } catch (error) {
             console.error('Erro ao registrar atendimento:', error);
-            // Substituir por modal personalizado
             alert('Não foi possível registrar o atendimento.');
             return null;
         }

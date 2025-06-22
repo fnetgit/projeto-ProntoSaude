@@ -1,4 +1,4 @@
-// src/routes/queueRoutes.ts (INALTERADO desde a última modificação)
+// src/routes/queueRoutes.ts
 
 import { Router } from 'express';
 import { QueueService } from '../services/queueService';

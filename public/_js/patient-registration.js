@@ -97,8 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="edit-btn"><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" width="20px" height="20px" alt="Editar" /></button>
                 <button class="consult-btn">Consulta</button>
             `;
-            
-            //novo do zé
+
             // Botão de consulta
             actionCell.querySelector('.consult-btn').addEventListener('click', () => handleConsultButtonClick(patient.patient_id));
 
@@ -106,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             actionCell.querySelector('.edit-btn').addEventListener('click', () => {
                 const form = document.querySelector('#register-patient-form form');
                 document.getElementById('register-patient-form').style.display = 'block';
-                document.getElementById('search-patient-form').style.display = 'none';  
+                document.getElementById('search-patient-form').style.display = 'none';
 
                 // Preenche os campos do formulário
                 for (const [key, value] of Object.entries(patient)) {
@@ -120,13 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Altera o texto do botão
                 const submitButton = form.querySelector('.submit-button');
                 if (submitButton) submitButton.textContent = 'ATUALIZAR PACIENTE';
-                
+
             });
         });
     }
-    // fim do novo
 
-// Busca a lista de pacientes da API, armazena e chama a função de renderização.
+    // Busca a lista de pacientes da API, armazena e chama a função de renderização.
     async function fetchAndRenderPatients() {
         if (!patientTableTbody) return;
         if (allPatients.length === 0) {
@@ -173,14 +171,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (patientRegistrationForm) {
         patientRegistrationForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-            // novo do zé
             const editingId = patientRegistrationForm.dataset.editingId;
             if (editingId) {
-             // Atualiza ao invés de cadastrar
-            atualizarPaciente(editingId);
-            return;
+                // Atualiza em vez de cadastrar
+                atualizarPaciente(editingId);
+                return;
             }
-            //fim do novo
 
             const formData = new FormData(patientRegistrationForm);
             const patientData = Object.fromEntries(formData.entries());
@@ -212,27 +208,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Erro de conexão ao tentar cadastrar paciente.');
             }
         });
-        // novo do zé
         const cadastroTabButton = document.querySelector('.tab-button[data-tab="register"]');
         const registerFormSection = document.getElementById('register-patient-form');
         const submitButton = document.getElementById('submit-button');
 
         if (cadastroTabButton) {
-        cadastroTabButton.addEventListener('click', () => {
-            // Mostra o formulário de cadastro
-            registerFormSection.style.display = 'block';
+            cadastroTabButton.addEventListener('click', () => {
+                // Mostra o formulário de cadastro
+                registerFormSection.style.display = 'block';
 
-            // Limpa o formulário
-            patientRegistrationForm.reset();
+                // Limpa o formulário
+                patientRegistrationForm.reset();
 
-            // Altera o texto do botão
-            submitButton.textContent = 'CADASTRAR PACIENTE';
+                // Altera o texto do botão
+                submitButton.textContent = 'CADASTRAR PACIENTE';
 
-            // Remove o atributo que identifica o modo edição
-            patientRegistrationForm.removeAttribute('data-editing-id');
-        });
-    }
-    // fim do novo
+                // Remove o atributo que identifica o modo edição
+                patientRegistrationForm.removeAttribute('data-editing-id');
+            });
+        }
     }
 
     // 3. Listener da aba de busca (para recarregar a lista).
@@ -244,7 +238,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // novo do zé
     // Função para atualizar paciente
     async function atualizarPaciente(patientId) {
         const form = document.querySelector('#register-patient-form form');
@@ -270,8 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 form.removeAttribute('data-editing-id');
                 const submitButton = form.querySelector('.submit-button');
                 if (submitButton) submitButton.textContent = 'CADASTRAR PACIENTE';
-    
-                //fim do novo
+
                 if (searchTabButton) searchTabButton.click();
             } else {
                 const errorData = await response.json();
@@ -282,7 +274,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('Erro de conexão com o servidor.');
         }
     }
-    // fim do novo
 
     // --- INICIALIZAÇÃO ---
     // Carrega a lista de pacientes assim que a página é aberta.

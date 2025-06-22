@@ -1,13 +1,14 @@
 /* public/css/login.css */
 
 :root {
-    --primary-color: #007bff;
-    --primary-color-hover: #0056b3;
-    --page-bg-color: #f0f2f5;
+    --primary-color: #17a2b8;
+    --primary-color-hover: #138496;
+    --page-bg-color: #f4f7f9;
+    --text-color: #34495e;
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     background-color: var(--page-bg-color);
     display: flex;
     justify-content: center;
@@ -20,7 +21,7 @@ body {
     background-color: white;
     padding: 40px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
     text-align: center;
     width: 350px;
 }
@@ -36,9 +37,15 @@ body {
     width: 100%;
     padding: 12px;
     margin-bottom: 15px;
-    border: 1px solid #ccc;
+    border: 1px solid #e3e8ee;
     border-radius: 4px;
     box-sizing: border-box;
+}
+
+.login-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.2);
 }
 
 .login-form button {

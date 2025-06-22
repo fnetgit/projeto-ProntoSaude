@@ -1,4 +1,4 @@
-// src/services/queueService.ts (INALTERADO desde a última modificação)
+// src/services/queueService.ts
 
 import db from '../config/database';
 

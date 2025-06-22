@@ -127,18 +127,21 @@
 
 /* Estilos para o botão "Iniciar" na tabela de fila (initiate-button) */
 .initiate-button {
-    padding: 8px 15px; /* Ajustado um pouco para se encaixar na tabela */
+    padding: 8px 15px;
+    /* Ajustado um pouco para se encaixar na tabela */
     border: none;
     border-radius: 5px;
     font-size: 14px;
     cursor: pointer;
     transition: background-color 0.2s ease, opacity 0.2s ease;
     text-align: center;
-    min-width: 80px; /* Garante uma largura mínima */
+    min-width: 80px;
+    /* Garante uma largura mínima */
 }
 
 .initiate-button.active {
-    background-color: var(--success-color); /* Cor verde para ativo */
+    background-color: var(--success-color);
+    /* Cor verde para ativo */
     color: var(--light-text-color);
 }
 
@@ -147,7 +150,8 @@
 }
 
 .initiate-button.inactive {
-    background-color: var(--secondary-bg-color); /* Cor mais neutra para inativo */
+    background-color: var(--secondary-bg-color);
+    /* Cor mais neutra para inativo */
     color: var(--secondary-text-color);
     cursor: not-allowed;
     opacity: 0.7;
@@ -155,15 +159,18 @@
 
 /* Estilos para o botão "Remover" na tabela de fila (remove-button) */
 .remove-button {
-    padding: 8px 15px; /* Mesmo padding do iniciar */
+    padding: 8px 15px;
+    /* Mesmo padding do iniciar */
     border: none;
     border-radius: 5px;
     font-size: 14px;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    background-color: var(--danger-color); /* Cor vermelha para remover */
+    background-color: var(--danger-color);
+    /* Cor vermelha para remover */
     color: var(--light-text-color);
-    margin-left: 5px; /* Espaço entre Iniciar e Remover */
+    margin-left: 5px;
+    /* Espaço entre Iniciar e Remover */
 }
 
 .remove-button:hover {
@@ -175,9 +182,11 @@
 
 /* Botão "Registrar Triagem" (submit-button) dentro do formulário de triagem */
 .triage-form .submit-button {
-    align-self: center; /* Alinha o botão no centro do flex container */
+    align-self: center;
+    /* Alinha o botão no centro do flex container */
     padding: 15px 40px;
-    margin-top: 0; /* Remove margem superior se houver alguma conflitando */
+    margin-top: 0;
+    /* Remove margem superior se houver alguma conflitando */
     font-size: 16px;
     font-weight: 600;
     background-color: var(--primary-color);
@@ -201,25 +210,32 @@
     margin-top: 20px;
     font-size: 16px;
     font-weight: 600;
-    background-color: var(--secondary-bg-color); /* Cor mais neutra para voltar */
+    background-color: var(--secondary-bg-color);
+    /* Cor mais neutra para voltar */
     color: var(--text-color);
-    border: 1px solid var(--border-color); /* Adiciona uma borda */
+    border: 1px solid var(--border-color);
+    /* Adiciona uma borda */
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease, border-color 0.3s ease;
-    display: flex; /* Para alinhar imagem e texto */
+    display: flex;
+    /* Para alinhar imagem e texto */
     align-items: center;
     justify-content: center;
-    gap: 8px; /* Espaço entre imagem e texto */
+    gap: 8px;
+    /* Espaço entre imagem e texto */
 }
 
 .triage-form .back-button:hover {
-    background-color: var(--input-bg-color); /* Uma cor mais clara no hover */
-    border-color: var(--primary-color); /* Mudar cor da borda no hover */
+    background-color: var(--input-bg-color);
+    /* Uma cor mais clara no hover */
+    border-color: var(--primary-color);
+    /* Mudar cor da borda no hover */
 }
 
 .triage-form .back-button img {
-    height: 20px; /* Ajusta o tamanho da imagem do ícone */
+    height: 20px;
+    /* Ajusta o tamanho da imagem do ícone */
     width: 20px;
 }
 

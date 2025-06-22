@@ -2,7 +2,7 @@
 
 import { Router } from 'express';
 import { PatientService } from '../services/patientService';
-import { Patient } from '../entities/patient'; // Certifique-se de que Patient está importado
+import { Patient } from '../entities/patient';
 
 const router = Router();
 

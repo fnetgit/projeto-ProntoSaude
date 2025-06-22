@@ -1,4 +1,4 @@
-// server.ts (MODIFICADO para usar doctorRoutes)
+// server.ts
 
 import express from 'express';
 import path from 'path';
@@ -9,7 +9,7 @@ import generalRoutes from './routes/generalRoutes';
 import patientRoutes from './routes/patientRoutes';
 import triageRoutes from './routes/triageRoutes';
 import queueRoutes from './routes/queueRoutes';
-import doctorRoutes from './routes/doctorRoutes'; // NOVA IMPORTAÇÃO, AGORA COM NOME DOCTOR
+import doctorRoutes from './routes/doctorRoutes';
 
 const app = express();
 const port = 3000;
@@ -24,7 +24,7 @@ app.use('/', generalRoutes);
 app.use('/', patientRoutes);
 app.use('/', triageRoutes);
 app.use('/', queueRoutes);
-app.use('/', doctorRoutes); // USANDO AS NOVAS ROTAS DO DOCTOR
+app.use('/', doctorRoutes);
 
 // Bloco listen
 app.listen(port, () => {

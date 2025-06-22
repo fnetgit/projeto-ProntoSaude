@@ -76,12 +76,12 @@
 }
 
 .action-buttons .edit-btn {
-    background-color: #f0f0f0;
+    background-color: var(--border-color);
     color: var(--text-color);
 }
 
 .action-buttons .edit-btn:hover {
-    background-color: #e0e0e0;
+    background-color: #d8dde4;
 }
 
 .action-buttons .consult-btn {

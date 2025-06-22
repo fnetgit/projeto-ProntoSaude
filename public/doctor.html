@@ -1,5 +1,3 @@
-<!-- doctor.html -->
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -8,17 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/_css/style.css">
     <link rel="stylesheet" href="/_css/doctor.css">
-    <title>Clinify - Área do Médico</title>
+    <title>Área do Médico</title>
 </head>
 
 <body>
     <div class="container">
         <aside class="sidebar">
-            <div class="logo">Clinify</div>
+            <div class="logo">
+                <img src="/img/logo-prontosaude.png" alt="Logo ProntoSaúde">
+            </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="doctor.html" class="sidebar-item active">
-                            <img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Homepage" />
+                    <li><a href="/medico" class="sidebar-item active">
+                            <img src="https://img.icons8.com/ios-filled/50/000000/home.png" alt="Homepage" />
                             <span>Principal</span>
                         </a></li>
                     <li><a href="#" class="sidebar-item">
@@ -33,7 +33,7 @@
             <header class="header">
                 <div class="user-info">
                     <div class="user-avatar"><img src="https://img.icons8.com/ios-filled/20/ffffff/user-male-circle.png"
-                                alt="User" /></div>
+                            alt="User" /></div>
                     <div>
                         <div class="user-name">Dr. Francisco Neto</div>
                         <div class="user-role">Médico</div>
@@ -50,14 +50,11 @@
                             <th>NOME</th>
                             <th>PRIORIDADE</th>
                             <th>DATA/HORA DA TRIAGEM</th>
-                            <!-- <th style="display: none;">DATA DE NASCIMENTO</th> -->
-                            <!-- <th style="display: none;">GÊNERO</th> -->
                             <th>STATUS</th>
                             <th>AÇÃO</th>
                         </tr>
                     </thead>
                     <tbody id="doctor-queue-body">
-                        <!-- Conteúdo da fila será inserido aqui pelo JavaScript -->
                     </tbody>
                 </table>
             </section>
@@ -72,18 +69,20 @@
                 </div>
 
                 <div class="data-display-box">
-    <h3>Dados da Triagem</h3>
-    <div class="triage-data-grid">
-        <div class="data-item"><strong>Peso:</strong> <span id="triage-weight"></span></div>
-        <div class="data-item"><strong>Temperatura:</strong> <span id="triage-temperature"></span></div>
-        <div class="data-item"><strong>Saturação O²:</strong> <span id="triage-oxygen-saturation"></span></div>
-        <div class="data-item"><strong>Pressão Arterial:</strong> <span id="triage-blood-pressure"></span></div>
-        <div class="data-item"><strong>Glicose:</strong> <span id="triage-glucose"></span></div>
-    </div>
-    <div class="data-item-full">
-        <strong>Sintomas Descritos:</strong> <span id="triage-symptoms"></span>
-    </div>
-</div>
+                    <h3>Dados da Triagem</h3>
+                    <div class="triage-data-grid">
+                        <div class="data-item"><strong>Peso:</strong> <span id="triage-weight"></span></div>
+                        <div class="data-item"><strong>Temperatura:</strong> <span id="triage-temperature"></span></div>
+                        <div class="data-item"><strong>Saturação O²:</strong> <span
+                                id="triage-oxygen-saturation"></span></div>
+                        <div class="data-item"><strong>Pressão Arterial:</strong> <span
+                                id="triage-blood-pressure"></span></div>
+                        <div class="data-item"><strong>Glicose:</strong> <span id="triage-glucose"></span></div>
+                    </div>
+                    <div class="data-item-full">
+                        <strong>Sintomas Descritos:</strong> <span id="triage-symptoms"></span>
+                    </div>
+                </div>
 
                 <form class="medical-report-form">
                     <div class="form-group">
@@ -94,9 +93,12 @@
 
                     <div class="action-buttons-group">
                         <button type="button" id="start-consultation-btn" class="btn-start">Iniciar Consulta</button>
-                        <button type="button" id="call-again-btn" class="btn-call-again" style="display: none;">Chamar Novamente</button>
-                        <button type="button" id="no-show-btn" class="btn-no-show" style="display: none;">Não Compareceu</button>
-                        <button type="submit" id="end-consultation-btn" class="btn-end" style="display: none;">Encerrar Consulta</button>
+                        <button type="button" id="call-again-btn" class="btn-call-again" style="display: none;">Chamar
+                            Novamente</button>
+                        <button type="button" id="no-show-btn" class="btn-no-show" style="display: none;">Não
+                            Compareceu</button>
+                        <button type="submit" id="end-consultation-btn" class="btn-end" style="display: none;">Encerrar
+                            Consulta</button>
                     </div>
                 </form>
             </section>

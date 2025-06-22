@@ -20,7 +20,7 @@ router.post('/api/triage', async (req, res) => {
     }
 });
 
-// NOVA ROTA: Obter detalhes completos da triagem e dados do paciente
+// ROTA: Obter detalhes completos da triagem e dados do paciente
 router.get('/api/triage-details/:patientId/:triageId', async (req, res) => {
     const { patientId, triageId } = req.params;
     try {
