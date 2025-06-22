@@ -2,9 +2,14 @@
 // RESPONSABILIDADE: Gestão completa da página do atendente, incluindo cadastro,
 // listagem, ações e filtragem de pacientes.
 
+const registrationForm = document.getElementById('register-patient-form');
+const searchForm = document.getElementById('search-patient-form');
+const editform = document.getElementById('edit-patient-form')
+
 document.addEventListener('DOMContentLoaded', () => {
     // --- SELETORES DE ELEMENTOS ---
     const patientRegistrationForm = document.querySelector('#register-patient-form form');
+    const paitientUpdateForm = document.querySelector('#edit-patient-form form')
     const patientTableTbody = document.getElementById('patient-list-body');
     const searchInput = document.querySelector('.search-bar input');
     const searchTabButton = document.querySelector('.tab-button[data-tab="search"]');
@@ -73,13 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função que desenha a tabela no HTML com base em uma lista de pacientes.
     function renderTable(patientsToRender) {
-        if (!patientTableTbody) return;
+        // Limpa a tabela antes de renderizar
         patientTableTbody.innerHTML = '';
-
-        if (patientsToRender.length === 0) {
-            patientTableTbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhum paciente encontrado.</td></tr>';
-            return;
-        }
 
         patientsToRender.forEach(patient => {
             const row = patientTableTbody.insertRow();
@@ -97,11 +97,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="edit-btn"><img src="https://cdn-icons-png.flaticon.com/512/1159/1159633.png" width="20px" height="20px" alt="Editar" /></button>
                 <button class="consult-btn">Consulta</button>
             `;
+            
+            //novo do zé
+            // Botão de consulta
             actionCell.querySelector('.consult-btn').addEventListener('click', () => handleConsultButtonClick(patient.patient_id));
+
+            // Botão de edição
+            actionCell.querySelector('.edit-btn').addEventListener('click', () => {
+                const form = document.querySelector('#register-patient-form form');
+                document.getElementById('register-patient-form').style.display = 'block';
+                document.getElementById('search-patient-form').style.display = 'none';  
+
+                // Preenche os campos do formulário
+                for (const [key, value] of Object.entries(patient)) {
+                    const input = form.querySelector(`#${key}`);
+                    if (input) input.value = value;
+                }
+
+                // Marca como modo de edição
+                form.dataset.editingId = patient.patient_id;
+
+                // Altera o texto do botão
+                const submitButton = form.querySelector('.submit-button');
+                if (submitButton) submitButton.textContent = 'ATUALIZAR PACIENTE';
+                
+            });
         });
     }
+    // fim do novo
 
-    // Busca a lista de pacientes da API, armazena e chama a função de renderização.
+// Busca a lista de pacientes da API, armazena e chama a função de renderização.
     async function fetchAndRenderPatients() {
         if (!patientTableTbody) return;
         if (allPatients.length === 0) {
@@ -148,6 +173,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (patientRegistrationForm) {
         patientRegistrationForm.addEventListener('submit', async (event) => {
             event.preventDefault();
+            // novo do zé
+            const editingId = patientRegistrationForm.dataset.editingId;
+            if (editingId) {
+             // Atualiza ao invés de cadastrar
+            atualizarPaciente(editingId);
+            return;
+            }
+            //fim do novo
+
             const formData = new FormData(patientRegistrationForm);
             const patientData = Object.fromEntries(formData.entries());
 
@@ -178,6 +212,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Erro de conexão ao tentar cadastrar paciente.');
             }
         });
+        // novo do zé
+        const cadastroTabButton = document.querySelector('.tab-button[data-tab="register"]');
+        const registerFormSection = document.getElementById('register-patient-form');
+        const submitButton = document.getElementById('submit-button');
+
+        if (cadastroTabButton) {
+        cadastroTabButton.addEventListener('click', () => {
+            // Mostra o formulário de cadastro
+            registerFormSection.style.display = 'block';
+
+            // Limpa o formulário
+            patientRegistrationForm.reset();
+
+            // Altera o texto do botão
+            submitButton.textContent = 'CADASTRAR PACIENTE';
+
+            // Remove o atributo que identifica o modo edição
+            patientRegistrationForm.removeAttribute('data-editing-id');
+        });
+    }
+    // fim do novo
     }
 
     // 3. Listener da aba de busca (para recarregar a lista).
@@ -188,6 +243,46 @@ document.addEventListener('DOMContentLoaded', () => {
             fetchAndRenderPatients();
         });
     }
+
+    // novo do zé
+    // Função para atualizar paciente
+    async function atualizarPaciente(patientId) {
+        const form = document.querySelector('#register-patient-form form');
+        const formData = new FormData(form);
+        const patientData = Object.fromEntries(formData.entries());
+
+        // Limpa os dados
+        if (patientData.cpf) patientData.cpf = String(patientData.cpf).replace(/\D/g, '');
+        if (patientData.sus_card) patientData.sus_card = String(patientData.sus_card).replace(/\D/g, '');
+        if (patientData.phone) patientData.phone = String(patientData.phone).replace(/\D/g, '');
+        patientData.gender = parseInt(String(patientData.gender), 10);
+
+        try {
+            const response = await fetch(`/api/pacientes/${patientId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(patientData)
+            });
+
+            if (response.ok) {
+                alert('Paciente atualizado com sucesso!');
+                form.reset();
+                form.removeAttribute('data-editing-id');
+                const submitButton = form.querySelector('.submit-button');
+                if (submitButton) submitButton.textContent = 'CADASTRAR PACIENTE';
+    
+                //fim do novo
+                if (searchTabButton) searchTabButton.click();
+            } else {
+                const errorData = await response.json();
+                alert(`Erro ao atualizar paciente: ${errorData.message || response.statusText}`);
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar paciente:', error);
+            alert('Erro de conexão com o servidor.');
+        }
+    }
+    // fim do novo
 
     // --- INICIALIZAÇÃO ---
     // Carrega a lista de pacientes assim que a página é aberta.

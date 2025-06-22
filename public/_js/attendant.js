@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabButtons = document.querySelectorAll('.tab-button');
     const registrationForm = document.getElementById('register-patient-form');
     const searchForm = document.getElementById('search-patient-form');
+    const editform = document.getElementById('edit-patient-form');
 
     // Oculta/mostra os formulários ao clicar nas abas
     if (registrationForm && searchForm) {
@@ -17,9 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (tab === 'register') {
                     registrationForm.style.display = 'block';
                     searchForm.style.display = 'none';
+                    editform.style.display = 'none'
                 } else {
                     registrationForm.style.display = 'none';
                     searchForm.style.display = 'block';
+                    editform.style.display = 'none';
                 }
             });
         });

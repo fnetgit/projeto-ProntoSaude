@@ -404,3 +404,68 @@ app.listen(port, () => {
     console.log(`Página do Triador: http://localhost:${port}/triador`);
     console.log(`Página do Médico: http://localhost:${port}/medico`);
 });
+
+//novo do zé
+// Exemplo básico para atualizar um paciente
+app.put('/api/pacientes/:id', async (req, res) => {
+    const { id } = req.params;
+    const updatedData = req.body;
+
+    try {
+        // Aqui você atualiza o paciente no banco de dados (ex: usando SQL, Sequelize, Prisma etc.)
+        const resultado = await atualizarPacienteNoBanco(id, updatedData); // função fictícia
+        res.status(200).json({ message: 'Paciente atualizado com sucesso' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erro ao atualizar paciente' });
+    }
+});
+function atualizarPacienteNoBanco(id: string, updatedData: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+        const fields = [
+            'patient_name',
+            'birth_date',
+            'cpf',
+            'birthplace',
+            'sus_card',
+            'address',
+            'mother_name',
+            'gender',
+            'phone'
+        ];
+
+        // Monta os campos a serem atualizados dinamicamente
+        const setClauses: string[] = [];
+        const params: any[] = [];
+
+        fields.forEach(field => {
+            if (updatedData[field] !== undefined) {
+                setClauses.push(`${field} = ?`);
+                // Se for birth_date e for Date, converte para string YYYY-MM-DD
+                if (field === 'birth_date' && updatedData[field] instanceof Date) {
+                    params.push(updatedData[field].toISOString().split('T')[0]);
+                } else {
+                    params.push(updatedData[field]);
+                }
+            }
+        });
+
+        if (setClauses.length === 0) {
+            return reject(new Error('Nenhum campo válido para atualizar.'));
+        }
+
+        const sql = `UPDATE Patient SET ${setClauses.join(', ')} WHERE patient_id = ?`;
+        params.push(id);
+
+        db.run(sql, params, function (err) {
+            if (err) {
+                return reject(err);
+            }
+            if (this.changes === 0) {
+                return reject(new Error('Paciente não encontrado ou dados idênticos.'));
+            }
+            resolve();
+        });
+    });
+}
+// fim do novo
