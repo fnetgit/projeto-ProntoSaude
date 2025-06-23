@@ -1,4 +1,4 @@
-// src/routes/userRoutes.ts
+// src/routes/userRoutes.ts (MODIFICADO)
 
 import { Router } from 'express';
 import { UserService } from '../services/userService';
@@ -13,28 +13,39 @@ router.post('/api/login', async (req, res) => {
     }
 
     try {
+        // user aqui terá user_id e role (do UserService.validateUser)
+        // Precisamos também do username aqui. Para isso, vamos ajustar o UserService.
         const user = await UserService.validateUser(username, password);
 
         if (user) {
-            // AQUI está o código que constrói a URL de redirecionamento
             let redirectPath: string;
+            let userRoleDisplay: string; // Para o texto a ser exibido na página (ex: "Atendente", "Médico")
+
             switch (user.role) {
                 case 'attendant':
-                    redirectPath = '/atendente'; // Retorna '/atendente'
+                    redirectPath = '/atendente';
+                    userRoleDisplay = 'Atendente';
                     break;
                 case 'triager':
-                    redirectPath = '/triador';   // Retorna '/triador'
+                    redirectPath = '/triador';
+                    userRoleDisplay = 'Triador';
                     break;
                 case 'doctor':
-                    redirectPath = '/medico';    // Retorna '/medico'
+                    redirectPath = '/medico';
+                    userRoleDisplay = 'Médico';
                     break;
                 default:
-                    redirectPath = '/'; // Redirecionamento padrão caso a role seja desconhecida
+                    redirectPath = '/';
+                    userRoleDisplay = 'Usuário'; // Fallback
             }
 
             res.status(200).json({
                 message: 'Login bem-sucedido!',
-                redirectUrl: redirectPath // Esta é a URL que será enviada ao navegador
+                redirectUrl: redirectPath,
+                // --- NOVOS CAMPOS ENVIADOS ---
+                username: username, // O nome de usuário que foi logado
+                role: userRoleDisplay // O texto da função para exibição
+                // -----------------------------
             });
         } else {
             res.status(401).json({ message: 'Usuário ou senha incorretos.' });

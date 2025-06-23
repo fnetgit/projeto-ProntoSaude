@@ -20,7 +20,7 @@
 
         </div>
 
-    <script>
+<script>
     document.addEventListener('DOMContentLoaded', () => {
         const loginForm = document.getElementById('loginForm');
         const usernameInput = document.getElementById('username');
@@ -28,7 +28,7 @@
         const errorMessageDiv = document.getElementById('errorMessage');
 
         loginForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Impede o envio padrão do formulário
+            event.preventDefault();
 
             const username = usernameInput.value;
             const password = passwordInput.value;
@@ -46,9 +46,15 @@
 
                 const data = await response.json();
 
-                if (response.ok) { // Login bem-sucedido (status 2xx)
-                    // AQUI está o código que faz o navegador ir para a URL recebida
-                    window.location.href = data.redirectUrl; // data.redirectUrl será '/medico', '/atendente', etc.
+                if (response.ok) {
+                    // --- NOVAS LINHAS PARA ARMAZENAR NO sessionStorage ---
+                    sessionStorage.setItem('loggedInUser', JSON.stringify({
+                        username: data.username,
+                        role: data.role // 'Atendente', 'Triador', 'Médico'
+                    }));
+                    // ----------------------------------------------------
+
+                    window.location.href = data.redirectUrl;
                 } else {
                     errorMessageDiv.textContent = data.message || 'Erro ao fazer login.';
                 }
@@ -59,6 +65,8 @@
         });
     });
 </script>
+</body>
+</html>
 </body>
 
 </html>

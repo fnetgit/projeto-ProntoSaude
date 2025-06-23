@@ -1,17 +1,62 @@
 // public/_js/queue.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Início do código para alterar o link do atendente ---
-    const principalLink = document.querySelector('.sidebar-nav a[href*="/atendente"]');
 
-    if (principalLink && document.referrer) {
-        // Verifica se a página anterior (referrer) termina com '/triador'
-        if (document.referrer.endsWith('/triador')) {
-            // Se sim, muda o link "Principal" para voltar para o triador
-            principalLink.href = '/triador';
+    // --- LÓGICA PARA EXIBIR NOME E FUNÇÃO DO USUÁRIO LOGADO E AJUSTAR LINK PRINCIPAL ---
+    const userNameElement = document.getElementById('loggedInUserName');
+    const userRoleElement = document.getElementById('loggedInUserRole');
+    // Adicione um ID ao link "Principal" na sua queue.html, por exemplo: <a id="homeLink" href="#" ...>
+    const homeLink = document.getElementById('homeLink'); 
+
+    const userDataString = sessionStorage.getItem('loggedInUser');
+
+    if (userDataString) {
+        try {
+            const userData = JSON.parse(userDataString);
+            if (userNameElement) {
+                userNameElement.textContent = userData.username;
+            }
+            if (userRoleElement) {
+                userRoleElement.textContent = userData.role;
+            }
+
+            // --- Lógica para ajustar o link "Principal" usando userData do sessionStorage ---
+            if (homeLink) {
+                let homePath;
+                // Use userData.role (que vem do backend como 'Atendente', 'Triador', 'Médico')
+                switch(userData.role) {
+                    case 'Atendente':
+                        homePath = '/atendente';
+                        break;
+                    case 'Triador':
+                        homePath = '/triador';
+                        break;
+                    case 'Médico':
+                        homePath = '/medico';
+                        break;
+                    default:
+                        homePath = '/'; // Fallback para a página de login ou uma página padrão
+                }
+                homeLink.href = homePath;
+                // Remover a classe 'active' do link atual e adicionar ao 'Fila' se for o caso
+                // Isso já está no seu HTML, mas é bom ter em mente para futuras navegações dinâmicas
+                // Por exemplo: homeLink.classList.remove('active');
+                // document.querySelector('.sidebar-nav a[href="/fila"]').classList.add('active');
+            }
+
+        } catch (e) {
+            console.error('Erro ao fazer parse dos dados do usuário do sessionStorage na fila:', e);
+            sessionStorage.removeItem('loggedInUser'); // Limpa dados inválidos
+            // Opcional: Redirecionar para o login se os dados estiverem corrompidos
+            // window.location.href = '/'; 
         }
+    } else {
+        console.warn('Nenhum dado de usuário encontrado no sessionStorage na fila. Redirecionando para o login.');
+        // Se não houver dados no sessionStorage, assume que o usuário não está logado
+        // E direciona para a página de login
+        window.location.href = '/'; 
     }
-    // --- Fim do código para alterar o link do atendente ---
+    // --- FIM DA LÓGICA DE USUÁRIO LOGADO E LINK PRINCIPAL ---
 
 
     // --- Início do código da fila de atendimento (queue.js) ---
@@ -44,12 +89,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // NOVO: Mapeamento de status para texto (COPIADO DO DOCTOR.JS)
+        // Mapeamento de status para texto (mantido do seu código)
         function getStatusText(statusCode) {
             switch (statusCode) {
                 case 0: return 'Aguardando Atendimento';
                 case 1: return 'Em Atendimento';
-                case 3: return 'Atendido';
+                case 3: return 'Atendido'; // Verifique se este status 3 é o correto para "Atendido"
                 case 4: return 'Não Compareceu';
                 default: return 'Desconhecido';
             }
@@ -57,13 +102,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         async function fetchPriorityQueue() {
             try {
-                // AQUI VOCÊ ESTÁ CHAMANDO '/api/priority-queue', QUE É A ROTA DO MÉDICO.
-                // Se a fila do atendente deve ver *exatamente* o que o médico vê (incluindo "Em Atendimento"),
-                // então esta rota está correta.
-                // Se o atendente só deve ver quem "Aguardando Triagem", deveria ser '/api/queue-patients'.
-                // Pelo seu problema, você quer que o status mude, então manter '/api/priority-queue' ou
-                // a nova '/api/general-queue' que sugeri antes é o correto.
-                // Vou assumir que você quer que ela veja a mesma fila que o médico.
                 const response = await fetch('/api/priority-queue');
                 if (!response.ok) {
                     throw new Error(`Erro HTTP! Status: ${response.status}`);
@@ -98,7 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${getPriorityText(patient.color_name)}
                         </span>
                     </td>
-                    <td>${getStatusText(patient.queue_status)}</td> <td>${formattedDate} ${formattedTime}</td>
+                    <td>${getStatusText(patient.queue_status)}</td>
+                    <td>${formattedDate} ${formattedTime}</td>
                 `;
                 queueBody.appendChild(row);
             });

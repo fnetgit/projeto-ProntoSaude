@@ -87,3 +87,39 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
+
+
+//aparecer o usuario logado
+
+document.addEventListener('DOMContentLoaded', () => {
+                    const userNameElement = document.getElementById('loggedInUserName');
+                    const userRoleElement = document.getElementById('loggedInUserRole');
+
+                    // Tenta obter os dados do sessionStorage
+                    const userDataString = sessionStorage.getItem('loggedInUser');
+
+                    if (userDataString) {
+                        try {
+                            const userData = JSON.parse(userDataString);
+                            if (userNameElement) {
+                                userNameElement.textContent = userData.username;
+                            }
+                            if (userRoleElement) {
+                                userRoleElement.textContent = userData.role;
+                            }
+                        } catch (e) {
+                            console.error('Erro ao fazer parse dos dados do usuário do sessionStorage:', e);
+                            // Limpa dados inválidos
+                            sessionStorage.removeItem('loggedInUser');
+                        }
+                    } else {
+                        // Opcional: Se não houver dados, talvez redirecionar para o login
+                        // ou mostrar um nome de usuário padrão como "Visitante".
+                        console.warn('Nenhum dado de usuário encontrado no sessionStorage.');
+                        if (userNameElement) userNameElement.textContent = 'Visitante';
+                        if (userRoleElement) userRoleElement.textContent = 'Desconhecido';
+                        // if (!window.location.pathname.includes('/login')) {
+                        //     window.location.href = '/'; // Redireciona para o login se não estiver logado
+                        // }
+                    }
+                });

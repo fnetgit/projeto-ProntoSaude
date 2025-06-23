@@ -37,8 +37,8 @@
                         <img src="https://img.icons8.com/ios-filled/20/ffffff/user-male-circle.png" alt="User" />
                     </div>
                     <div>
-                        <div class="user-name">João Triador</div>
-                        <div class="user-role">Triador</div>
+                        <div class="user-name" id="loggedInUserName"></div>
+                        <div class="user-role" id="loggedInUserRole"></div>
                     </div>
                 </div>
             </header>
@@ -129,6 +129,38 @@
     </div>
 
     <script src="/_js/triager.js"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const userNameElement = document.getElementById('loggedInUserName');
+            const userRoleElement = document.getElementById('loggedInUserRole');
+
+            const userDataString = sessionStorage.getItem('loggedInUser');
+
+            if (userDataString) {
+                try {
+                    const userData = JSON.parse(userDataString);
+                    if (userNameElement) {
+                        userNameElement.textContent = userData.username;
+                    }
+                    if (userRoleElement) {
+                        userRoleElement.textContent = userData.role;
+                    }
+                } catch (e) {
+                    console.error('Erro ao fazer parse dos dados do usuário do sessionStorage:', e);
+                    sessionStorage.removeItem('loggedInUser');
+                }
+            } else {
+                console.warn('Nenhum dado de usuário encontrado no sessionStorage para o triador.');
+                if (userNameElement) userNameElement.textContent = 'Visitante';
+                if (userRoleElement) userRoleElement.textContent = 'Desconhecido';
+                // Opcional: Redirecionar para o login se o usuário não estiver logado
+                // if (!window.location.pathname.includes('/login')) {
+                //     window.location.href = '/';
+                // }
+            }
+        });
+    </script>
+
 </body>
 
 </html>

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/_css/style.css">
-    <link rel="stylesheet" href="/_css/attendant.css">
+    <link rel="stylesheet" href="/_css/attendant.css"> 
     <title>Fila de Atendimento</title>
 </head>
 
@@ -17,7 +17,7 @@
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="/atendente" class="sidebar-item">
+                    <li><a href="#" id="homeLink" class="sidebar-item">
                             <img src="https://img.icons8.com/ios-filled/50/ffffff/home.png" alt="Homepage" />
                             <span>Principal</span>
                         </a></li>
@@ -41,14 +41,19 @@
                         <img src="https://img.icons8.com/ios-filled/20/ffffff/user-male-circle.png" alt="User" />
                     </div>
                     <div>
-                        <div class="user-name">Francisco Neto</div>
-                        <div class="user-role">Atendente</div>
+                        <div class="user-name" id="loggedInUserName"></div>
+                        <div class="user-role" id="loggedInUserRole"></div>
                     </div>
                 </div>
             </header>
 
             <section id="service-queue">
                 <h1 class="page-title">Fila de Atendimento</h1>
+
+                <div class="search-bar">
+                    <img src="https://img.icons8.com/ios-filled/24/777777/search--v1.png" alt="Search Icon" class="icon" />
+                    <input type="text" placeholder="Pesquisar Paciente..." id="search-queue-patient">
+                </div>
 
                 <table class="data-table">
                     <thead>
@@ -61,7 +66,7 @@
                         </tr>
                     </thead>
                     <tbody id="queue-body">
-                    </tbody>
+                        </tbody>
                 </table>
             </section>
         </main>
