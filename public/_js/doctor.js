@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const noShowBtn = document.getElementById('no-show-btn');
     const endConsultationBtn = document.getElementById('end-consultation-btn');
     const medicalReportForm = document.querySelector('.medical-report-form');
+    const formMedicalOpinion = document.getElementById('medical-opinion')
 
     let currentPatientData = null;
     let isConsultationActive = false;
@@ -333,6 +334,7 @@ document.addEventListener('DOMContentLoaded', () => {
         endConsultationBtn.style.display = 'block';
         callAgainBtn.style.display = 'block';
         noShowBtn.style.display = 'block';
+        formMedicalOpinion.placeholder = 'Escreva aqui sua avaliação médica e recomendações.';
     });
 
     endConsultationBtn.addEventListener('click', async (event) => {
