@@ -1,3 +1,5 @@
+<!-- doctor.html -->
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 
@@ -107,37 +109,6 @@
 
     <script src="/_js/doctor.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const userNameElement = document.getElementById('loggedInUserName');
-            const userRoleElement = document.getElementById('loggedInUserRole');
-
-            const userDataString = sessionStorage.getItem('loggedInUser');
-
-            if (userDataString) {
-                try {
-                    const userData = JSON.parse(userDataString);
-                    if (userNameElement) {
-                        userNameElement.textContent = userData.username;
-                    }
-                    if (userRoleElement) {
-                        userRoleElement.textContent = userData.role;
-                    }
-                } catch (e) {
-                    console.error('Erro ao fazer parse dos dados do usuário do sessionStorage:', e);
-                    sessionStorage.removeItem('loggedInUser');
-                }
-            } else {
-                console.warn('Nenhum dado de usuário encontrado no sessionStorage para o médico.');
-                if (userNameElement) userNameElement.textContent = 'Visitante';
-                if (userRoleElement) userRoleElement.textContent = 'Desconhecido';
-                // Opcional: Redirecionar para o login se o usuário não estiver logado
-                // if (!window.location.pathname.includes('/login')) {
-                //     window.location.href = '/';
-                // }
-            }
-        });
-    </script>
 </body>
 
 </html>

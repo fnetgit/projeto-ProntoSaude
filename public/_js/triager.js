@@ -1,9 +1,42 @@
+// triager.js
+
 document.addEventListener('DOMContentLoaded', () => {
+    // Função para exibir os dados do usuário logado no cabeçalho
+    function displayUserData() {
+        const userNameElement = document.getElementById('loggedInUserName');
+        const userRoleElement = document.getElementById('loggedInUserRole');
+        const userDataString = sessionStorage.getItem('loggedInUser');
+
+        if (userDataString) {
+            try {
+                const userData = JSON.parse(userDataString);
+                if (userNameElement) {
+                    userNameElement.textContent = userData.username;
+                }
+                if (userRoleElement) {
+                    userRoleElement.textContent = userData.role;
+                }
+            } catch (e) {
+                console.error('Erro ao fazer parse dos dados do usuário do sessionStorage:', e);
+                sessionStorage.removeItem('loggedInUser');
+                if (userNameElement) userNameElement.textContent = 'Visitante';
+                if (userRoleElement) userRoleElement.textContent = 'Desconhecido';
+            }
+        } else {
+            console.warn('Nenhum dado de usuário encontrado no sessionStorage para o triador.');
+            if (userNameElement) userNameElement.textContent = 'Visitante';
+            if (userRoleElement) userRoleElement.textContent = 'Desconhecido';
+            // Opcional: Redirecionar para o login se o usuário não estiver logado
+            // if (!window.location.pathname.includes('/login')) {
+            //     window.location.href = '/';
+            // }
+        }
+    }
+
     // Elementos da UI
     const triageQueueList = document.getElementById('triage-queue-list');
     const triageDataFormSection = document.getElementById('triage-data-form');
     const triageQueueBody = document.getElementById('triage-queue-body');
-    // Busca o elemento pelo ID CORRETO que está no HTML
     const prioritySelect = document.getElementById('priority_classification');
     const triageForm = document.getElementById('triage-form-element');
     const displayPatientName = document.getElementById('display-patient-name');
@@ -113,7 +146,6 @@ document.addEventListener('DOMContentLoaded', () => {
         triageDataFormSection.style.display = show ? 'block' : 'none';
         if (!show) {
             triageForm.reset();
-            // Reseta a cor do select ao voltar
             if (prioritySelect) {
                 prioritySelect.classList.remove('priority-red', 'priority-orange', 'priority-yellow', 'priority-green', 'priority-blue');
             }
@@ -170,7 +202,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Botão de voltar
     backButton.addEventListener('click', () => showTriageForm(false));
 
-    // Inicialização da página
-    loadClassifications();
-    loadTriageQueue();
+    // --- INICIALIZAÇÃO DA PÁGINA ---
+    // Chama todas as funções que precisam ser executadas quando a página carrega
+    function initializePage() {
+        displayUserData(); // <-- Chamada da nova função
+        loadClassifications();
+        loadTriageQueue();
+    }
+
+    initializePage();
 });

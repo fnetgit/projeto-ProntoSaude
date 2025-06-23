@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const userNameElement = document.getElementById('loggedInUserName');
     const userRoleElement = document.getElementById('loggedInUserRole');
     // Adicione um ID ao link "Principal" na sua queue.html, por exemplo: <a id="homeLink" href="#" ...>
-    const homeLink = document.getElementById('homeLink'); 
+    const homeLink = document.getElementById('homeLink');
 
     const userDataString = sessionStorage.getItem('loggedInUser');
 
@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (homeLink) {
                 let homePath;
                 // Use userData.role (que vem do backend como 'Atendente', 'Triador', 'Médico')
-                switch(userData.role) {
+                switch (userData.role) {
                     case 'Atendente':
                         homePath = '/atendente';
                         break;
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.warn('Nenhum dado de usuário encontrado no sessionStorage na fila. Redirecionando para o login.');
         // Se não houver dados no sessionStorage, assume que o usuário não está logado
         // E direciona para a página de login
-        window.location.href = '/'; 
+        window.location.href = '/';
     }
     // --- FIM DA LÓGICA DE USUÁRIO LOGADO E LINK PRINCIPAL ---
 

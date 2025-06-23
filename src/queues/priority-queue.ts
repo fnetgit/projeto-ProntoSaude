@@ -2,10 +2,10 @@
 
 export interface PatientInQueue {
   patientName: string;
-  priority: number; // Corresponde ao level_order da classificação
-  queue_id?: number; // Opcional, para identificar a entrada na PriorityQueue
-  patient_id?: number; // Opcional, para identificar o paciente
-  color_name?: string; // Opcional, para exibir a cor da classificação
+  priority: number;        // Corresponde ao level_order da classificação
+  queue_id?: number;       // Opcional, para identificar a entrada na PriorityQueue
+  patient_id?: number;     // Opcional, para identificar o paciente
+  color_name?: string;     // Opcional, para exibir a cor da classificação
   queue_datetime?: string; // Opcional, para a data/hora que entrou na fila de prioridade
 }
 

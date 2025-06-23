@@ -1,3 +1,4 @@
+// src/entities/triage.ts
 export class Triage {
   constructor(
     public idPatient: number,

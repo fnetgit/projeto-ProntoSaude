@@ -1,3 +1,5 @@
+// src/entities/patient.ts
+
 import { Triage } from "./triage";
 
 export class Patient {

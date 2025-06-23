@@ -1,3 +1,5 @@
+// src/users/attendant.ts
+
 import { Patient } from "../entities/patient";
 
 const attendants: { attendantId: number; attendantName: string }[] = [];

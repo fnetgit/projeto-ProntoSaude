@@ -1,4 +1,4 @@
-// src/routes/userRoutes.ts (MODIFICADO)
+// src/routes/userRoutes.ts
 
 import { Router } from 'express';
 import { UserService } from '../services/userService';

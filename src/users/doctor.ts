@@ -1,3 +1,5 @@
+// src/users/doctor.ts
+
 import { PatientInQueue } from "../queues/priority-queue";
 
 export class Doctor {
