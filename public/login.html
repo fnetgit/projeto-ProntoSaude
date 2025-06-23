@@ -11,19 +11,54 @@
 <body>
     <div class="login-container">
         <div class="logo">ProntoSaúde</div>
-        <form class="login-form">
-            <input type="text" placeholder="Usuário" title="" required>
-            <input type="password" placeholder="Senha" title="" required>
+        <form class="login-form" id="loginForm">
+            <input type="text" id="username" placeholder="Usuário" required>
+            <input type="password" id="password" placeholder="Senha" required>
             <button type="submit">Entrar</button>
+            <div id="errorMessage" style="color: red; margin-top: 10px;"></div>
         </form>
 
-        <div class="dev-links">
-            <h4>Acesso Rápido (Desenvolvimento)</h4>
-            <a href="/atendente">Entrar como Atendente</a>
-            <a href="/triador">Entrar como Triador</a>
-            <a href="/medico">Entrar como Médico</a>
         </div>
-    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const errorMessageDiv = document.getElementById('errorMessage');
+
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Impede o envio padrão do formulário
+
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+
+            errorMessageDiv.textContent = '';
+
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) { // Login bem-sucedido (status 2xx)
+                    // AQUI está o código que faz o navegador ir para a URL recebida
+                    window.location.href = data.redirectUrl; // data.redirectUrl será '/medico', '/atendente', etc.
+                } else {
+                    errorMessageDiv.textContent = data.message || 'Erro ao fazer login.';
+                }
+            } catch (error) {
+                console.error('Erro de rede ou servidor:', error);
+                errorMessageDiv.textContent = 'Não foi possível conectar ao servidor. Tente novamente.';
+            }
+        });
+    });
+</script>
 </body>
 
 </html>
