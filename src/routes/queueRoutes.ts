@@ -8,15 +8,19 @@ const router = Router();
 // ROTA PARA A FILA DE ATENDIMENTO GERAL
 router.get('/api/priority-queue', async (req, res) => {
     try {
-        const rows = await QueueService.getPriorityQueue();
-        console.log('Dados brutos da API /api/priority-queue:', rows);
-        res.status(200).json(rows);
+        // CORREÇÃO CRUCIAL: Chame a função que usa a classe PriorityQueue.
+        // Se você remover o arquivo priority-queue.ts, esta linha causará um erro.
+        const patientsInOrder = await QueueService.getPriorityQueueInOrder();
+        
+        console.log('Dados da API /api/priority-queue (ordenados por lógica da fila):', patientsInOrder);
+        res.status(200).json(patientsInOrder);
     } catch (error: any) {
         console.error('Erro ao buscar pacientes na fila de prioridade:', error.message);
         res.status(500).json({ message: error.message });
     }
 });
 
+// A rota POST não precisa de alteração.
 router.post('/api/service', async (req, res) => {
     const { patient_id, attendant_id, datetime } = req.body;
     if (!patient_id || !attendant_id || !datetime) {

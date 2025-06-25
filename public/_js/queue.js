@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- LÓGICA PARA EXIBIR NOME E FUNÇÃO DO USUÁRIO LOGADO E AJUSTAR LINK PRINCIPAL --- Verificar isso !!!!!!!!!
+    // --- LÓGICA PARA EXIBIR NOME E FUNÇÃO DO USUÁRIO LOGADO E AJUSTAR LINK PRINCIPAL
     const userNameElement = document.getElementById('loggedInUserName');
     const userRoleElement = document.getElementById('loggedInUserRole');
     const homeLink = document.getElementById('homeLink');
@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/';
     }
 
-
     const queueBody = document.getElementById('queue-body');
 
     if (queueBody) {
@@ -76,16 +75,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Mapeamento de status para texto
-        function getStatusText(statusCode) {
-            switch (statusCode) {
-                case 0: return 'Aguardando Atendimento';
-                case 1: return 'Em Atendimento';
-                case 3: return 'Atendido';
-                case 4: return 'Não Compareceu';
-                default: return 'Desconhecido';
-            }
-        }
+        // Mapeamento de status para texto - CORRIGIDO
+function getStatusText(statusCode) {
+    // Converte o valor para um número para garantir a comparação estrita
+    const statusNum = Number(statusCode); 
+
+    switch (statusNum) {
+        case 0: return 'Aguardando Atendimento';
+        case 1: return 'Em Atendimento';
+        case 2: return 'Consultado';
+        case 3: return 'Não Compareceu';
+        default: return 'Desconhecido';
+    }
+}
 
         async function fetchPriorityQueue() {
             try {
@@ -110,6 +112,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             patients.forEach((patient, index) => {
+                // ADICIONE ESTA LINHA PARA DIAGNÓSTICO
+                console.log('Paciente na fila:', patient.patientName, ' | Status recebido:', patient.queue_status, ' | Tipo:', typeof patient.queue_status);
+
                 const row = document.createElement('tr');
                 const date = new Date(patient.queue_datetime);
                 const formattedDate = date.toLocaleDateString('pt-BR');
@@ -117,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 row.innerHTML = `
                     <td>${(index + 1).toString().padStart(3, '0')}</td>
-                    <td>${patient.patient_name}</td>
+                    <td>${patient.patientName}</td>
                     <td>
                         <span class="priority-badge ${getPriorityBadgeClass(patient.color_name)}">
                             ${getPriorityText(patient.color_name)}
