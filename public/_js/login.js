@@ -26,12 +26,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (response.ok) {
-                // --- NOVAS LINHAS PARA ARMAZENAR NO sessionStorage ---
                 sessionStorage.setItem('loggedInUser', JSON.stringify({
                     username: data.username,
-                    role: data.role // 'Atendente', 'Triador', 'Médico'
+                    role: data.role
                 }));
-                // ----------------------------------------------------
+
 
                 window.location.href = data.redirectUrl;
             } else {

@@ -1,25 +1,19 @@
 // _js/patient-registration.js
-// RESPONSABILIDADE: Gestão completa da página do atendente, incluindo cadastro,
-// listagem, ações e filtragem de pacientes.
 
 const registrationForm = document.getElementById('register-patient-form');
 const searchForm = document.getElementById('search-patient-form');
 const editform = document.getElementById('edit-patient-form')
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- SELETORES DE ELEMENTOS ---
+
     const patientRegistrationForm = document.querySelector('#register-patient-form form');
     const paitientUpdateForm = document.querySelector('#edit-patient-form form')
     const patientTableTbody = document.getElementById('patient-list-body');
     const searchInput = document.querySelector('.search-bar input');
     const searchTabButton = document.querySelector('.tab-button[data-tab="search"]');
 
-    // --- VARIÁVEL PARA ARMAZENAR OS DADOS ---
-    // Guarda a lista completa de pacientes para permitir a filtragem rápida no frontend.
     let allPatients = [];
 
-    // --- FUNÇÕES AUXILIARES DE FORMATAÇÃO ---
-    // Responsáveis por formatar os dados para exibição na tabela.
     function formatCpf(cpf) {
         if (!cpf) return '';
         const cleaned = String(cpf).replace(/\D/g, '');
@@ -47,11 +41,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- LÓGICA DE AÇÕES E COMUNICAÇÃO COM API ---
 
-    // Função executada ao clicar no botão "Consulta".
     // Envia o paciente para a fila de triagem.
     async function handleConsultButtonClick(patientId) {
         console.log('Botão "Consulta" clicado para o paciente ID:', patientId);
-        const attendantId = 1; // Simula o ID do atendente logado
+        const attendantId = 1;
 
         try {
             const response = await fetch('/api/service', {
@@ -76,9 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Função que desenha a tabela no HTML com base em uma lista de pacientes.
     function renderTable(patientsToRender) {
-        // Limpa a tabela antes de renderizar
         patientTableTbody.innerHTML = '';
 
         patientsToRender.forEach(patient => {
@@ -98,10 +89,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="consult-btn">Consulta</button>
             `;
 
-            // Botão de consulta
             actionCell.querySelector('.consult-btn').addEventListener('click', () => handleConsultButtonClick(patient.patient_id));
 
-            // Botão de edição
             actionCell.querySelector('.edit-btn').addEventListener('click', () => {
                 const form = document.querySelector('#register-patient-form form');
                 document.getElementById('register-patient-form').style.display = 'block';
@@ -124,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Busca a lista de pacientes da API, armazena e chama a função de renderização.
     async function fetchAndRenderPatients() {
         if (!patientTableTbody) return;
         if (allPatients.length === 0) {
@@ -144,7 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- EVENT LISTENERS (OUVINTES DE EVENTOS) ---
 
     // 1. Listener do campo de busca (pesquisa por Nome ou CPF).
     if (searchInput) {
@@ -173,8 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             const editingId = patientRegistrationForm.dataset.editingId;
             if (editingId) {
-                // Atualiza em vez de cadastrar
-                atualizarPaciente(editingId);
+                updatePatient(editingId);
                 return;
             }
 
@@ -197,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     alert('Paciente cadastrado com sucesso!');
                     patientRegistrationForm.reset();
-                    // Simula um clique na aba de busca para mostrar a lista atualizada
+
                     if (searchTabButton) searchTabButton.click();
                 } else {
                     const errorData = await response.json();
@@ -214,16 +200,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (cadastroTabButton) {
             cadastroTabButton.addEventListener('click', () => {
-                // Mostra o formulário de cadastro
                 registerFormSection.style.display = 'block';
 
-                // Limpa o formulário
                 patientRegistrationForm.reset();
 
-                // Altera o texto do botão
                 submitButton.textContent = 'CADASTRAR PACIENTE';
 
-                // Remove o atributo que identifica o modo edição
                 patientRegistrationForm.removeAttribute('data-editing-id');
             });
         }
@@ -233,18 +215,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchTabButton) {
         // Carrega a lista quando a aba é clicada.
         searchTabButton.addEventListener('click', () => {
-            if (searchInput) searchInput.value = ''; // Limpa a busca anterior
+            if (searchInput) searchInput.value = '';
             fetchAndRenderPatients();
         });
     }
 
-    // Função para atualizar paciente
-    async function atualizarPaciente(patientId) {
+    async function updatePatient(patientId) {
         const form = document.querySelector('#register-patient-form form');
         const formData = new FormData(form);
         const patientData = Object.fromEntries(formData.entries());
 
-        // Limpa os dados
         if (patientData.cpf) patientData.cpf = String(patientData.cpf).replace(/\D/g, '');
         if (patientData.sus_card) patientData.sus_card = String(patientData.sus_card).replace(/\D/g, '');
         if (patientData.phone) patientData.phone = String(patientData.phone).replace(/\D/g, '');
@@ -275,7 +255,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- INICIALIZAÇÃO ---
-    // Carrega a lista de pacientes assim que a página é aberta.
     fetchAndRenderPatients();
 });

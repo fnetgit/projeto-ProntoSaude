@@ -24,13 +24,13 @@ router.get('/medico', (req, res) => {
     res.sendFile(path.join(publicPath, 'doctor.html'));
 });
 
-router.get('/fila', (req, res) => { // Certifique-se que esta também está aqui para /queue
+router.get('/fila', (req, res) => {
     res.sendFile(path.join(publicPath, 'queue.html'));
 });
 
 
 
-// Rota para buscar as classificações (pode ficar aqui ou em outra rota geral)
+// Rota para buscar as classificações
 router.get('/api/classifications', (req, res) => {
     const sql = `SELECT classification_id, color_name, level_order FROM Classification ORDER BY level_order ASC`;
     db.all(sql, [], (err, rows) => {

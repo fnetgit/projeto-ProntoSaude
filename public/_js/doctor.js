@@ -1,7 +1,6 @@
 // public/_js/doctor.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Função para exibir os dados do usuário logado no cabeçalho
     function displayUserData() {
         const userNameElement = document.getElementById('loggedInUserName');
         const userRoleElement = document.getElementById('loggedInUserRole');
@@ -26,14 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn('Nenhum dado de usuário encontrado no sessionStorage para o médico.');
             if (userNameElement) userNameElement.textContent = 'Visitante';
             if (userRoleElement) userRoleElement.textContent = 'Desconhecido';
-            // Opcional: Redirecionar para o login se o usuário não estiver logado
-            // if (!window.location.pathname.includes('/login')) {
-            //     window.location.href = '/';
-            // }
+
         }
     }
 
-    // Referências aos elementos da UI
+
     const doctorQueueBody = document.getElementById('doctor-queue-body');
     const patientQueueSection = document.getElementById('patient-queue');
     const medicalConsultationSection = document.getElementById('medical-consultation');
@@ -394,12 +390,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-    // --- Inicialização ---
     function initializePage() {
-        displayUserData(); // <-- Exibe os dados do usuário no cabeçalho
-        fetchPriorityQueue(); // Carrega a fila quando a página é carregada
-        setInterval(fetchPriorityQueue, 15000); // Atualiza a fila a cada 15 segundos
+        displayUserData();
+        fetchPriorityQueue();
+        setInterval(fetchPriorityQueue, 5000);
     }
 
-    initializePage(); // Chama a função de inicialização
+    initializePage();
 });

@@ -1,7 +1,7 @@
 // src/routes/doctorRoutes.ts
 
 import { Router } from 'express';
-import { DoctorService } from '../services/doctorService'; // Importa o DoctorService
+import { DoctorService } from '../services/doctorService';
 
 const router = Router();
 

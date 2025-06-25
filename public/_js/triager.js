@@ -26,10 +26,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn('Nenhum dado de usuário encontrado no sessionStorage para o triador.');
             if (userNameElement) userNameElement.textContent = 'Visitante';
             if (userRoleElement) userRoleElement.textContent = 'Desconhecido';
-            // Opcional: Redirecionar para o login se o usuário não estiver logado
-            // if (!window.location.pathname.includes('/login')) {
-            //     window.location.href = '/';
-            // }
         }
     }
 
@@ -199,13 +195,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Botão de voltar
     backButton.addEventListener('click', () => showTriageForm(false));
 
-    // --- INICIALIZAÇÃO DA PÁGINA ---
     // Chama todas as funções que precisam ser executadas quando a página carrega
     function initializePage() {
-        displayUserData(); // <-- Chamada da nova função
+        displayUserData();
         loadClassifications();
         loadTriageQueue();
     }

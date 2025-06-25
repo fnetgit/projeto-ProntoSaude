@@ -13,13 +13,11 @@ router.post('/api/login', async (req, res) => {
     }
 
     try {
-        // user aqui terá user_id e role (do UserService.validateUser)
-        // Precisamos também do username aqui. Para isso, vamos ajustar o UserService.
         const user = await UserService.validateUser(username, password);
 
         if (user) {
             let redirectPath: string;
-            let userRoleDisplay: string; // Para o texto a ser exibido na página (ex: "Atendente", "Médico")
+            let userRoleDisplay: string;
 
             switch (user.role) {
                 case 'attendant':
@@ -36,16 +34,14 @@ router.post('/api/login', async (req, res) => {
                     break;
                 default:
                     redirectPath = '/';
-                    userRoleDisplay = 'Usuário'; // Fallback
+                    userRoleDisplay = 'Usuário';
             }
 
             res.status(200).json({
                 message: 'Login bem-sucedido!',
                 redirectUrl: redirectPath,
-                // --- NOVOS CAMPOS ENVIADOS ---
-                username: username, // O nome de usuário que foi logado
-                role: userRoleDisplay // O texto da função para exibição
-                // -----------------------------
+                username: username,
+                role: userRoleDisplay
             });
         } else {
             res.status(401).json({ message: 'Usuário ou senha incorretos.' });

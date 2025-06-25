@@ -26,7 +26,7 @@ export const TriageService = {
         return new Promise((resolve, reject) => {
             const { patient_id, service_id, classification_id, blood_pressure, temperature, glucose, weight, oxygen_saturation, symptoms } = triageData;
             const datetime = new Date().toISOString();
-            const triage_officer_id = 1; // Assumindo fixo por enquanto
+            const triage_officer_id = 1;
 
             db.serialize(() => {
                 db.run('BEGIN TRANSACTION;');

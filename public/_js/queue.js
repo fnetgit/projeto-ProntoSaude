@@ -2,10 +2,9 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- LÓGICA PARA EXIBIR NOME E FUNÇÃO DO USUÁRIO LOGADO E AJUSTAR LINK PRINCIPAL ---
+    // --- LÓGICA PARA EXIBIR NOME E FUNÇÃO DO USUÁRIO LOGADO E AJUSTAR LINK PRINCIPAL --- Verificar isso !!!!!!!!!
     const userNameElement = document.getElementById('loggedInUserName');
     const userRoleElement = document.getElementById('loggedInUserRole');
-    // Adicione um ID ao link "Principal" na sua queue.html, por exemplo: <a id="homeLink" href="#" ...>
     const homeLink = document.getElementById('homeLink');
 
     const userDataString = sessionStorage.getItem('loggedInUser');
@@ -20,10 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 userRoleElement.textContent = userData.role;
             }
 
-            // --- Lógica para ajustar o link "Principal" usando userData do sessionStorage ---
             if (homeLink) {
                 let homePath;
-                // Use userData.role (que vem do backend como 'Atendente', 'Triador', 'Médico')
                 switch (userData.role) {
                     case 'Atendente':
                         homePath = '/atendente';
@@ -35,34 +32,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         homePath = '/medico';
                         break;
                     default:
-                        homePath = '/'; // Fallback para a página de login ou uma página padrão
+                        homePath = '/';
                 }
                 homeLink.href = homePath;
-                // Remover a classe 'active' do link atual e adicionar ao 'Fila' se for o caso
-                // Isso já está no seu HTML, mas é bom ter em mente para futuras navegações dinâmicas
-                // Por exemplo: homeLink.classList.remove('active');
-                // document.querySelector('.sidebar-nav a[href="/fila"]').classList.add('active');
             }
 
         } catch (e) {
             console.error('Erro ao fazer parse dos dados do usuário do sessionStorage na fila:', e);
-            sessionStorage.removeItem('loggedInUser'); // Limpa dados inválidos
-            // Opcional: Redirecionar para o login se os dados estiverem corrompidos
-            // window.location.href = '/'; 
+            sessionStorage.removeItem('loggedInUser');
+
         }
     } else {
         console.warn('Nenhum dado de usuário encontrado no sessionStorage na fila. Redirecionando para o login.');
-        // Se não houver dados no sessionStorage, assume que o usuário não está logado
-        // E direciona para a página de login
         window.location.href = '/';
     }
-    // --- FIM DA LÓGICA DE USUÁRIO LOGADO E LINK PRINCIPAL ---
 
 
-    // --- Início do código da fila de atendimento (queue.js) ---
     const queueBody = document.getElementById('queue-body');
 
-    // Só executa a lógica da fila se o elemento #queue-body existir na página
     if (queueBody) {
 
         // Mapeamento de cores para classes CSS
@@ -89,12 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Mapeamento de status para texto (mantido do seu código)
+        // Mapeamento de status para texto
         function getStatusText(statusCode) {
             switch (statusCode) {
                 case 0: return 'Aguardando Atendimento';
                 case 1: return 'Em Atendimento';
-                case 3: return 'Atendido'; // Verifique se este status 3 é o correto para "Atendido"
+                case 3: return 'Atendido';
                 case 4: return 'Não Compareceu';
                 default: return 'Desconhecido';
             }
@@ -115,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function displayQueue(patients) {
-            queueBody.innerHTML = ''; // Limpa o conteúdo atual da tabela
+            queueBody.innerHTML = '';
 
             if (patients.length === 0) {
                 queueBody.innerHTML = '<tr><td colspan="5">Nenhum paciente na fila de atendimento.</td></tr>';
@@ -149,5 +136,4 @@ document.addEventListener('DOMContentLoaded', () => {
         // Habilitar a atualização automática da fila a cada 5 segundos
         setInterval(fetchPriorityQueue, 5000);
     }
-    // --- Fim do código da fila de atendimento ---
 });

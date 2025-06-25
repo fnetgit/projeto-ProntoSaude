@@ -32,23 +32,5 @@ export class Triage {
         );
     }
   }
-
-  public static priorityToColor(priority: number): string {
-    switch (priority) {
-      case 1:
-        return "vermelho";
-      case 2:
-        return "laranja";
-      case 3:
-        return "amarelo";
-      case 4:
-        return "verde";
-      case 5:
-        return "azul";
-      default:
-        throw new Error(
-          "Prioridade inválida. Deve ser de 1 (vermelho) a 5 (azul)."
-        );
-    }
-  }
 }
+

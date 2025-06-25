@@ -1,7 +1,7 @@
 // src/services/patientService.ts
 
 import db from '../config/database';
-import { Patient } from '../entities/patient'; // Importe Patient se for usado para criar instâncias aqui
+import { Patient } from '../entities/patient';
 
 export const PatientService = {
     async createPatient(patient: Patient): Promise<number> {

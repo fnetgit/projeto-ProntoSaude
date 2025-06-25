@@ -1,14 +1,11 @@
-// _js/attendant.js (Completo e Correto)
-// RESPONSABILIDADE: Interatividade da página e Máscaras do formulário.
+// _js/attendant.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- LÓGICA DAS ABAS ---
     const tabButtons = document.querySelectorAll('.tab-button');
     const registrationForm = document.getElementById('register-patient-form');
     const searchForm = document.getElementById('search-patient-form');
     const editform = document.getElementById('edit-patient-form');
 
-    // Oculta/mostra os formulários ao clicar nas abas
     if (registrationForm && searchForm) {
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
@@ -28,21 +25,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA DA BARRA DE PESQUISA ---
     const searchInput = document.querySelector('.search-bar input');
     if (searchInput) {
         searchInput.addEventListener('input', (event) => {
             console.log('Searching for:', event.target.value);
-            // Futuramente, a lógica de filtro da tabela pode vir aqui.
         });
     }
 
-    // --- LÓGICA DAS MÁSCARAS DE INPUT ---
     const cpfInput = document.getElementById('cpf');
     const susCardInput = document.getElementById('sus_card');
     const phoneInput = document.getElementById('phone');
 
-    // Máscara para CPF
     if (cpfInput) {
         cpfInput.addEventListener('input', (event) => {
             let value = event.target.value.replace(/\D/g, '').substring(0, 11);
@@ -53,7 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Máscara para Cartão do SUS
     if (susCardInput) {
         susCardInput.addEventListener('input', (event) => {
             let value = event.target.value.replace(/\D/g, '').substring(0, 15);
@@ -68,7 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Máscara para Telefone
     if (phoneInput) {
         phoneInput.addEventListener('input', (event) => {
             let value = event.target.value.replace(/\D/g, '');
@@ -89,13 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-//aparecer o usuario logado
-
 document.addEventListener('DOMContentLoaded', () => {
     const userNameElement = document.getElementById('loggedInUserName');
     const userRoleElement = document.getElementById('loggedInUserRole');
-
-    // Tenta obter os dados do sessionStorage
     const userDataString = sessionStorage.getItem('loggedInUser');
 
     if (userDataString) {
@@ -109,17 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (e) {
             console.error('Erro ao fazer parse dos dados do usuário do sessionStorage:', e);
-            // Limpa dados inválidos
             sessionStorage.removeItem('loggedInUser');
         }
     } else {
-        // Opcional: Se não houver dados, talvez redirecionar para o login
-        // ou mostrar um nome de usuário padrão como "Visitante".
         console.warn('Nenhum dado de usuário encontrado no sessionStorage.');
         if (userNameElement) userNameElement.textContent = 'Visitante';
         if (userRoleElement) userRoleElement.textContent = 'Desconhecido';
-        // if (!window.location.pathname.includes('/login')) {
-        //     window.location.href = '/'; // Redireciona para o login se não estiver logado
-        // }
     }
 });
