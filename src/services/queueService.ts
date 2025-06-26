@@ -4,43 +4,43 @@ import db from '../config/database';
 
 export const QueueService = {
     async getPriorityQueueInOrder(): Promise<any[]> {
-        return new Promise((resolve, reject) => {
-            const sql = `
-                SELECT 
-                    PQ.queue_id,
-                    PQ.patient_id,
-                    PQ.datetime AS queue_datetime,
-                    PQ.status AS queue_status,
-                    P.patient_name,
-                    C.color_name,
-                    C.level_order AS priority,
-                    T.triage_id,
-                    T.datetime AS triage_datetime
-                FROM PriorityQueue PQ
-                JOIN Patient P ON PQ.patient_id = P.patient_id
-                LEFT JOIN (
-                    SELECT T1.*
-                    FROM Triage T1
-                    INNER JOIN (
-                        SELECT patient_id, MAX(datetime) AS max_datetime
-                        FROM Triage
-                        GROUP BY patient_id
-                    ) T2
-                    ON T1.patient_id = T2.patient_id AND T1.datetime = T2.max_datetime
-                ) T ON PQ.patient_id = T.patient_id
-                LEFT JOIN Classification C ON T.classification_id = C.classification_id
-                WHERE PQ.status = 0
-                ORDER BY priority ASC, queue_datetime ASC, triage_datetime ASC
-            `;
-            db.all(sql, [], (err, rows) => {
-                if (err) {
-                    console.error('Erro ao buscar fila de prioridade:', err.message);
-                    return reject(err);
-                }
-                resolve(rows);
-            });
+    return new Promise((resolve, reject) => {
+        const sql = `
+            SELECT 
+                PQ.queue_id,
+                PQ.patient_id,
+                PQ.datetime AS queue_datetime,
+                PQ.status AS queue_status,
+                P.patient_name,
+                C.color_name,
+                C.level_order AS priority,
+                T.triage_id,
+                T.datetime AS triage_datetime
+            FROM PriorityQueue PQ
+            JOIN Patient P ON PQ.patient_id = P.patient_id
+            LEFT JOIN (
+                SELECT T1.*
+                FROM Triage T1
+                INNER JOIN (
+                    SELECT patient_id, MAX(datetime) AS max_datetime
+                    FROM Triage
+                    GROUP BY patient_id
+                ) T2
+                ON T1.patient_id = T2.patient_id AND T1.datetime = T2.max_datetime
+            ) T ON PQ.patient_id = T.patient_id
+            LEFT JOIN Classification C ON T.classification_id = C.classification_id
+            WHERE PQ.status IN (0, 1)
+            ORDER BY priority ASC, queue_datetime ASC, triage_datetime ASC
+        `;
+        db.all(sql, [], (err, rows) => {
+            if (err) {
+                console.error('Erro ao buscar fila de prioridade:', err.message);
+                return reject(err);
+            }
+            resolve(rows);
         });
-    },
+    });
+},
 
     async addPatientToServiceQueue(patient_id: number, attendant_id: number, datetime: string): Promise<number> {
         return new Promise((resolve, reject) => {

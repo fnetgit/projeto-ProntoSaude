@@ -1,5 +1,3 @@
-// public/_js/doctor.js
-
 document.addEventListener('DOMContentLoaded', () => {
     function displayUserData() {
         const userNameElement = document.getElementById('loggedInUserName');
@@ -9,12 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (userDataString) {
             try {
                 const userData = JSON.parse(userDataString);
-                if (userNameElement) {
-                    userNameElement.textContent = userData.username;
-                }
-                if (userRoleElement) {
-                    userRoleElement.textContent = userData.role;
-                }
+                if (userNameElement) userNameElement.textContent = userData.username;
+                if (userRoleElement) userRoleElement.textContent = userData.role;
             } catch (e) {
                 console.error('Erro ao fazer parse dos dados do usuário do sessionStorage:', e);
                 sessionStorage.removeItem('loggedInUser');
@@ -25,10 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn('Nenhum dado de usuário encontrado no sessionStorage para o médico.');
             if (userNameElement) userNameElement.textContent = 'Visitante';
             if (userRoleElement) userRoleElement.textContent = 'Desconhecido';
-
         }
     }
-
 
     const doctorQueueBody = document.getElementById('doctor-queue-body');
     const patientQueueSection = document.getElementById('patient-queue');
@@ -47,14 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const callAgainBtn = document.getElementById('call-again-btn');
     const noShowBtn = document.getElementById('no-show-btn');
     const endConsultationBtn = document.getElementById('end-consultation-btn');
-    const medicalReportForm = document.querySelector('.medical-report-form');
-    const formMedicalOpinion = document.getElementById('medical-opinion')
+    const formMedicalOpinion = document.getElementById('medical-opinion');
 
     let currentPatientData = null;
     let isConsultationActive = false;
     const DOCTOR_ID = 1;
 
-    // --- Funções Auxiliares ---
     function getPriorityBadgeClass(colorName) {
         switch (colorName.toLowerCase()) {
             case 'vermelho': return 'priority-red';
@@ -78,11 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function getStatusText(statusCode) {
-        switch (statusCode) {
+        const statusNum = Number(statusCode);
+        switch (statusNum) {
             case 0: return 'Aguardando Atendimento';
             case 1: return 'Em Atendimento';
-            case 3: return 'Atendido';
-            case 4: return 'Não Compareceu';
+            case 2: return 'Consultado';
+            case 3: return 'Não Compareceu';
             default: return 'Desconhecido';
         }
     }
@@ -102,16 +93,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
-    // --- Funções de Requisição ao Backend ---
     async function fetchPriorityQueue() {
         try {
             const response = await fetch('/api/priority-queue');
-            if (!response.ok) {
-                throw new Error(`Erro HTTP! Status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
             const patients = await response.json();
-            displayQueue(patients);
+
+            // Filtra apenas os com status 0 (esperando) ou 1 (em atendimento)
+            const filtered = patients.filter(p => p.queue_status === 0 || p.queue_status === 1);
+            displayQueue(filtered);
         } catch (error) {
             console.error('Erro ao buscar a fila de prioridade:', error);
             doctorQueueBody.innerHTML = '<tr><td colspan="6">Erro ao carregar a fila de atendimento.</td></tr>';
@@ -121,9 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function fetchTriageDetails(patientId, triageId) {
         try {
             const response = await fetch(`/api/triage-details/${patientId}/${triageId}`);
-            if (!response.ok) {
-                throw new Error(`Erro HTTP! Status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
             return await response.json();
         } catch (error) {
             console.error('Erro ao buscar detalhes da triagem:', error);
@@ -137,11 +125,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`/api/priority-queue/${queueId}/status`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ status: status })
+                body: JSON.stringify({ status })
             });
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(`Erro ao atualizar status: ${response.status} - ${errorData.message}`);
+                throw new Error(`${response.status} - ${errorData.message}`);
             }
             return await response.json();
         } catch (error) {
@@ -160,12 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     patient_id: patientId,
                     doctor_id: doctorId,
                     datetime: new Date().toISOString(),
-                    observations: observations
+                    observations
                 })
             });
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(`Erro ao registrar atendimento: ${response.status} - ${errorData.message}`);
+                throw new Error(`${response.status} - ${errorData.message}`);
             }
             return await response.json();
         } catch (error) {
@@ -175,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Funções de Renderização da UI ---
     function displayQueue(patients) {
         doctorQueueBody.innerHTML = '';
 
@@ -187,24 +174,22 @@ document.addEventListener('DOMContentLoaded', () => {
         patients.forEach((patient, index) => {
             const row = document.createElement('tr');
             const triageDate = new Date(patient.triage_datetime);
-            const formattedTriageDate = triageDate.toLocaleDateString('pt-BR');
-            const formattedTriageTime = triageDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const formattedDate = triageDate.toLocaleDateString('pt-BR');
+            const formattedTime = triageDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
             row.dataset.patientId = patient.patient_id;
             row.dataset.queueId = patient.queue_id;
             row.dataset.triageId = patient.triage_id;
             row.dataset.queueStatus = patient.queue_status;
 
-            let actionButtonHtml = '';
-            let buttonClass = 'action-button';
             let buttonText = '';
+            let buttonClass = 'action-button';
             let isDisabled = false;
 
             if (isConsultationActive) {
-                if (currentPatientData && currentPatientData.queue_id === patient.queue_id) {
+                if (currentPatientData?.queue_id === patient.queue_id) {
                     buttonText = 'Visualizar Consulta';
                     buttonClass += ' active';
-                    isDisabled = false;
                 } else {
                     buttonText = getStatusText(patient.queue_status);
                     buttonClass += ' inactive';
@@ -214,11 +199,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (patient.queue_status === 0) {
                     buttonText = 'Chamar Paciente';
                     buttonClass += ' call-patient-btn';
-                    isDisabled = false;
                 } else if (patient.queue_status === 1) {
                     buttonText = 'Visualizar Consulta';
                     buttonClass += ' active';
-                    isDisabled = false;
                 } else {
                     buttonText = getStatusText(patient.queue_status);
                     buttonClass += ' disabled-btn';
@@ -226,16 +209,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            actionButtonHtml = `<button class="${buttonClass}" ${isDisabled ? 'disabled' : ''}>${buttonText}</button>`;
-
             row.innerHTML = `
                 <td>${(index + 1).toString().padStart(3, '0')}</td>
                 <td>${patient.patient_name}</td>
                 <td><span class="priority-badge ${getPriorityBadgeClass(patient.color_name)}">${getPriorityText(patient.color_name)}</span></td>
-                <td>${formattedTriageDate} ${formattedTriageTime}</td>
+                <td>${formattedDate} ${formattedTime}</td>
                 <td>${getStatusText(patient.queue_status)}</td>
-                <td>${actionButtonHtml}</td>
+                <td><button class="${buttonClass}" ${isDisabled ? 'disabled' : ''}>${buttonText}</button></td>
             `;
+
             doctorQueueBody.appendChild(row);
         });
 
@@ -245,18 +227,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populateConsultationSection(patientData, triageData) {
-        console.log('Dados do paciente recebidos para preenchimento:', patientData);
-        console.log('Dados da triagem recebidos para preenchimento:', triageData);
-
         displayPatientName.textContent = patientData.patient_name || 'Nome Indisponível';
         displayPatientDob.textContent = `Data de Nascimento: ${formatDate(patientData.birth_date)}`;
         displayPatientGender.textContent = `Gênero: ${getGenderText(patientData.gender)}`;
-
-        triageWeight.textContent = triageData.weight !== null && triageData.weight !== undefined ? `${triageData.weight}kg` : 'N/A';
-        triageTemperature.textContent = triageData.temperature !== null && triageData.temperature !== undefined ? `${triageData.temperature}°C` : 'N/A';
-        triageOxygenSaturation.textContent = triageData.oxygen_saturation !== null && triageData.oxygen_saturation !== undefined ? `${triageData.oxygen_saturation}%` : 'N/A';
+        triageWeight.textContent = triageData.weight ? `${triageData.weight}kg` : 'N/A';
+        triageTemperature.textContent = triageData.temperature ? `${triageData.temperature}°C` : 'N/A';
+        triageOxygenSaturation.textContent = triageData.oxygen_saturation ? `${triageData.oxygen_saturation}%` : 'N/A';
         triageBloodPressure.textContent = triageData.blood_pressure || 'N/A';
-        triageGlucose.textContent = triageData.glucose !== null && triageData.glucose !== undefined ? `${triageData.glucose} mg/dL` : 'N/A';
+        triageGlucose.textContent = triageData.glucose ? `${triageData.glucose} mg/dL` : 'N/A';
         triageSymptoms.textContent = triageData.symptoms || 'N/A';
 
         medicalOpinionTextarea.value = '';
@@ -285,26 +263,16 @@ document.addEventListener('DOMContentLoaded', () => {
         endConsultationBtn.style.display = 'none';
     }
 
-
-    // --- Handlers de Eventos ---
     async function handleActionButtonClick(event) {
         const row = event.target.closest('tr');
-        const patientId = row.dataset.patientId;
-        const queueId = row.dataset.queueId;
-        const triageId = row.dataset.triageId;
-        const queueStatus = parseInt(row.dataset.queueStatus);
+        const { patientId, queueId, triageId, queueStatus } = row.dataset;
 
-        currentPatientData = { patient_id: patientId, queue_id: queueId, triage_id: triageId, queue_status: queueStatus };
-
-        if (queueStatus === 0) {
-            const updateStatusRes = await updatePatientStatusInQueue(queueId, 1);
-            if (!updateStatusRes) {
-                currentPatientData = null;
-                fetchPriorityQueue();
-                return;
-            }
-            currentPatientData.queue_status = 1;
-        }
+        currentPatientData = {
+            patient_id: patientId,
+            queue_id: queueId,
+            triage_id: triageId,
+            queue_status: parseInt(queueStatus)
+        };
 
         const triageDetails = await fetchTriageDetails(patientId, triageId);
         if (triageDetails) {
@@ -313,17 +281,16 @@ document.addEventListener('DOMContentLoaded', () => {
             medicalConsultationSection.style.display = 'block';
             isConsultationActive = true;
             fetchPriorityQueue();
-        } else {
-            if (queueStatus === 0) {
-                await updatePatientStatusInQueue(queueId, 0);
-            }
-            currentPatientData = null;
-            isConsultationActive = false;
-            fetchPriorityQueue();
         }
     }
 
-    startConsultationBtn.addEventListener('click', () => {
+    startConsultationBtn.addEventListener('click', async () => {
+        if (currentPatientData && currentPatientData.queue_status === 0) {
+            const updateStatusRes = await updatePatientStatusInQueue(currentPatientData.queue_id, 1);
+            if (!updateStatusRes) return;
+            currentPatientData.queue_status = 1;
+        }
+
         medicalOpinionTextarea.readOnly = false;
         medicalOpinionTextarea.focus();
         startConsultationBtn.style.display = 'none';
@@ -331,28 +298,20 @@ document.addEventListener('DOMContentLoaded', () => {
         callAgainBtn.style.display = 'block';
         noShowBtn.style.display = 'block';
         formMedicalOpinion.placeholder = 'Escreva aqui sua avaliação médica e recomendações.';
+        fetchPriorityQueue();
     });
 
     endConsultationBtn.addEventListener('click', async (event) => {
         event.preventDefault();
+        if (!currentPatientData) return alert('Nenhum paciente selecionado.');
 
-        if (!currentPatientData) {
-            alert('Nenhum paciente selecionado para encerrar consulta.');
-            return;
-        }
+        const opinion = medicalOpinionTextarea.value.trim();
+        if (!opinion) return alert('Por favor, insira o parecer médico.');
 
-        const medicalOpinion = medicalOpinionTextarea.value.trim();
-        if (!medicalOpinion) {
-            alert('Por favor, insira o parecer do médico antes de encerrar a consulta.');
-            return;
-        }
+        const res = await registerAppointment(currentPatientData.patient_id, DOCTOR_ID, opinion);
+        if (!res) return;
 
-        const appointmentRes = await registerAppointment(currentPatientData.patient_id, DOCTOR_ID, medicalOpinion);
-        if (!appointmentRes) return;
-
-        const updateStatusRes = await updatePatientStatusInQueue(currentPatientData.queue_id, 3);
-        if (!updateStatusRes) return;
-
+        await updatePatientStatusInQueue(currentPatientData.queue_id, 2);
         clearConsultationSection();
         medicalConsultationSection.style.display = 'none';
         patientQueueSection.style.display = 'block';
@@ -362,17 +321,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     noShowBtn.addEventListener('click', async () => {
-        if (!currentPatientData) {
-            alert('Nenhum paciente selecionado.');
-            return;
-        }
-
-        const confirmNoShow = confirm('Tem certeza que deseja marcar este paciente como "Não Compareceu"? Ele será removido da fila.');
+        if (!currentPatientData) return alert('Nenhum paciente selecionado.');
+        const confirmNoShow = confirm('Confirmar "Não Compareceu"?');
         if (!confirmNoShow) return;
 
-        const updateStatusRes = await updatePatientStatusInQueue(currentPatientData.queue_id, 4);
-        if (!updateStatusRes) return;
-
+        await updatePatientStatusInQueue(currentPatientData.queue_id, 3);
         clearConsultationSection();
         medicalConsultationSection.style.display = 'none';
         patientQueueSection.style.display = 'block';
@@ -381,14 +334,10 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchPriorityQueue();
     });
 
-    callAgainBtn.addEventListener('click', async () => {
-        if (!currentPatientData) {
-            alert('Nenhum paciente selecionado para chamar novamente.');
-            return;
-        }
+    callAgainBtn.addEventListener('click', () => {
+        if (!currentPatientData) return alert('Nenhum paciente selecionado.');
         alert('Chamando paciente novamente!');
     });
-
 
     function initializePage() {
         displayUserData();
