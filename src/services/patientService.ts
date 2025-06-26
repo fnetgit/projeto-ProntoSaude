@@ -8,7 +8,7 @@ export const PatientService = {
         return new Promise((resolve, reject) => {
             const sql = `INSERT INTO Patient (patient_name, cpf, birth_date, gender, phone, address, birthplace, sus_card, mother_name) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
             const params = [
-                patient.patientName,
+                patient.patient_name,
                 patient.cpf,
                 patient.birthDate.toISOString().split('T')[0],
                 patient.gender,

@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             patients.forEach((patient, index) => {
-                console.log('Paciente na fila:', patient.patientName, ' | Status recebido:', patient.queue_status, ' | Tipo:', typeof patient.queue_status);
+                console.log('Paciente na fila:', patient.patient_name, ' | Status recebido:', patient.queue_status, ' | Tipo:', typeof patient.queue_status);
 
                 const row = document.createElement('tr');
                 const date = new Date(patient.queue_datetime);
@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 row.innerHTML = `
                     <td>${(index + 1).toString().padStart(3, '0')}</td>
-                    <td>${patient.patientName}</td>
+                    <td>${patient.patient_name}</td>
                     <td>
                         <span class="priority-badge ${getPriorityBadgeClass(patient.color_name)}">
                             ${getPriorityText(patient.color_name)}

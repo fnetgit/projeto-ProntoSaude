@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (target.classList.contains('initiate-button')) {
             patientIdInput.value = target.dataset.patientId;
             serviceIdInput.value = target.dataset.serviceId;
-            displayPatientName.textContent = target.dataset.patientName;
+            displayPatientName.textContent = target.dataset.patient_name;
             displayPatientDob.textContent = `Nascimento: ${target.dataset.birthDate}`;
             showTriageForm(true);
         }

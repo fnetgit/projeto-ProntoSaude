@@ -8,7 +8,7 @@ export class Patient {
   constructor(
     public id: number,
     public birthplace: string,
-    public patientName: string,
+    public patient_name: string,
     public phone: string,
     public gender: string,
     public cpf: string,

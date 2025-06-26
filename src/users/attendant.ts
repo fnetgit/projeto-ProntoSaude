@@ -22,7 +22,7 @@ export class Attendant {
 
   public registerPatient(
     birthplace: string,
-    patientName: string,
+    patient_name: string,
     phone: string,
     gender: string,
     cpf: string,
@@ -34,7 +34,7 @@ export class Attendant {
     const newPatient = new Patient(
       nextPatientId++,
       birthplace,
-      patientName,
+      patient_name,
       phone,
       gender,
       cpf,
@@ -45,7 +45,7 @@ export class Attendant {
     );
     patients.push(newPatient);
     console.log(
-      `→ Paciente ${patientName} cadastrado por ${this.attendantName}`
+      `→ Paciente ${patient_name} cadastrado por ${this.attendantName}`
     );
     return newPatient;
   }

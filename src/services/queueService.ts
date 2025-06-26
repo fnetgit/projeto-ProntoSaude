@@ -1,8 +1,4 @@
-// src/services/queueService.ts
-
 import db from '../config/database';
-// Importação da classe e interface PriorityQueue.
-// Mantenha esta linha, pois ela é necessária para a função getPriorityQueueInOrder.
 import { PriorityQueue, PatientInQueue } from '../queue/priority-queue';
 
 interface QueueRow {
@@ -23,7 +19,6 @@ interface QueueRow {
 
 export const QueueService = {
     // Função original que usa a ordenação SQL.
-    // Mantenha-a se for usada em outras partes do seu sistema.
     async getPriorityQueue(): Promise<QueueRow[]> {
         return new Promise((resolve, reject) => {
             const sql = `WITH LatestTriagePerPatient AS (
@@ -104,10 +99,8 @@ ORDER BY
         });
     },
 
-    // NOVA FUNÇÃO: Usa a classe PriorityQueue para ordenação em memória.
     async getPriorityQueueInOrder(): Promise<PatientInQueue[]> {
         return new Promise((resolve, reject) => {
-            // SQL simplificado, sem a ordenação
             const sql = `WITH LatestTriagePerPatient AS (
     SELECT
         triage_id,
@@ -137,7 +130,8 @@ SELECT
     C.color_name,
     C.level_order,
     LPQE.queue_datetime,
-    LPQE.queue_status
+    LPQE.queue_status,
+    LTPP.triage_datetime
 FROM
     LatestPriorityQueueEntry AS LPQE
 JOIN
@@ -157,26 +151,24 @@ WHERE
                     return reject(new Error('Erro ao buscar pacientes.'));
                 }
 
-                // Cria uma instância da fila de prioridade (aqui a classe é usada)
                 const priorityQueue = new PriorityQueue();
 
-                // Insere cada paciente na fila usando o mapeamento correto.
                 rows.forEach(row => {
+                    // Garante que o nome está correto, e faz fallback para string vazia se vier null
                     const patient: PatientInQueue = {
-                        patientName: row.patient_name,
+                        patient_name: row.patient_name ?? '',
                         priority: row.level_order,
                         queue_id: row.queue_id,
                         patient_id: row.patient_id,
                         color_name: row.color_name,
                         queue_datetime: row.queue_datetime,
-                        queue_status: row.queue_status
+                        queue_status: row.queue_status,
+                        triage_datetime: row.triage_datetime
                     };
                     priorityQueue.insert(patient);
                 });
 
-                // Obtém a lista ordenada pela lógica do heap
                 const orderedPatients = priorityQueue.list();
-
                 resolve(orderedPatients);
             });
         });

@@ -7,7 +7,7 @@ export class Doctor {
 
   public performService(patient: PatientInQueue) {
     console.log(
-      `Médico ${this.name} está atendendo ${patient.patientName} (prioridade ${patient.priority})`
+      `Médico ${this.name} está atendendo ${patient.patient_name} (prioridade ${patient.priority})`
     );
   }
 
