@@ -1,3 +1,4 @@
+// src/queue/priority-queue.ts
 export interface PatientInQueue {
   patient_name: string;
   priority: number;

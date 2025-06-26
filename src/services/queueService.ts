@@ -1,188 +1,153 @@
-import db from '../config/database';
-import { PriorityQueue, PatientInQueue } from '../queue/priority-queue';
+// src/services/queueService.ts
 
-interface QueueRow {
-    queue_id: number;
-    patient_id: number;
-    patient_name: string;
-    classification_id: number;
-    color_name: string;
-    level_order: number;
-    queue_datetime: string;
-    triage_datetime: string;
-    queue_status: number;
-    max_wait_minutes?: number;
-    elapsed_minutes?: number;
-    time_remaining?: number;
-    triage_id?: number;
-}
+import db from '../config/database';
 
 export const QueueService = {
-    // Função original que usa a ordenação SQL.
-    async getPriorityQueue(): Promise<QueueRow[]> {
+    async getPriorityQueueInOrder(): Promise<any[]> {
         return new Promise((resolve, reject) => {
-            const sql = `WITH LatestTriagePerPatient AS (
-    SELECT
-        triage_id,
-        patient_id,
-        classification_id,
-        datetime AS triage_datetime,
-        ROW_NUMBER() OVER(PARTITION BY patient_id ORDER BY datetime DESC, triage_id DESC) as rn_triage
-    FROM
-        Triage
-),
-LatestPriorityQueueEntry AS (
-    SELECT
-        queue_id,
-        patient_id,
-        datetime AS queue_datetime,
-        status AS queue_status,
-        ROW_NUMBER() OVER(PARTITION BY patient_id ORDER BY datetime DESC, queue_id DESC) as rn_pq
-    FROM
-        PriorityQueue
-    WHERE status IN (0, 1)
-)
-SELECT
-    LPQE.queue_id,
-    LPQE.patient_id,
-    P.patient_name,
-    P.birth_date,
-    P.gender,
-    LTPP.triage_id,
-    LTPP.triage_datetime,
-    C.color_name,
-    C.level_order,
-    LPQE.queue_datetime,
-    LPQE.queue_status,
-    CASE C.level_order
-        WHEN 1 THEN 0
-        WHEN 2 THEN 10
-        WHEN 3 THEN 60
-        WHEN 4 THEN 120
-        WHEN 5 THEN 240
-        ELSE 9999
-    END AS max_wait_minutes,
-    CAST((JULIANDAY('now') - JULIANDAY(LPQE.queue_datetime)) * 1440 AS INTEGER) AS elapsed_minutes,
-    CAST((CASE C.level_order
-        WHEN 1 THEN 0
-        WHEN 2 THEN 10
-        WHEN 3 THEN 60
-        WHEN 4 THEN 120
-        WHEN 5 THEN 240
-        ELSE 9999
-    END - (JULIANDAY('now') - JULIANDAY(LPQE.queue_datetime)) * 1440) AS INTEGER) AS time_remaining
-FROM
-    LatestPriorityQueueEntry AS LPQE
-JOIN
-    Patient AS P ON LPQE.patient_id = P.patient_id
-JOIN
-    LatestTriagePerPatient AS LTPP ON LPQE.patient_id = LTPP.patient_id
-JOIN
-    Classification AS C ON LTPP.classification_id = C.classification_id
-WHERE
-    LPQE.rn_pq = 1
-    AND LTPP.rn_triage = 1
-ORDER BY
-    CASE WHEN C.level_order = 1 THEN 1 ELSE 2 END ASC,
-    time_remaining ASC,
-    C.level_order ASC,
-    LPQE.queue_datetime ASC;
+            const sql = `
+                SELECT 
+                    PQ.queue_id,
+                    PQ.patient_id,
+                    PQ.datetime AS queue_datetime,
+                    PQ.status AS queue_status,
+                    P.patient_name,
+                    C.color_name,
+                    C.level_order AS priority,
+                    T.triage_id,
+                    T.datetime AS triage_datetime
+                FROM PriorityQueue PQ
+                JOIN Patient P ON PQ.patient_id = P.patient_id
+                LEFT JOIN (
+                    SELECT T1.*
+                    FROM Triage T1
+                    INNER JOIN (
+                        SELECT patient_id, MAX(datetime) AS max_datetime
+                        FROM Triage
+                        GROUP BY patient_id
+                    ) T2
+                    ON T1.patient_id = T2.patient_id AND T1.datetime = T2.max_datetime
+                ) T ON PQ.patient_id = T.patient_id
+                LEFT JOIN Classification C ON T.classification_id = C.classification_id
+                WHERE PQ.status = 0
+                ORDER BY priority ASC, queue_datetime ASC, triage_datetime ASC
             `;
-
-            db.all(sql, [], (err, rows: QueueRow[]) => {
+            db.all(sql, [], (err, rows) => {
                 if (err) {
-                    console.error('Erro ao buscar pacientes na fila de prioridade:', err.message);
-                    return reject(new Error('Erro ao buscar pacientes na fila de prioridade.'));
+                    console.error('Erro ao buscar fila de prioridade:', err.message);
+                    return reject(err);
                 }
                 resolve(rows);
             });
         });
     },
 
-    async getPriorityQueueInOrder(): Promise<PatientInQueue[]> {
-        return new Promise((resolve, reject) => {
-            const sql = `WITH LatestTriagePerPatient AS (
-    SELECT
-        triage_id,
-        patient_id,
-        classification_id,
-        datetime AS triage_datetime,
-        ROW_NUMBER() OVER(PARTITION BY patient_id ORDER BY datetime DESC, triage_id DESC) as rn_triage
-    FROM
-        Triage
-),
-LatestPriorityQueueEntry AS (
-    SELECT
-        queue_id,
-        patient_id,
-        datetime AS queue_datetime,
-        status AS queue_status,
-        ROW_NUMBER() OVER(PARTITION BY patient_id ORDER BY datetime DESC, queue_id DESC) as rn_pq
-    FROM
-        PriorityQueue
-    WHERE status IN (0, 1)
-)
-SELECT
-    LPQE.queue_id,
-    LPQE.patient_id,
-    P.patient_name,
-    LTPP.classification_id,
-    C.color_name,
-    C.level_order,
-    LPQE.queue_datetime,
-    LPQE.queue_status,
-    LTPP.triage_datetime
-FROM
-    LatestPriorityQueueEntry AS LPQE
-JOIN
-    Patient AS P ON LPQE.patient_id = P.patient_id
-JOIN
-    LatestTriagePerPatient AS LTPP ON LPQE.patient_id = LTPP.patient_id
-JOIN
-    Classification AS C ON LTPP.classification_id = C.classification_id
-WHERE
-    LPQE.rn_pq = 1
-    AND LTPP.rn_triage = 1;
-            `;
-
-            db.all(sql, [], (err, rows: QueueRow[]) => {
-                if (err) {
-                    console.error('Erro ao buscar pacientes para a fila de prioridade:', err.message);
-                    return reject(new Error('Erro ao buscar pacientes.'));
-                }
-
-                const priorityQueue = new PriorityQueue();
-
-                rows.forEach(row => {
-                    // Garante que o nome está correto, e faz fallback para string vazia se vier null
-                    const patient: PatientInQueue = {
-                        patient_name: row.patient_name ?? '',
-                        priority: row.level_order,
-                        queue_id: row.queue_id,
-                        patient_id: row.patient_id,
-                        color_name: row.color_name,
-                        queue_datetime: row.queue_datetime,
-                        queue_status: row.queue_status,
-                        triage_datetime: row.triage_datetime
-                    };
-                    priorityQueue.insert(patient);
-                });
-
-                const orderedPatients = priorityQueue.list();
-                resolve(orderedPatients);
-            });
-        });
-    },
-
     async addPatientToServiceQueue(patient_id: number, attendant_id: number, datetime: string): Promise<number> {
         return new Promise((resolve, reject) => {
-            const sql = `INSERT INTO Service (patient_id, attendant_id, datetime, status) VALUES (?, ?, ?, ?)`;
-            db.run(sql, [patient_id, attendant_id, datetime, 0], function (err) {
+            const sql = `
+                INSERT INTO Service (attendant_id, patient_id, datetime, status)
+                VALUES (?, ?, ?, 0)
+            `;
+            db.run(sql, [attendant_id, patient_id, datetime], function (err) {
                 if (err) {
-                    return reject(new Error('Erro ao adicionar à fila de triagem.'));
+                    console.error('Erro ao adicionar paciente à fila de serviço:', err.message);
+                    return reject(new Error('Erro ao adicionar paciente à fila de serviço.'));
                 }
                 resolve(this.lastID);
             });
         });
-    }
+    },
+
+    async updatePriorityQueueStatus(queueId: number, status: number): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const sql = `UPDATE PriorityQueue SET status = ? WHERE queue_id = ?`;
+            db.run(sql, [status, queueId], function (err) {
+                if (err) {
+                    console.error('Erro ao atualizar status da fila de prioridade:', err.message);
+                    return reject(new Error('Erro ao atualizar status da fila de prioridade.'));
+                }
+                if (this.changes === 0) {
+                    return reject(new Error('Registro de fila não encontrado.'));
+                }
+                resolve();
+            });
+        });
+    },
+
+    async insertIntoPriorityQueue(patient_id: number, datetime: string, status: number = 0): Promise<number> {
+        return new Promise((resolve, reject) => {
+            const sql = `
+                INSERT INTO PriorityQueue (patient_id, datetime, status)
+                VALUES (?, ?, ?)
+            `;
+            db.run(sql, [patient_id, datetime, status], function (err) {
+                if (err) {
+                    console.error('Erro ao inserir na fila de prioridade:', err.message);
+                    return reject(new Error('Erro ao inserir na fila de prioridade.'));
+                }
+                resolve(this.lastID);
+            });
+        });
+    },
+
+    async getPriorityQueueById(queueId: number): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM PriorityQueue WHERE queue_id = ?`;
+            db.get(sql, [queueId], (err, row) => {
+                if (err) {
+                    console.error('Erro ao buscar registro da fila de prioridade:', err.message);
+                    return reject(new Error('Erro ao buscar registro da fila de prioridade.'));
+                }
+                resolve(row);
+            });
+        });
+    },
+
+    async removeFromPriorityQueue(queueId: number): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const sql = `DELETE FROM PriorityQueue WHERE queue_id = ?`;
+            db.run(sql, [queueId], function (err) {
+                if (err) {
+                    console.error('Erro ao remover da fila de prioridade:', err.message);
+                    return reject(new Error('Erro ao remover da fila de prioridade.'));
+                }
+                if (this.changes === 0) {
+                    return reject(new Error('Registro da fila de prioridade não encontrado.'));
+                }
+                resolve();
+            });
+        });
+    },
+
+    async getAllPriorityQueues(): Promise<any[]> {
+        return new Promise((resolve, reject) => {
+            const sql = `SELECT * FROM PriorityQueue`;
+            db.all(sql, [], (err, rows) => {
+                if (err) {
+                    console.error('Erro ao buscar todas as filas de prioridade:', err.message);
+                    return reject(new Error('Erro ao buscar todas as filas de prioridade.'));
+                }
+                resolve(rows);
+            });
+        });
+    },
+
+    async getPatientQueueHistory(patient_id: number): Promise<any[]> {
+        return new Promise((resolve, reject) => {
+            const sql = `
+                SELECT PQ.*, P.patient_name
+                FROM PriorityQueue PQ
+                JOIN Patient P ON PQ.patient_id = P.patient_id
+                WHERE PQ.patient_id = ?
+                ORDER BY PQ.datetime DESC
+            `;
+            db.all(sql, [patient_id], (err, rows) => {
+                if (err) {
+                    console.error('Erro ao buscar histórico da fila de prioridade do paciente:', err.message);
+                    return reject(new Error('Erro ao buscar histórico da fila de prioridade do paciente.'));
+                }
+                resolve(rows);
+            });
+        });
+    },
 };
