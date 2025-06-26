@@ -1,6 +1,6 @@
 // src/users/doctor.ts
 
-import { PatientInQueue } from "../queues/priority-queue";
+import { PatientInQueue } from "../queue/priority-queue";
 
 export class Doctor {
   constructor(private name: string) { }

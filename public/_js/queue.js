@@ -75,19 +75,19 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Mapeamento de status para texto - CORRIGIDO
-function getStatusText(statusCode) {
-    // Converte o valor para um número para garantir a comparação estrita
-    const statusNum = Number(statusCode); 
+        // Mapeamento de status para texto
+        function getStatusText(statusCode) {
+            // Converte o valor para um número para garantir a comparação estrita
+            const statusNum = Number(statusCode);
 
-    switch (statusNum) {
-        case 0: return 'Aguardando Atendimento';
-        case 1: return 'Em Atendimento';
-        case 2: return 'Consultado';
-        case 3: return 'Não Compareceu';
-        default: return 'Desconhecido';
-    }
-}
+            switch (statusNum) {
+                case 0: return 'Aguardando Atendimento';
+                case 1: return 'Em Atendimento';
+                case 2: return 'Consultado';
+                case 3: return 'Não Compareceu';
+                default: return 'Desconhecido';
+            }
+        }
 
         async function fetchPriorityQueue() {
             try {
@@ -112,7 +112,6 @@ function getStatusText(statusCode) {
             }
 
             patients.forEach((patient, index) => {
-                // ADICIONE ESTA LINHA PARA DIAGNÓSTICO
                 console.log('Paciente na fila:', patient.patientName, ' | Status recebido:', patient.queue_status, ' | Tipo:', typeof patient.queue_status);
 
                 const row = document.createElement('tr');

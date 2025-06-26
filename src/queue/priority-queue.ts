@@ -1,12 +1,12 @@
-// src/queues/priority-queue.ts
+// src/queue/priority-queue.ts
 export interface PatientInQueue {
-  patientName: string; 
-  priority: number;
-  queue_id?: number;
-  patient_id?: number;
-  color_name?: string;
-  queue_datetime?: string;
-  queue_status?: number; // <-- ADICIONE ESTA LINHA
+  patientName: string;
+  priority: number;
+  queue_id?: number;
+  patient_id?: number;
+  color_name?: string;
+  queue_datetime?: string;
+  queue_status?: number;
 
 }
 

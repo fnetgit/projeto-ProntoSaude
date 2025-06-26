@@ -3,7 +3,7 @@
 import db from '../config/database';
 // Importação da classe e interface PriorityQueue.
 // Mantenha esta linha, pois ela é necessária para a função getPriorityQueueInOrder.
-import { PriorityQueue, PatientInQueue } from '../queues/priority-queue';
+import { PriorityQueue, PatientInQueue } from '../queue/priority-queue';
 
 interface QueueRow {
     queue_id: number;
@@ -162,21 +162,21 @@ WHERE
 
                 // Insere cada paciente na fila usando o mapeamento correto.
                 rows.forEach(row => {
-                    const patient: PatientInQueue = {
-                        patientName: row.patient_name,
-                        priority: row.level_order,
-                        queue_id: row.queue_id,
-                        patient_id: row.patient_id,
-                        color_name: row.color_name,
-                        queue_datetime: row.queue_datetime,
-                        queue_status: row.queue_status // <-- ADICIONADO AQUI
-                    };
-                    priorityQueue.insert(patient);
-                });
+                    const patient: PatientInQueue = {
+                        patientName: row.patient_name,
+                        priority: row.level_order,
+                        queue_id: row.queue_id,
+                        patient_id: row.patient_id,
+                        color_name: row.color_name,
+                        queue_datetime: row.queue_datetime,
+                        queue_status: row.queue_status
+                    };
+                    priorityQueue.insert(patient);
+                });
 
                 // Obtém a lista ordenada pela lógica do heap
                 const orderedPatients = priorityQueue.list();
-                
+
                 resolve(orderedPatients);
             });
         });
