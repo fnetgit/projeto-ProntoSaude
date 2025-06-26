@@ -2,18 +2,19 @@
 
 import { Router } from 'express';
 import { QueueService } from '../services/queueService';
+import { QueueSortedService } from '../services/queueSortedservice';
 
 const router = Router();
 
-// ROTA PARA A FILA DE ATENDIMENTO GERAL
+/**
+ * Rota para obter a fila de prioridade ordenada.
+ * Este é o endpoint centralizado para exibir a fila em qualquer tela.
+ */
 router.get('/api/priority-queue', async (req, res) => {
     try {
-        // CORREÇÃO CRUCIAL: Chame a função que usa a classe PriorityQueue.
-        // Se você remover o arquivo priority-queue.ts, esta linha causará um erro.
-        const patientsInOrder = await QueueService.getPriorityQueueInOrder();
-
-        console.log('Dados da API /api/priority-queue (ordenados por lógica da fila):', patientsInOrder);
-        res.status(200).json(patientsInOrder);
+        const sortedQueue = await QueueSortedService.getPatientsOrderedByPriority();
+        console.log('Fila ordenada para triagem/médicos:', sortedQueue);
+        res.status(200).json(sortedQueue);
     } catch (error: any) {
         console.error('Erro ao buscar pacientes na fila de prioridade:', error.message);
         res.status(500).json({ message: error.message });

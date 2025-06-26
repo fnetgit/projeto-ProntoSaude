@@ -347,3 +347,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializePage();
 });
+

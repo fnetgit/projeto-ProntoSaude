@@ -3,45 +3,51 @@
 import db from '../config/database';
 
 export const QueueService = {
+    /**
+     * Busca pacientes na fila de prioridade sem ordenação no banco de dados.
+     * A ordenação será feita na camada de serviço.
+     */
     async getPriorityQueueInOrder(): Promise<any[]> {
-    return new Promise((resolve, reject) => {
-        const sql = `
-            SELECT 
-                PQ.queue_id,
-                PQ.patient_id,
-                PQ.datetime AS queue_datetime,
-                PQ.status AS queue_status,
-                P.patient_name,
-                C.color_name,
-                C.level_order AS priority,
-                T.triage_id,
-                T.datetime AS triage_datetime
-            FROM PriorityQueue PQ
-            JOIN Patient P ON PQ.patient_id = P.patient_id
-            LEFT JOIN (
-                SELECT T1.*
-                FROM Triage T1
-                INNER JOIN (
-                    SELECT patient_id, MAX(datetime) AS max_datetime
-                    FROM Triage
-                    GROUP BY patient_id
-                ) T2
-                ON T1.patient_id = T2.patient_id AND T1.datetime = T2.max_datetime
-            ) T ON PQ.patient_id = T.patient_id
-            LEFT JOIN Classification C ON T.classification_id = C.classification_id
-            WHERE PQ.status IN (0, 1)
-            ORDER BY priority ASC, queue_datetime ASC, triage_datetime ASC
-        `;
-        db.all(sql, [], (err, rows) => {
-            if (err) {
-                console.error('Erro ao buscar fila de prioridade:', err.message);
-                return reject(err);
-            }
-            resolve(rows);
+        return new Promise((resolve, reject) => {
+            const sql = `
+                SELECT 
+                    PQ.queue_id,
+                    PQ.patient_id,
+                    PQ.datetime AS queue_datetime,
+                    PQ.status AS queue_status,
+                    P.patient_name,
+                    C.color_name,
+                    C.level_order AS priority,
+                    T.triage_id,
+                    T.datetime AS triage_datetime
+                FROM PriorityQueue PQ
+                JOIN Patient P ON PQ.patient_id = P.patient_id
+                LEFT JOIN (
+                    SELECT T1.*
+                    FROM Triage T1
+                    INNER JOIN (
+                        SELECT patient_id, MAX(datetime) AS max_datetime
+                        FROM Triage
+                        GROUP BY patient_id
+                    ) T2
+                    ON T1.patient_id = T2.patient_id AND T1.datetime = T2.max_datetime
+                ) T ON PQ.patient_id = T.patient_id
+                LEFT JOIN Classification C ON T.classification_id = C.classification_id
+                WHERE PQ.status IN (0, 1)
+            `;
+            db.all(sql, [], (err, rows) => {
+                if (err) {
+                    console.error('Erro ao buscar fila de prioridade:', err.message);
+                    return reject(err);
+                }
+                resolve(rows);
+            });
         });
-    });
-},
+    },
 
+    /**
+     * Adiciona um paciente à fila de serviço.
+     */
     async addPatientToServiceQueue(patient_id: number, attendant_id: number, datetime: string): Promise<number> {
         return new Promise((resolve, reject) => {
             const sql = `
@@ -58,6 +64,10 @@ export const QueueService = {
         });
     },
 
+    /**
+     * Atualiza o status de um registro na fila de prioridade.
+     * Esta é a função centralizada para esta operação.
+     */
     async updatePriorityQueueStatus(queueId: number, status: number): Promise<void> {
         return new Promise((resolve, reject) => {
             const sql = `UPDATE PriorityQueue SET status = ? WHERE queue_id = ?`;
@@ -74,6 +84,9 @@ export const QueueService = {
         });
     },
 
+    /**
+     * Insere um novo paciente na fila de prioridade.
+     */
     async insertIntoPriorityQueue(patient_id: number, datetime: string, status: number = 0): Promise<number> {
         return new Promise((resolve, reject) => {
             const sql = `
@@ -90,6 +103,9 @@ export const QueueService = {
         });
     },
 
+    /**
+     * Busca um registro da fila por ID.
+     */
     async getPriorityQueueById(queueId: number): Promise<any> {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM PriorityQueue WHERE queue_id = ?`;
@@ -103,6 +119,9 @@ export const QueueService = {
         });
     },
 
+    /**
+     * Remove um registro da fila de prioridade.
+     */
     async removeFromPriorityQueue(queueId: number): Promise<void> {
         return new Promise((resolve, reject) => {
             const sql = `DELETE FROM PriorityQueue WHERE queue_id = ?`;
@@ -119,6 +138,9 @@ export const QueueService = {
         });
     },
 
+    /**
+     * Busca todos os registros da fila de prioridade.
+     */
     async getAllPriorityQueues(): Promise<any[]> {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM PriorityQueue`;
@@ -132,6 +154,9 @@ export const QueueService = {
         });
     },
 
+    /**
+     * Busca o histórico de um paciente na fila de prioridade.
+     */
     async getPatientQueueHistory(patient_id: number): Promise<any[]> {
         return new Promise((resolve, reject) => {
             const sql = `

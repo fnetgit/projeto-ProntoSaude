@@ -7,6 +7,7 @@ export interface PatientInQueue {
   queue_datetime?: string;  // string ISO ou compatível para Date
   queue_status?: number;
   triage_datetime?: string;
+  triage_id?: number; 
 }
 
 export class PriorityQueue {
