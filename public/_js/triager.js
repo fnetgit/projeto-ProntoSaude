@@ -1,5 +1,33 @@
 // triager.js
 
+// Funções auxiliares de formatação
+const formatCPF = (cpf) => {
+    if (!cpf) return 'N/A';
+    // Remove caracteres não numéricos
+    const cleaned = cpf.toString().replace(/\D/g, '');
+    // Aplica a máscara: 000.000.000-00
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+};
+
+const formatSUS = (sus) => {
+    if (!sus) return 'N/A';
+    // Remove caracteres não numéricos
+    const cleaned = sus.toString().replace(/\D/g, '');
+    // Aplica a máscara: 000 0000 0000 0000
+    return cleaned.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
+};
+
+const formatPhone = (phone) => {
+    if (!phone) return 'N/A';
+    // Remove caracteres não numéricos
+    const cleaned = phone.toString().replace(/\D/g, '');
+    // Formatação para (00) 0000-0000 ou (00) 00000-0000
+    if (cleaned.length === 11) {
+        return cleaned.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    }
+    return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     // Função para exibir os dados do usuário logado no cabeçalho
     function displayUserData() {
@@ -123,9 +151,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${patient.patient_name}</td>
-                <td>${patient.cpf}</td>
-                <td>${patient.sus_card}</td>
-                <td>${patient.phone || 'N/A'}</td>
+                <td>${formatCPF(patient.cpf)}</td>
+                <td>${formatSUS(patient.sus_card)}</td>
+                <td>${formatPhone(patient.phone) || 'N/A'}</td>
                 <td>${birthDate}</td>
                 <td>
                     <button class="initiate-button active" data-patient-id="${patient.patient_id}" data-service-id="${patient.service_id}" data-patient-name="${patient.patient_name}" data-birth-date="${birthDate}">Triar</button>
@@ -202,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         displayUserData();
         loadClassifications();
         loadTriageQueue();
+        setInterval(loadTriageQueue, 5000);
     }
 
     initializePage();

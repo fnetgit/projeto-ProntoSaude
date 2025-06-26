@@ -303,6 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     endConsultationBtn.addEventListener('click', async (event) => {
         event.preventDefault();
+        alert('Consulta finalizada com sucesso!')
         if (!currentPatientData) return alert('Nenhum paciente selecionado.');
 
         const opinion = medicalOpinionTextarea.value.trim();

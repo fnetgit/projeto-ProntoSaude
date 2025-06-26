@@ -41,8 +41,8 @@
 
     /* --- Cores de Prioridade (Sistema de Triagem) --- */
     --priority-red: #d9534f;
-    --priority-orange: #f0ad4e;
-    --priority-yellow: #f1c40f;
+    --priority-orange: #FFA500;
+    --priority-yellow: #ffff00;
     --priority-green: #28a745;
     --priority-blue: #17a2b8;
 }
