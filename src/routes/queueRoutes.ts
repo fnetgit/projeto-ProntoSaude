@@ -2,7 +2,7 @@
 
 import { Router } from 'express';
 import { QueueService } from '../services/queueService';
-import { QueueSortedService } from '../services/queueSortedservice';
+import { QueueSortedService } from '../services/queueSortedService';
 
 const router = Router();
 

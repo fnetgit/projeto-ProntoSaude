@@ -1,12 +1,12 @@
 // src/services/doctorService.ts
 
 import db from '../config/database';
-import { QueueService } from './queueService'; // Importa o serviço correto
+import { QueueService } from './queueService';
 
 export const DoctorService = {
-    /**
-     * Registra um novo atendimento no banco de dados.
-     */
+
+    // Registra um novo atendimento no banco de dados.
+
     async registerAppointment(patient_id: number, doctor_id: number, datetime: string, observations: string): Promise<number> {
         return new Promise((resolve, reject) => {
             const sql = `INSERT INTO Appointment (patient_id, doctor_id, datetime, observations) VALUES (?, ?, ?, ?)`;
@@ -20,20 +20,18 @@ export const DoctorService = {
         });
     },
 
-    /**
-     * Atualiza o status de um paciente na fila de prioridade, chamando o serviço centralizado.
-     */
+    // Atualiza o status de um paciente na fila de prioridade, chamando o serviço centralizado.
     async updatePriorityQueueStatus(queueId: number, status: number): Promise<void> {
         // Chamando a função centralizada no QueueService.
         return QueueService.updatePriorityQueueStatus(queueId, status);
     },
-    
+
     /**
      * Retorna a fila médica.
      * Nota: A lógica de ordenação agora deve vir do `QueueSortedService`.
      * Esta função não é mais usada para buscar a fila ordenada, mas mantida caso outras partes do código a usem.
      */
-     async getMedicalQueue(): Promise<any[]> {
+    async getMedicalQueue(): Promise<any[]> {
         return new Promise((resolve, reject) => {
             const todayLocal = new Date().toISOString().split('T')[0];
             const sql = `

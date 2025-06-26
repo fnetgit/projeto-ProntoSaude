@@ -45,9 +45,9 @@ export const QueueService = {
         });
     },
 
-    /**
-     * Adiciona um paciente à fila de serviço.
-     */
+
+    // Adiciona um paciente à fila de serviço.
+
     async addPatientToServiceQueue(patient_id: number, attendant_id: number, datetime: string): Promise<number> {
         return new Promise((resolve, reject) => {
             const sql = `
@@ -84,9 +84,8 @@ export const QueueService = {
         });
     },
 
-    /**
-     * Insere um novo paciente na fila de prioridade.
-     */
+    // Insere um novo paciente na fila de prioridade.
+
     async insertIntoPriorityQueue(patient_id: number, datetime: string, status: number = 0): Promise<number> {
         return new Promise((resolve, reject) => {
             const sql = `
@@ -103,9 +102,8 @@ export const QueueService = {
         });
     },
 
-    /**
-     * Busca um registro da fila por ID.
-     */
+
+    // Busca um registro da fila por ID.
     async getPriorityQueueById(queueId: number): Promise<any> {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM PriorityQueue WHERE queue_id = ?`;
@@ -119,9 +117,9 @@ export const QueueService = {
         });
     },
 
-    /**
-     * Remove um registro da fila de prioridade.
-     */
+
+    // Remove um registro da fila de prioridade.
+
     async removeFromPriorityQueue(queueId: number): Promise<void> {
         return new Promise((resolve, reject) => {
             const sql = `DELETE FROM PriorityQueue WHERE queue_id = ?`;
@@ -138,9 +136,7 @@ export const QueueService = {
         });
     },
 
-    /**
-     * Busca todos os registros da fila de prioridade.
-     */
+    // Busca todos os registros da fila de prioridade.
     async getAllPriorityQueues(): Promise<any[]> {
         return new Promise((resolve, reject) => {
             const sql = `SELECT * FROM PriorityQueue`;
@@ -154,9 +150,7 @@ export const QueueService = {
         });
     },
 
-    /**
-     * Busca o histórico de um paciente na fila de prioridade.
-     */
+    // Busca o histórico de um paciente na fila de prioridade.
     async getPatientQueueHistory(patient_id: number): Promise<any[]> {
         return new Promise((resolve, reject) => {
             const sql = `
