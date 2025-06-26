@@ -2,13 +2,10 @@
 
 import { Router } from 'express';
 import { DoctorService } from '../services/doctorService';
-// Remova a importação de QueueSortedService, pois a rota foi removida
 
 const router = Router();
 
-// Rota GET /api/medical-queue removida para evitar redundância.
-// Agora, tanto a tela de triagem quanto a do médico usarão a mesma rota da fila.
-
+// Tanto a tela de triagem quanto a do médico usarão a mesma rota da fila.
 router.post('/api/appointment', async (req, res) => {
     const { patient_id, doctor_id, datetime, observations } = req.body;
     if (!patient_id || !doctor_id || !datetime) {
@@ -30,7 +27,6 @@ router.put('/api/priority-queue/:queueId/status', async (req, res) => {
         return res.status(400).json({ message: 'Status é obrigatório.' });
     }
     try {
-        // Chamada agora usa o serviço de forma centralizada.
         await DoctorService.updatePriorityQueueStatus(Number(queueId), Number(status));
         res.status(200).json({ message: 'Status da fila atualizado com sucesso.' });
     } catch (error: any) {

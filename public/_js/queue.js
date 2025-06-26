@@ -134,10 +134,8 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Carrega a fila quando a página é carregada
         fetchPriorityQueue();
 
-        // Habilitar a atualização automática da fila a cada 5 segundos
         setInterval(fetchPriorityQueue, 5000);
     }
 });

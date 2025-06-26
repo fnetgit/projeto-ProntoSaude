@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastro de Usuário (Admin)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+        }
+
+        label {
+            display: block;
+            margin-top: 1em;
+        }
+
+        #doctorFields {
+            margin-left: 1em;
+        }
+
+        #result {
+            margin-top: 1em;
+            color: #b00;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Cadastro de Usuário</h1>
+    <form id="adminForm">
+        <label>
+            Nome de usuário:
+            <input type="text" name="username" required>
+        </label>
+        <label>
+            Senha:
+            <input type="password" name="password" required>
+        </label>
+        <label>
+            Nome completo:
+            <input type="text" name="name" required>
+        </label>
+        <label>
+            Papel:
+            <select name="role" id="role" required>
+                <option value="attendant">Atendente</option>
+                <option value="triager">Triador</option>
+                <option value="doctor">Médico</option>
+            </select>
+        </label>
+        <div id="doctorFields" style="display: none;">
+            <label>
+                Especialidade:
+                <input type="text" name="specialty">
+            </label>
+            <label>
+                CRM:
+                <input type="text" name="crm">
+            </label>
+        </div>
+        <button type="submit">Cadastrar</button>
+    </form>
+    <div id="result"></div>
+    <script>
+        const roleSelect = document.getElementById('role');
+        const doctorFields = document.getElementById('doctorFields');
+        roleSelect.addEventListener('change', function () {
+            doctorFields.style.display = this.value === 'doctor' ? 'block' : 'none';
+        });
+        document.getElementById('adminForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            // Remove specialty/crm se não for doctor
+            if (data.role !== 'doctor') {
+                delete data.specialty;
+                delete data.crm;
+            }
+            const response = await fetch('/api/admin/create-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await response.json();
+            document.getElementById('result').innerText = result.message || result.error;
+            if (result.message) {
+                this.reset();
+                doctorFields.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>

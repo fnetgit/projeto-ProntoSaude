@@ -6,7 +6,7 @@ export interface PatientInQueue {
   queue_id?: number;
   patient_id?: number;
   color_name?: string;      // ex: 'vermelho', 'amarelo', 'azul' ...
-  queue_datetime?: string;  // string ISO ou compatível para Date
+  queue_datetime?: string;
   queue_status?: number;
   triage_datetime?: string;
   triage_id?: number;
@@ -17,7 +17,7 @@ export class PriorityQueue {
 
   // Tempo máximo em minutos para cada cor, baseado no protocolo Manchester:
   private maxAllowedMinutesByColor: Record<string, number> = {
-    vermelho: 0,  // Emergência - prioridade máxima
+    vermelho: 0,  // Emergência
     laranja: 10,  // Muito urgente
     amarelo: 60,  // Urgente
     verde: 120,   // Pouco urgente

@@ -1,26 +1,37 @@
-// src/users/attendant.ts
-
 import { Patient } from "../entities/patient";
-
-const attendants: { attendantId: number; attendantName: string }[] = [];
-let nextAttendantId = 1;
-let nextPatientId = 1;
-const patients: Patient[] = [];
+import { openDb } from "../utils/db";
 
 export class Attendant {
-  private attendantId: number;
-  private attendantName: string;
+  public attendantId: number;
+  public attendantName: string;
 
-  constructor(name: string) {
-    this.attendantId = nextAttendantId++;
-    this.attendantName = name;
-    attendants.push({
-      attendantId: this.attendantId,
-      attendantName: this.attendantName,
-    });
+  constructor(attendantId: number, attendantName: string) {
+    this.attendantId = attendantId;
+    this.attendantName = attendantName;
   }
 
-  public registerPatient(
+  static async create(name: string): Promise<Attendant> {
+    const db = await openDb();
+    const result = await db.run(
+      "INSERT INTO Attendant (attendant_name) VALUES (?)",
+      name
+    );
+    if (typeof result.lastID !== "number") {
+      throw new Error("Erro ao criar Attendant: lastID indefinido");
+    }
+    return new Attendant(result.lastID, name);
+  }
+
+  static async findById(id: number): Promise<Attendant | null> {
+    const db = await openDb();
+    const att = await db.get(
+      "SELECT attendant_id, attendant_name FROM Attendant WHERE attendant_id = ?",
+      id
+    );
+    return att ? new Attendant(att.attendant_id, att.attendant_name) : null;
+  }
+
+  async registerPatient(
     birthplace: string,
     patient_name: string,
     phone: string,
@@ -30,9 +41,28 @@ export class Attendant {
     susCard: string,
     motherName: string,
     address: string
-  ): Patient {
-    const newPatient = new Patient(
-      nextPatientId++,
+  ): Promise<Patient> {
+    const db = await openDb();
+    const result = await db.run(
+      `INSERT INTO Patient 
+        (patient_name, cpf, birth_date, gender, phone, address, birthplace, sus_card, mother_name)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      patient_name,
+      cpf,
+      birthDate.toISOString().slice(0, 10),
+      gender,
+      phone,
+      address,
+      birthplace,
+      susCard,
+      motherName
+    );
+    if (typeof result.lastID !== "number") {
+      throw new Error("Erro ao criar Patient: lastID indefinido");
+    }
+
+    return new Patient(
+      result.lastID,
       birthplace,
       patient_name,
       phone,
@@ -43,10 +73,5 @@ export class Attendant {
       motherName,
       address
     );
-    patients.push(newPatient);
-    console.log(
-      `→ Paciente ${patient_name} cadastrado por ${this.attendantName}`
-    );
-    return newPatient;
   }
 }
