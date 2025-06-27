@@ -1,5 +1,3 @@
-// src/services/queueSortedService.ts
-
 import { PriorityQueue, PatientInQueue } from '../queue/priority-queue';
 import { QueueService } from './queueService';
 

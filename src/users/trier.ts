@@ -1,5 +1,3 @@
-// src/users/trier.ts
-
 import { Patient } from "../entities/patient";
 import { openDb } from "../utils/db";
 
@@ -44,7 +42,6 @@ export class Trier {
     wristbandColor: string
   ): Promise<{ triageId: number; triagerName: string }> {
     const db = await openDb();
-    // busca classification_id da cor da pulseira
     const classification = await db.get(
       "SELECT classification_id FROM Classification WHERE color_name = ?",
       wristbandColor

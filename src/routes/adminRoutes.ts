@@ -1,5 +1,3 @@
-// src/routes/adminRoutes.ts
-
 import express from "express";
 import { openDb } from "../utils/db";
 
@@ -11,7 +9,6 @@ router.post("/api/admin/create-user", async (req, res) => {
     try {
         const db = await openDb();
 
-        // Verifica se o username já existe
         const existingUser = await db.get(
             "SELECT * FROM User WHERE username = ?",
             username
@@ -20,7 +17,6 @@ router.post("/api/admin/create-user", async (req, res) => {
             return res.status(400).json({ error: "Nome de usuário já existe." });
         }
 
-        // 1. Cria o usuário na tabela User
         const userResult = await db.run(
             "INSERT INTO User (username, password, role) VALUES (?, ?, ?)",
             username,
@@ -29,7 +25,6 @@ router.post("/api/admin/create-user", async (req, res) => {
         );
         const userId = userResult.lastID;
 
-        // 2. Cria na tabela específica com user_id
         if (role === "attendant") {
             await db.run(
                 "INSERT INTO Attendant (attendant_name, user_id) VALUES (?, ?)",

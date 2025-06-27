@@ -1,11 +1,7 @@
-// src/services/doctorService.ts
-
 import db from '../config/database';
 import { QueueService } from './queueService';
 
 export const DoctorService = {
-
-    // Registra um novo atendimento no banco de dados.
 
     async registerAppointment(patient_id: number, doctor_id: number, datetime: string, observations: string): Promise<number> {
         return new Promise((resolve, reject) => {
@@ -20,9 +16,7 @@ export const DoctorService = {
         });
     },
 
-    // Atualiza o status de um paciente na fila de prioridade, chamando o serviço centralizado.
     async updatePriorityQueueStatus(queueId: number, status: number): Promise<void> {
-        // Chamando a função centralizada no QueueService.
         return QueueService.updatePriorityQueueStatus(queueId, status);
     },
 };

@@ -1,12 +1,9 @@
-// src/routes/patientRoutes.ts
-
 import { Router } from 'express';
 import { PatientService } from '../services/patientService';
 import { Patient } from '../entities/patient';
 
 const router = Router();
 
-// Rotas de Pacientes
 router.post('/api/pacientes', async (req, res) => {
     const { patient_name, birth_date, cpf, birthplace, sus_card, address, mother_name, gender, phone } = req.body;
     if (!patient_name || !birth_date || !cpf || !sus_card) {

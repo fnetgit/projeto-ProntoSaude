@@ -1,11 +1,9 @@
-// src/queue/priority-queue.ts
-
 export interface PatientInQueue {
   patient_name: string;
-  priority: number;         // nível numérico da prioridade (ex: 1, 2, 3...)
+  priority: number;
   queue_id?: number;
   patient_id?: number;
-  color_name?: string;      // ex: 'vermelho', 'amarelo', 'azul' ...
+  color_name?: string;
   queue_datetime?: string;
   queue_status?: number;
   triage_datetime?: string;
@@ -15,13 +13,12 @@ export interface PatientInQueue {
 export class PriorityQueue {
   private heap: PatientInQueue[] = [];
 
-  // Tempo máximo em minutos para cada cor, baseado no protocolo Manchester:
   private maxAllowedMinutesByColor: Record<string, number> = {
-    vermelho: 0,  // Emergência
-    laranja: 10,  // Muito urgente
-    amarelo: 60,  // Urgente
-    verde: 120,   // Pouco urgente
-    azul: 240     // Não urgente
+    vermelho: 0,
+    laranja: 10,
+    amarelo: 60,
+    verde: 120,
+    azul: 240
   };
 
   private parentIndex(i: number) {
@@ -38,7 +35,6 @@ export class PriorityQueue {
     [this.heap[i], this.heap[j]] = [this.heap[j], this.heap[i]];
   }
 
-  // Calcula o tempo que um paciente está esperando em minutos.
   private getWaitedMinutes(patient: PatientInQueue): number {
     if (!patient.queue_datetime) return 0;
     const now = new Date();
@@ -46,37 +42,26 @@ export class PriorityQueue {
     return (now.getTime() - enteredDate.getTime()) / 60000;
   }
 
-  /**
-   * Calcula um score de prioridade dinâmico para o paciente,
-   * combinando a prioridade original com o tempo de espera.
-   * Um score menor indica maior urgência.
-   */
   private getDynamicPriorityScore(patient: PatientInQueue): number {
     const waitedMinutes = this.getWaitedMinutes(patient);
 
-    // O fator de decaimento determina o quão rápido a prioridade "cai" com o tempo.
-    // Quanto menor o número, maior o impacto do tempo de espera.
-    // Ex: um fator de 10 significa que 10 minutos de espera diminuem a prioridade em 1 ponto.
     const decayFactor = 10.0;
 
     return patient.priority - (waitedMinutes / decayFactor);
   }
 
-  // Compara dois pacientes na fila, baseando-se em seu score de prioridade dinâmico.
   private comparePatients(a: PatientInQueue, b: PatientInQueue): boolean {
     const scoreA = this.getDynamicPriorityScore(a);
     const scoreB = this.getDynamicPriorityScore(b);
 
-    // 1) Score menor é mais urgente.
     if (scoreA < scoreB) return true;
     if (scoreA > scoreB) return false;
 
-    // 2) Se os scores forem iguais, o desempate é feito pela data de entrada (FIFO).
     if (a.queue_datetime && b.queue_datetime) {
       return new Date(a.queue_datetime) < new Date(b.queue_datetime);
     }
 
-    return false; // empate padrão
+    return false;
   }
 
   private bubbleUp(i: number) {

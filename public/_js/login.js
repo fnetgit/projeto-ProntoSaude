@@ -1,5 +1,3 @@
-// login.js
-
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('loginForm');
     const usernameInput = document.getElementById('username');

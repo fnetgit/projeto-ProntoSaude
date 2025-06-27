@@ -1,5 +1,3 @@
-// triager.js
-
 const formatCPF = (cpf) => {
     if (!cpf) return 'N/A';
     const cleaned = cpf.toString().replace(/\D/g, '');
@@ -31,7 +29,6 @@ const getGenderText = (genderCode) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Função para exibir os dados do usuário logado no cabeçalho
     function displayUserData() {
         const userNameElement = document.getElementById('loggedInUserName');
         const userRoleElement = document.getElementById('loggedInUserRole');
@@ -59,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Elementos da UI
     const triageQueueList = document.getElementById('triage-queue-list');
     const triageDataFormSection = document.getElementById('triage-data-form');
     const triageQueueBody = document.getElementById('triage-queue-body');
@@ -72,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const serviceIdInput = document.getElementById('service_id');
     const backButton = document.querySelector('.back-button');
 
-    // Mapa para exibir textos mais amigáveis no select
     const classificationTextMap = {
         'Vermelho': 'Vermelho (Emergência)',
         'Laranja': 'Laranja (Muito Urgente)',
@@ -81,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
         'Azul': 'Azul (Não Urgente)'
     };
 
-    // Função que aplica a cor no select ao mudar a opção
     const applyColorToSelect = () => {
         if (!prioritySelect || prioritySelect.selectedIndex === -1) return;
 
@@ -92,10 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
             'azul': 'priority-blue'
         };
 
-        // Remove todas as classes de cor anteriores
         prioritySelect.classList.remove(...Object.values(colorMap));
 
-        // Adiciona a classe de cor correta
         for (const colorName in colorMap) {
             if (selectedOptionText.includes(colorName)) {
                 prioritySelect.classList.add(colorMap[colorName]);
@@ -104,12 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Adiciona o "ouvinte" de evento para mudar a cor
     if (prioritySelect) {
         prioritySelect.addEventListener('change', applyColorToSelect);
     }
 
-    // Carrega as classificações do banco de dados
     async function loadClassifications() {
         if (!prioritySelect) return;
         try {
@@ -129,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Carrega os pacientes na fila de triagem
     async function loadTriageQueue() {
         try {
             const response = await fetch('/api/queue-patients');
@@ -142,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Renderiza a tabela de pacientes
     function renderTriageQueue(patients) {
         triageQueueBody.innerHTML = '';
         if (patients.length === 0) {
@@ -174,7 +162,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Alterna entre a lista e o formulário
     function showTriageForm(show) {
         triageQueueList.style.display = show ? 'none' : 'block';
         triageDataFormSection.style.display = show ? 'block' : 'none';
@@ -186,7 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Lida com cliques nos botões da tabela
     triageQueueBody.addEventListener('click', async (event) => {
         const target = event.target;
         if (target.classList.contains('initiate-button')) {
@@ -213,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Lida com a submissão do formulário de triagem
     triageForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const formData = new FormData(triageForm);

@@ -1,5 +1,3 @@
-// src/services/triageService.ts
-
 import db from '../config/database';
 
 interface TriageDetails {

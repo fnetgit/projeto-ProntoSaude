@@ -1,8 +1,5 @@
-/* doctor.css */
-
 @import url('style.css');
 
-/* Botão de ação da fila do médico */
 .action-button {
     padding: 10px 20px;
     border: none;
@@ -29,7 +26,6 @@
     cursor: not-allowed;
 }
 
-/* === Bloco de informações do paciente no topo === */
 .patient-info-display {
     padding-bottom: 20px;
     margin-bottom: 30px;
@@ -54,7 +50,6 @@
     margin-left: 30px;
 }
 
-/* Responsividade para o bloco do paciente */
 @media (max-width: 600px) {
     #display-patient-name {
         font-size: 20px;
@@ -67,7 +62,6 @@
     }
 }
 
-/* === Box de dados da triagem === */
 .data-display-box {
     background-color: var(--container-bg-color);
     border: 1px solid var(--border-color);
@@ -103,7 +97,6 @@
     line-height: 1.5;
 }
 
-/* === Formulário de parecer médico === */
 .medical-report-form textarea {
     min-height: 180px;
     resize: vertical;
@@ -173,8 +166,6 @@
 .btn-end:hover {
     background-color: var(--dark-neutral-color-hover);
 }
-
-/* === Badge de prioridade na tabela === */
 
 .priority-red {
     background-color: var(--priority-red);

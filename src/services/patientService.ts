@@ -1,5 +1,3 @@
-// src/services/patientService.ts
-
 import db from '../config/database';
 import { Patient } from '../entities/patient';
 

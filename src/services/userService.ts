@@ -1,5 +1,3 @@
-// src/services/userService.ts
-
 import db from '../config/database';
 
 export const UserService = {

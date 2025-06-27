@@ -1,5 +1,3 @@
-// src/users/doctor.ts
-
 import { openDb } from "../utils/db";
 
 export class Doctor {

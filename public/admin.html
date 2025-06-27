@@ -73,7 +73,6 @@
             e.preventDefault();
             const formData = new FormData(this);
             const data = Object.fromEntries(formData.entries());
-            // Remove specialty/crm se não for doctor
             if (data.role !== 'doctor') {
                 delete data.specialty;
                 delete data.crm;

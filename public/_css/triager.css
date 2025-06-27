@@ -1,5 +1,3 @@
-/* triager.css */
-
 @import url('style.css');
 
 .triage-form textarea {
@@ -21,7 +19,6 @@
     margin-top: 0;
 }
 
-/* === Bloco de informações do paciente no topo === */
 .patient-info-display {
     padding-bottom: 20px;
     margin-bottom: 30px;
@@ -58,7 +55,6 @@
     }
 }
 
-/* Select de prioridade */
 .select-wrapper {
     position: relative;
 }
@@ -129,7 +125,6 @@
     color: var(--text-color);
 }
 
-/* Estilos para o botão "Iniciar" na tabela de fila (initiate-button) */
 .initiate-button {
     padding: 8px 15px;
     border: none;
@@ -157,7 +152,6 @@
     opacity: 0.7;
 }
 
-/* Estilos para o botão "Remover" na tabela de fila (remove-button) */
 .remove-button {
     padding: 8px 15px;
     border: none;
@@ -174,7 +168,6 @@
     background-color: var(--danger-color-hover);
 }
 
-/* --- Estilos para Botões do Formulário de Triagem --- */
 .triage-form .submit-button {
     align-self: center;
     padding: 15px 40px;
@@ -216,7 +209,6 @@
     border-color: var(--primary-color);
 }
 
-/* Ajustes para as cores de prioridade no select */
 #priority_classification.priority-red,
 #priority_classification.priority-orange,
 #priority_classification.priority-green,
@@ -226,7 +218,6 @@
     font-weight: 700;
 }
 
-/* Se precisar que o texto em fundo amarelo seja escuro */
 .select-wrapper.priority-yellow.has-color::after {
     color: var(--text-color);
 }

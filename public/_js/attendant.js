@@ -1,5 +1,3 @@
-// _js/attendant.js
-
 document.addEventListener('DOMContentLoaded', () => {
     const tabButtons = document.querySelectorAll('.tab-button');
     const registrationForm = document.getElementById('register-patient-form');

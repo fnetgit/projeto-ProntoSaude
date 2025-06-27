@@ -1,15 +1,9 @@
-// src/routes/queueRoutes.ts
-
 import { Router } from 'express';
 import { QueueService } from '../services/queueService';
 import { QueueSortedService } from '../services/queueSortedService';
 
 const router = Router();
 
-/**
- * Rota para obter a fila de prioridade ordenada.
- * Este é o endpoint centralizado para exibir a fila em qualquer tela.
- */
 router.get('/api/priority-queue', async (req, res) => {
     try {
         const sortedQueue = await QueueSortedService.getPatientsOrderedByPriority();

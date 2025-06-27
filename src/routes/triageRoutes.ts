@@ -1,11 +1,8 @@
-// src/routes/triageRoutes.ts
-
 import { Router } from 'express';
 import { TriageService } from '../services/triageService';
 
 const router = Router();
 
-// ROTA DE TRIAGEM
 router.post('/api/triage', async (req, res) => {
     const { patient_id, service_id, classification_id, blood_pressure, temperature, glucose, weight, oxygen_saturation, symptoms } = req.body;
     if (!patient_id || !service_id || !classification_id) {
@@ -20,7 +17,6 @@ router.post('/api/triage', async (req, res) => {
     }
 });
 
-// ROTA: Obter detalhes completos da triagem e dados do paciente
 router.get('/api/triage-details/:patientId/:triageId', async (req, res) => {
     const { patientId, triageId } = req.params;
     try {

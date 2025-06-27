@@ -1,13 +1,9 @@
-/* style.css */
-
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 :root {
-    /* --- Paleta Principal --- */
     --primary-color: #17a2b8;
     --primary-color-hover: #138496;
 
-    /* --- Cores de Ação e Status --- */
     --success-color: #28a745;
     --success-color-hover: #218838;
     --danger-color: #dc3545;
@@ -15,20 +11,16 @@
     --warning-color: #ffc107;
     --info-color: #17a2b8;
 
-    /* --- Cores da Sidebar --- */
     --sidebar-bg-color: var(--primary-color);
     --sidebar-hover-color: var(--primary-color-hover);
 
-    /* --- Cores Neutras --- */
     --dark-neutral-color: #2c3e50;
     --dark-neutral-color-hover: #34495e;
 
-    /* --- Cores de Texto --- */
     --text-color: #34495e;
     --light-text-color: #ffffff;
     --secondary-text-color: #8c98a4;
 
-    /* --- Cores de Fundo e Bordas --- */
     --page-bg-color: #f4f7f9;
     --container-bg-color: #fff;
     --border-color: #e3e8ee;
@@ -36,10 +28,8 @@
     --inactive-bg-color: #ccc;
     --inactive-text-color: #666;
 
-    /* --- Fonte Principal --- */
     --primary-font: 'Roboto', sans-serif;
 
-    /* --- Cores de Prioridade (Sistema de Triagem) --- */
     --priority-red: #d9534f;
     --priority-orange: #ff770f;
     --priority-yellow: #ffff00;
@@ -101,7 +91,6 @@ section {
     margin-bottom: 30px;
 }
 
-/* === SIDEBAR === */
 .sidebar {
     width: 220px;
     background-color: var(--sidebar-bg-color);
@@ -174,8 +163,6 @@ section {
 .sidebar-item.active img {
     filter: none;
 }
-
-/* === FIM DA SEÇÃO DA SIDEBAR === */
 
 .header {
     display: flex;

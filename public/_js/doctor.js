@@ -1,5 +1,3 @@
-// // _js/doctor.js
-
 document.addEventListener('DOMContentLoaded', () => {
     function displayUserData() {
         const userNameElement = document.getElementById('loggedInUserName');
@@ -101,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
             const patients = await response.json();
 
-            // Filtra apenas os com status 0 (esperando) ou 1 (em atendimento)
             const filtered = patients.filter(p => p.queue_status === 0 || p.queue_status === 1);
             displayQueue(filtered);
         } catch (error) {

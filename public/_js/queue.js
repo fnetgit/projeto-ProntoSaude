@@ -1,8 +1,5 @@
-// public/_js/queue.js
-
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- LÓGICA PARA EXIBIR NOME E FUNÇÃO DO USUÁRIO LOGADO E AJUSTAR LINK PRINCIPAL
     const userNameElement = document.getElementById('loggedInUserName');
     const userRoleElement = document.getElementById('loggedInUserRole');
     const homeLink = document.getElementById('homeLink');
@@ -51,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (queueBody) {
 
-        // Mapeamento de cores para classes CSS
         function getPriorityBadgeClass(colorName) {
             switch (colorName.toLowerCase()) {
                 case 'vermelho': return 'priority-red';
@@ -63,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Mapeamento de cores para texto de prioridade
         function getPriorityText(colorName) {
             switch (colorName.toLowerCase()) {
                 case 'vermelho': return 'Emergência';
@@ -75,9 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Mapeamento de status para texto
         function getStatusText(statusCode) {
-            // Converte o valor para um número para garantir a comparação estrita
             const statusNum = Number(statusCode);
 
             switch (statusNum) {

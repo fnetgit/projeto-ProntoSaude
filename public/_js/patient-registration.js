@@ -1,5 +1,3 @@
-// _js/patient-registration.js
-
 document.addEventListener('DOMContentLoaded', () => {
 
     const patientRegistrationForm = document.querySelector('#register-patient-form form');
@@ -34,9 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return phone;
     }
 
-    // --- LÓGICA DE AÇÕES E COMUNICAÇÃO COM API ---
-
-    // Envia o paciente para a fila de triagem.
     async function handleConsultButtonClick(patientId) {
         console.log('Botão "Consulta" clicado para o paciente ID:', patientId);
         const attendantId = 1;
@@ -91,16 +86,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('register-patient-form').style.display = 'block';
                 document.getElementById('search-patient-form').style.display = 'none';
 
-                // Preenche os campos do formulário
                 for (const [key, value] of Object.entries(patient)) {
                     const input = form.querySelector(`#${key}`);
                     if (input) input.value = value;
                 }
 
-                // Marca como modo de edição
                 form.dataset.editingId = patient.patient_id;
 
-                // Altera o texto do botão
                 const submitButton = form.querySelector('.submit-button');
                 if (submitButton) submitButton.textContent = 'ATUALIZAR PACIENTE';
 
@@ -128,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // 1. Listener do campo de busca (pesquisa por Nome ou CPF).
     if (searchInput) {
         searchInput.addEventListener('input', (event) => {
             const searchTerm = event.target.value.toLowerCase();
@@ -149,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. Listener do formulário de cadastro de paciente.
     if (patientRegistrationForm) {
         patientRegistrationForm.addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -162,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const formData = new FormData(patientRegistrationForm);
             const patientData = Object.fromEntries(formData.entries());
 
-            // Limpa os dados antes de enviar para a API
             if (patientData.cpf) patientData.cpf = String(patientData.cpf).replace(/\D/g, '');
             if (patientData.sus_card) patientData.sus_card = String(patientData.sus_card).replace(/\D/g, '');
             if (patientData.phone) patientData.phone = String(patientData.phone).replace(/\D/g, '');
@@ -206,9 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 3. Listener da aba de busca (para recarregar a lista).
     if (searchTabButton) {
-        // Carrega a lista quando a aba é clicada.
         searchTabButton.addEventListener('click', () => {
             if (searchInput) searchInput.value = '';
             fetchAndRenderPatients();
