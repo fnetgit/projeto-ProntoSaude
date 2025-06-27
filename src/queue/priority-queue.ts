@@ -13,14 +13,6 @@ export interface PatientInQueue {
 export class PriorityQueue {
   private heap: PatientInQueue[] = [];
 
-  private maxAllowedMinutesByColor: Record<string, number> = {
-    vermelho: 0,
-    laranja: 10,
-    amarelo: 60,
-    verde: 120,
-    azul: 240
-  };
-
   private parentIndex(i: number) {
     return Math.floor((i - 1) / 2);
   }
