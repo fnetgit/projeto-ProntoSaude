@@ -105,7 +105,6 @@ export class PriorityQueue {
     return top;
   }
 
-  // Retorna uma lista ordenada com base no score de prioridade dinâmico.
   public list(): PatientInQueue[] {
     return [...this.heap].sort((a, b) => {
       const scoreA = this.getDynamicPriorityScore(a);
@@ -115,7 +114,6 @@ export class PriorityQueue {
         return scoreA - scoreB;
       }
 
-      // Caso os scores sejam iguais, ordenar pela data de entrada
       if (a.queue_datetime && b.queue_datetime)
         return new Date(a.queue_datetime).getTime() - new Date(b.queue_datetime).getTime();
 
