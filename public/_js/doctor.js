@@ -229,7 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populateConsultationSection(patientData, triageData) {
-        // NOVO BLOCO FORMATAÇÃO CABEÇALHO
         displayPatientName.textContent = patientData.patient_name || 'Nome Indisponível';
         displayPatientDob.textContent = `Nascimento: ${formatDate(patientData.birth_date)}`;
         displayPatientGender.textContent = `Gênero: ${getGenderText(patientData.gender)}`;
@@ -307,7 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     endConsultationBtn.addEventListener('click', async (event) => {
         event.preventDefault();
-        alert('Consulta finalizada com sucesso!')
         if (!currentPatientData) return alert('Nenhum paciente selecionado.');
 
         const opinion = medicalOpinionTextarea.value.trim();
@@ -316,6 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await registerAppointment(currentPatientData.patient_id, DOCTOR_ID, opinion);
         if (!res) return;
 
+        alert('Consulta finalizada com sucesso!')
         await updatePatientStatusInQueue(currentPatientData.queue_id, 2);
         clearConsultationSection();
         medicalConsultationSection.style.display = 'none';
