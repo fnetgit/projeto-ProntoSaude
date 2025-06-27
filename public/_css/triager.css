@@ -2,24 +2,6 @@
 
 @import url('style.css');
 
-/* Botão "Iniciar Triagem" */
-.initiate-triage-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    font-size: 15px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    min-width: 150px;
-    text-align: center;
-    background-color: var(--success-color);
-    color: var(--light-text-color);
-}
-
-.initiate-triage-btn:hover {
-    background-color: var(--success-color-hover);
-}
-
 .triage-form textarea {
     min-height: 120px;
     resize: vertical;
@@ -232,11 +214,6 @@
 .triage-form .back-button:hover {
     background-color: var(--input-bg-color);
     border-color: var(--primary-color);
-}
-
-.triage-form .back-button img {
-    height: 20px;
-    width: 20px;
 }
 
 /* Ajustes para as cores de prioridade no select */

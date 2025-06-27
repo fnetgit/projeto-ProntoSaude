@@ -175,17 +175,6 @@
 }
 
 /* === Badge de prioridade na tabela === */
-.priority-badge {
-    display: inline-block;
-    padding: 5px 15px;
-    border-radius: 15px;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    color: var(--light-text-color);
-    text-align: center;
-}
 
 .priority-red {
     background-color: var(--priority-red);

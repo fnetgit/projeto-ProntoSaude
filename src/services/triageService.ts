@@ -130,7 +130,7 @@ export const TriageService = {
 
     async removePatientFromQueue(serviceId: number): Promise<number> {
         return new Promise((resolve, reject) => {
-            const sql = `UPDATE Service SET status = 2 WHERE service_id = ?`; // Status 2 = Não Compareceu
+            const sql = `UPDATE Service SET status = 2 WHERE service_id = ?`;
             db.run(sql, [serviceId], function (err) {
                 if (err) {
                     return reject(new Error('Erro ao remover paciente da fila.'));

@@ -1,13 +1,8 @@
 // _js/patient-registration.js
 
-// const registrationForm = document.getElementById('register-patient-form');
-// const searchForm = document.getElementById('search-patient-form');
-// const editform = document.getElementById('edit-patient-form')
-
 document.addEventListener('DOMContentLoaded', () => {
 
     const patientRegistrationForm = document.querySelector('#register-patient-form form');
-    const paitientUpdateForm = document.querySelector('#edit-patient-form form')
     const patientTableTbody = document.getElementById('patient-list-body');
     const searchInput = document.querySelector('.search-bar input');
     const searchTabButton = document.querySelector('.tab-button[data-tab="search"]');

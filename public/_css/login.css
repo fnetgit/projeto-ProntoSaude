@@ -69,25 +69,3 @@ body {
     color: red;
     margin-top: 10px;
 }
-
-
-.dev-links {
-    margin-top: 30px;
-    font-size: 0.9em;
-}
-
-.dev-links h4 {
-    color: #555;
-    margin-bottom: 10px;
-}
-
-.dev-links a {
-    display: block;
-    margin: 5px 0;
-    color: var(--primary-color);
-    text-decoration: none;
-}
-
-.dev-links a:hover {
-    text-decoration: underline;
-}

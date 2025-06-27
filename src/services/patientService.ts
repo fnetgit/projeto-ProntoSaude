@@ -55,11 +55,6 @@ export const PatientService = {
             fields.forEach(field => {
                 if (updatedData[field] !== undefined) {
                     setClauses.push(`${field} = ?`);
-                    if (field === 'birth_date' && updatedData[field] instanceof Date) {
-                        params.push(updatedData[field].toISOString().split('T')[0]);
-                    } else {
-                        params.push(updatedData[field]);
-                    }
                 }
             });
 
