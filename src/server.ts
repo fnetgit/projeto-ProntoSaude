@@ -2,7 +2,6 @@
 
 import express from 'express';
 import path from 'path';
-import db from './config/database';
 
 import generalRoutes from './routes/generalRoutes';
 import patientRoutes from './routes/patientRoutes';

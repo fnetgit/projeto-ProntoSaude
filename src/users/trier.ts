@@ -1,5 +1,6 @@
+// src/users/trier.ts
+
 import { Patient } from "../entities/patient";
-import { Triage } from "../entities/triage";
 import { openDb } from "../utils/db";
 
 export class Trier {

@@ -2,6 +2,7 @@
 
 @import url('style.css');
 
+/* Botão "Iniciar Triagem" */
 .initiate-triage-btn {
     padding: 10px 20px;
     border: none;
@@ -38,6 +39,7 @@
     margin-top: 0;
 }
 
+/* === Bloco de informações do paciente no topo === */
 .patient-info-display {
     padding-bottom: 20px;
     margin-bottom: 30px;
@@ -52,11 +54,29 @@
     margin-bottom: 5px;
 }
 
-#display-patient-dob {
+#display-patient-dob,
+#display-patient-gender {
     font-size: 16px;
     color: var(--secondary-text-color);
 }
 
+#display-patient-gender {
+    margin-left: 30px;
+}
+
+@media (max-width: 600px) {
+    #display-patient-name {
+        font-size: 20px;
+    }
+
+    #display-patient-gender {
+        margin-left: 0;
+        display: block;
+        margin-top: 6px;
+    }
+}
+
+/* Select de prioridade */
 .select-wrapper {
     position: relative;
 }
@@ -172,10 +192,7 @@
     background-color: var(--danger-color-hover);
 }
 
-
 /* --- Estilos para Botões do Formulário de Triagem --- */
-
-/* Botão "Registrar Triagem" (submit-button) dentro do formulário de triagem */
 .triage-form .submit-button {
     align-self: center;
     padding: 15px 40px;
@@ -194,9 +211,6 @@
     background-color: var(--primary-color-hover);
 }
 
-/* Botão "Voltar" do Formulário (back-button) dentro do formulário de triagem */
-/* Note: O botão "Voltar" no cabeçalho da seção também pode usar .back-button,
-   mas este seletor foca nos botões dentro do formulário. */
 .triage-form .back-button {
     align-self: center;
     padding: 15px 40px;
@@ -225,7 +239,7 @@
     width: 20px;
 }
 
-/* Ajustes para as cores de prioridade no select, se você não tiver essas regras ou se quiser sobrescrever */
+/* Ajustes para as cores de prioridade no select */
 #priority_classification.priority-red,
 #priority_classification.priority-orange,
 #priority_classification.priority-green,

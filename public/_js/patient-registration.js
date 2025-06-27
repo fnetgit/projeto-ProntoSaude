@@ -1,8 +1,8 @@
 // _js/patient-registration.js
 
-const registrationForm = document.getElementById('register-patient-form');
-const searchForm = document.getElementById('search-patient-form');
-const editform = document.getElementById('edit-patient-form')
+// const registrationForm = document.getElementById('register-patient-form');
+// const searchForm = document.getElementById('search-patient-form');
+// const editform = document.getElementById('edit-patient-form')
 
 document.addEventListener('DOMContentLoaded', () => {
 

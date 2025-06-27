@@ -1,3 +1,5 @@
+// // _js/doctor.js
+
 document.addEventListener('DOMContentLoaded', () => {
     function displayUserData() {
         const userNameElement = document.getElementById('loggedInUserName');
@@ -227,9 +229,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function populateConsultationSection(patientData, triageData) {
+        // NOVO BLOCO FORMATAÇÃO CABEÇALHO
         displayPatientName.textContent = patientData.patient_name || 'Nome Indisponível';
-        displayPatientDob.textContent = `Data de Nascimento: ${formatDate(patientData.birth_date)}`;
+        displayPatientDob.textContent = `Nascimento: ${formatDate(patientData.birth_date)}`;
         displayPatientGender.textContent = `Gênero: ${getGenderText(patientData.gender)}`;
+
         triageWeight.textContent = triageData.weight ? `${triageData.weight}kg` : 'N/A';
         triageTemperature.textContent = triageData.temperature ? `${triageData.temperature}°C` : 'N/A';
         triageOxygenSaturation.textContent = triageData.oxygen_saturation ? `${triageData.oxygen_saturation}%` : 'N/A';
@@ -348,4 +352,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializePage();
 });
-

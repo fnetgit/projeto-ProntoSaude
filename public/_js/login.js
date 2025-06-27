@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     role: data.role
                 }));
 
-
                 window.location.href = data.redirectUrl;
             } else {
                 errorMessageDiv.textContent = data.message || 'Erro ao fazer login.';

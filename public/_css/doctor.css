@@ -2,6 +2,7 @@
 
 @import url('style.css');
 
+/* Botão de ação da fila do médico */
 .action-button {
     padding: 10px 20px;
     border: none;
@@ -28,27 +29,45 @@
     cursor: not-allowed;
 }
 
-
+/* === Bloco de informações do paciente no topo === */
 .patient-info-display {
     padding-bottom: 20px;
     margin-bottom: 30px;
     border-bottom: 1px solid var(--border-color);
+    text-align: center;
 }
 
 #display-patient-name {
     font-size: 24px;
     font-weight: 500;
     color: var(--text-color);
+    margin-bottom: 5px;
 }
 
 #display-patient-dob,
 #display-patient-gender {
     font-size: 16px;
     color: var(--secondary-text-color);
-    margin-top: 4px;
 }
 
+#display-patient-gender {
+    margin-left: 30px;
+}
 
+/* Responsividade para o bloco do paciente */
+@media (max-width: 600px) {
+    #display-patient-name {
+        font-size: 20px;
+    }
+
+    #display-patient-gender {
+        margin-left: 0;
+        display: block;
+        margin-top: 6px;
+    }
+}
+
+/* === Box de dados da triagem === */
 .data-display-box {
     background-color: var(--container-bg-color);
     border: 1px solid var(--border-color);
@@ -84,6 +103,7 @@
     line-height: 1.5;
 }
 
+/* === Formulário de parecer médico === */
 .medical-report-form textarea {
     min-height: 180px;
     resize: vertical;
@@ -152,4 +172,38 @@
 
 .btn-end:hover {
     background-color: var(--dark-neutral-color-hover);
+}
+
+/* === Badge de prioridade na tabela === */
+.priority-badge {
+    display: inline-block;
+    padding: 5px 15px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--light-text-color);
+    text-align: center;
+}
+
+.priority-red {
+    background-color: var(--priority-red);
+}
+
+.priority-orange {
+    background-color: var(--priority-orange);
+}
+
+.priority-yellow {
+    background-color: var(--priority-yellow);
+    color: var(--text-color);
+}
+
+.priority-green {
+    background-color: var(--priority-green);
+}
+
+.priority-blue {
+    background-color: var(--priority-blue);
 }

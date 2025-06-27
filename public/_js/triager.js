@@ -21,6 +21,15 @@ const formatPhone = (phone) => {
     return cleaned.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
 };
 
+const getGenderText = (genderCode) => {
+    switch (String(genderCode)) {
+        case '1': return 'Masculino';
+        case '2': return 'Feminino';
+        case '3': return 'Outro';
+        default: return 'Não Informado';
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     // Função para exibir os dados do usuário logado no cabeçalho
     function displayUserData() {
@@ -58,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const triageForm = document.getElementById('triage-form-element');
     const displayPatientName = document.getElementById('display-patient-name');
     const displayPatientDob = document.getElementById('display-patient-dob');
+    const displayPatientGender = document.getElementById('display-patient-gender');
     const patientIdInput = document.getElementById('patient_id');
     const serviceIdInput = document.getElementById('service_id');
     const backButton = document.querySelector('.back-button');
@@ -141,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         patients.forEach(patient => {
             const birthDate = new Date(patient.birth_date).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+            const genderText = getGenderText(patient.gender);
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${patient.patient_name}</td>
@@ -149,7 +160,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td>${formatPhone(patient.phone) || 'N/A'}</td>
                 <td>${birthDate}</td>
                 <td>
-                    <button class="initiate-button active" data-patient-id="${patient.patient_id}" data-service-id="${patient.service_id}" data-patient-name="${patient.patient_name}" data-birth-date="${birthDate}">Triar</button>
+                    <button class="initiate-button active"
+                        data-patient-id="${patient.patient_id}"
+                        data-service-id="${patient.service_id}"
+                        data-patient-name="${patient.patient_name}"
+                        data-birth-date="${birthDate}"
+                        data-gender="${genderText}"
+                    >Triar</button>
                     <button class="remove-button" data-service-id="${patient.service_id}">Remover</button>
                 </td>
             `;
@@ -175,8 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (target.classList.contains('initiate-button')) {
             patientIdInput.value = target.dataset.patientId;
             serviceIdInput.value = target.dataset.serviceId;
-            displayPatientName.textContent = target.dataset.patient_name;
+            displayPatientName.textContent = target.dataset.patientName;
             displayPatientDob.textContent = `Nascimento: ${target.dataset.birthDate}`;
+            displayPatientGender.textContent = `Gênero: ${target.dataset.gender}`;
             showTriageForm(true);
         }
         if (target.classList.contains('remove-button')) {
